@@ -1,0 +1,8 @@
+exportPattern("^[[:alpha:]]+")
+import(ggplot2)
+import(rjags)
+import(boot)
+import(basicspace)
+importFrom("grDevices", "rgb")
+importFrom("stats", "density", "na.omit", "quantile", "rnorm", "sd")
+S3method(plot, aldmck_ci)

@@ -1,0 +1,32 @@
+model{
+for(i in 1:N){   ##loop through respondents
+        for(j in 1:q){ ##loop through stimuli
+			z[i,j] ~ dnorm(mu[i,j], tau[i,j])
+			mu[i,j] <- a[i] + b[i]*zhat[j]
+			tau[i,j] <- taui[i] * tauj[j]
+}
+}
+
+##priors on a and b
+for(i in 1:N){
+a[i] ~ dunif(-100,100)
+b[i] ~ dunif(-100,100)
+}
+
+##priors on variance
+for(j in 1:q){
+tauj[j] ~ dgamma(.1,.1)
+}
+for(i in 1:N){
+taui[i] ~ dgamma(ga,gb)
+}
+ga ~ dgamma(.1,.1)
+gb ~ dgamma(.1,.1)
+
+##priors on zhat
+for(j in 1:q){
+zhatstar[j] ~ dnorm(0,1)
+zhat[j] <- (zhatstar[j]-mean(zhatstar[]))/sd(zhatstar[])
+}
+
+}
