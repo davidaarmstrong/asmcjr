@@ -10,8 +10,8 @@ ggplot.aldmck <- function(result, groupVar=NULL, addStim = FALSE, weights=c("all
         v$stimulus <- groupVar
     }
     v <- na.omit(v)
-    xl <- ifelse(is.null(xlab), "Ideal Points", xl)
-    yl <- ifelse(is.null(ylab), "Density", yl)
+    xl <- ifelse(is.null(xlab), "Ideal Points", xlab)
+    yl <- ifelse(is.null(ylab), "Density", ylab)
     main <- ifelse(is.null(main), "", main)
     if(is.null(groupVar)){
         if(w == "all"){
@@ -93,8 +93,8 @@ ggplot.aldmck <- function(result, groupVar=NULL, addStim = FALSE, weights=c("all
 }
 
 boot.aldmck <- function(data, ..., boot.args=list(), plot=FALSE){
-    dots.args <- match.call(expand.dots = FALSE)$`...`
-    boot.fun <- function(data, inds, ...){
+    dot.args <- as.list(match.call(expand.dots = FALSE)$`...`)
+    boot.fun <- function(data, inds, dot.args, ...){
         tmp <- data[inds, ]
         dot.args$data <- tmp
         out <- do.call("aldmck", dot.args)
@@ -138,12 +138,11 @@ bamPrep <- function(x, nmin=1, missing=NULL, self=1, midpt=NULL){
     out
 }
 
-BAM <- function(data, polarity, zhat=TRUE, ab=FALSE, resp.idealpts=FALSE, ...){
+BAM <- function(data, polarity, zhat=TRUE, ab=FALSE, resp.idealpts=FALSE, n.sample = 2500, ...){
 if(!("bamPrep" %in% class(data)))stop("Data should be output from the bamPrep function")
-args <- match.call(expand.dots = FALSE)$`...`
+args <- as.list(match.call(expand.dots = FALSE)$`...`)
 if(!("n.chains" %in% names(args)))args$n.chains = 2
 if(!("n.adapt" %in% names(args)))args$n.adapt = 10000
-if(!("n.sample" %in% names(args)))n.sample = 5000
 if(!("inits" %in% names(args))){
     orig <- aldmck(na.omit(data$stims), respondent=0, polarity=polarity, verbose=FALSE)
     args$inits <- function(){list(zhatstar = orig$stimuli + rnorm(length(orig$stimuli), 0, 1))}
