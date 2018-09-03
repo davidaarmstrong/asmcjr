@@ -14,7 +14,9 @@ boot.aldmck(data, ..., boot.args = list(), plot = FALSE)
   \item{plot}{Logical indicating whether a dot-plot of the result should be printed.}
 }
 \value{
-A data frame with the ideal points, standard deviations as well as lower and upper 95 percent confidence bounds of the stimului.
+A list with two elements: 
+\item{sumstats}{A data frame with the ideal points, standard deviations as well as lower and upper 95 percent confidence bounds of the stimului.}
+\item{bootres}{The result from the bootstrap}
 }
 \seealso{
 \code{\link{aldmck}}

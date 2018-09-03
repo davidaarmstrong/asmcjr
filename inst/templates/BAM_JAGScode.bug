@@ -24,9 +24,11 @@ ga ~ dgamma(.1,.1)
 gb ~ dgamma(.1,.1)
 
 ##priors on zhat
+
+
 for(j in 1:q){
-zhatstar[j] ~ dnorm(0,1)
-zhat[j] <- (zhatstar[j]-mean(zhatstar[]))/sd(zhatstar[])
+   zhatstar[j] ~ dnorm(0,1)T(lower[j], upper[j])
+   zhat[j] <- (zhatstar[j]-mean(zhatstar[]))/sd(zhatstar[])
 }
 
 }
