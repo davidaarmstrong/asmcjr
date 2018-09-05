@@ -13,6 +13,7 @@ ggplot.resphist <- function(result, groupVar=NULL, addStim = FALSE, scaleDensity
     if(class(result) == "blackbox"){
         if(is.null(dim)){stop("For blackbox, 'dim' must be specified\n")}
         if(is.null(whichRes)){wres <- dim}
+        else{wres <- whichRes}
         v <- data.frame("idealpt" = result$individuals[[wres]][,dim], "weight" = 1)
     }
     if(!is.null(groupVar)){
@@ -145,7 +146,6 @@ boot.blackbox <- function(data, missing, dims=1, minscale, verbose=FALSE, posSti
         if(orig$individuals[[dims]][posStimulus, 1] < 0){
             orig$individuals[[dims]][,1] <- -orig$individuals[[dims]][,1]
         }
-        if(is.null(whichRes)){whichRes <- dim}
         sample.dat <- lapply(1:R, function(i)data[,sample(1:ncol(data), ncol(data), replace=TRUE)])
         for(i in 1:length(sample.dat))colnames(sample.dat[[i]]) <- 1:ncol(sample.dat[[i]])
         out <- array(dim=c(nrow(data), dims, R))
@@ -317,10 +317,10 @@ ggplot.blackbox <- function(result, dims, whichRes=NULL, groupVar=NULL, issueVec
         dimdat$group = groupVar
         dimdat$pch = substr(as.character(dimdat$group), 1, 1)
         ng <- length(unique(na.omit(groupVar)))
-        g <- ggplot(dimdat, aes(x=x, y=y, group=group, col=group)) +
+        g <- ggplot(dimdat, aes(x=x, y=y)) +
+            geom_point(aes(group=group, col=group), alpha=0) +
+            geom_text(aes(group=group, col=group, label=pch), show.legend=FALSE) +
             scale_color_manual(values=gray.palette(ng)) +
-            geom_point(alpha=0) +
-            geom_text(aes(label=pch), show.legend=FALSE) +
             guides(colour = guide_legend("Grouping", override.aes = list(size = 2, alpha = 1))) +
             theme_bw()
     }
@@ -328,7 +328,7 @@ ggplot.blackbox <- function(result, dims, whichRes=NULL, groupVar=NULL, issueVec
         g <- g+geom_rug(show.legend=FALSE)
     }
     if(is.null(xlab)){
-        ylab <- paste0("Dimension ", dims[1])
+        xlab <- paste0("Dimension ", dims[1])
     }
     if(is.null(ylab)){
         ylab <- paste0("Dimension ", dims[2])
@@ -365,9 +365,15 @@ ggplot.blackbox <- function(result, dims, whichRes=NULL, groupVar=NULL, issueVec
         nvals <- t(-Nvals*scale.fac)
         nvals <- as.data.frame(nvals)
         g <- g + geom_text(data=nvals, aes(x=x, y=y, label=rownames(nvals), size=2),
-             nudge_x = nudgeX, nudge_y=nudgeY)
+             nudge_x = nudgeX, nudge_y=nudgeY, show.legend=FALSE)
         }
     return(g)
 }
 
+doubleCenter <- function(x){
+    p <- dim(x)[1]
+    n <- dim(x)[2]
+    -(x-matrix(apply(x,1,mean),nrow=p,ncol=n) -
+          t(matrix(apply(x,2,mean),nrow=n,ncol=p)) + mean(x))/2
+}
 
