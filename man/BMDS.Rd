@@ -1,18 +1,16 @@
-\name{BAM}
-\alias{BAM}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{Bayesian Aldrich McKelvey Scaling}
-\description{Wrapper to \code{rjags} to estimate the Bayesian Aldrich McKelvey Scaling model.}
+\name{BMDS}
+\alias{BMDS}
+\title{Bayesian Multidimensional Scaling}
+\description{Wrapper to \code{rjags} to estimate the Bayesian Multidimensional Scaling model.}
 \usage{
-BAM(data, polarity, zhatSave = TRUE, abSave = FALSE,
-    resp.idealpts = FALSE, n.sample = 2500, ...)
+BMDS(data, posStims, negStims, z, fname=NULL, n.sample = 2500, ...)
 }
 \arguments{
-  \item{data}{An object of class \code{bamPrep} that contains data for scaling.}
-  \item{polarity}{integer, specifies the column in the data matrix of the stimuli that is to be set on the left side (generally this means a liberal)}
-  \item{zhatSave}{Logical indicating whether the stimulus locations should be monitored}
-  \item{abSave}{Logical indicating whether the intercept and slope parameters should be saved.}
-  \item{resp.idealpts}{Logical indicating whether respondent ideal points should be calculated.  This will only work if \code{self} is an element of the data and if \code{abSave=TRUE}.}
+  \item{data}{A numeric \code{data.frame} or \code{matrix} containing values to be scaled.}
+  \item{posStims}{A vector of two integer values identifying the row numbers of observations on the first and second dimension, respectively, which are to be constrained to be positive.}
+  \item{negStims}{A vector of two integer values identifying the row numbers of observations on the first and second dimension, respectively, which are to be constrained to be negative.}
+  \item{z}{A matrix with the same number of rows as the data and two columns giving the constraints to be imposed on the point configuration.  All unconstrained points should be missing (\code{NA}).  All constrained points should take non-missing values.}
+  \item{fname}{A string giving the file name where the JAGS code for the model will be written.}
   \item{n.sample}{Number of posterior samples to save.}
   \item{\dots}{Other arguments to be passed down to the \code{jags.model} function.  In particular, you may want to specify \code{n.chains} (which defaults to 2), \code{n.adapt} (which defaults to 10000) and/or \code{inits} which, by dfeault, uses the point configuration from the original AM scaling run.}
 }

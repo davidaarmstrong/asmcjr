@@ -5,7 +5,8 @@
 A function that applies bootstrap resampling to the Blackbox_transpose Scaling model.
 }
 \usage{
-boot.blackbox_transpose(data, missing, dims=1, minscale, verbose=FALSE, posStimulus = 1, R=100)
+boot.blackbox_transpose(data, missing, dims=1, minscale,
+  verbose=FALSE, posStimulus = 1, R=100)
 }
 \arguments{
   \item{data}{A data frame or matrix containing the data to be used in the Aldrich-McKelvey scaling.}

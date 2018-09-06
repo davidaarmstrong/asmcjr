@@ -9,7 +9,7 @@ Authors@R: c(person("Dave", "Armstrong", role=c("aut", "cre"), email="dave@quant
              person("Keith", "Poole", role="ctb"), 
              person("Howard", "Rosenthal", role="ctb"))
 Description: Supports the book - Analyzing Spatial Models of Choice and Judgment in R, CRC Press (2014). 
-Imports: ggplot2, basicspace, rjags, boot, 
+Imports: ggplot2, basicspace, rjags, boot, MASS, stats, grDevices
 License: GPL (>=2)
 Encoding: UTF-8
 LazyData: true

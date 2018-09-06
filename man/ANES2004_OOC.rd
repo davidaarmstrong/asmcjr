@@ -1,5 +1,8 @@
 \name{ANES2004_OOC}
 \alias{ANES2004_OOC}
+\alias{ANES2004}
+\alias{ANES2004b}
+\alias{ANES2004b_OOC}
 \docType{data}
 \title{
 Issue scale data for the ordinal optimal scaling algorithm.
@@ -7,7 +10,7 @@ Issue scale data for the ordinal optimal scaling algorithm.
 \description{
 Respondent self-identified positions on several issues.  The workspace contains both a data frame including presidential vote and party id (\code{ANES2004_OOC}) and one excluding presidential vote and party id \code{ANES2004}.
 }
-\usage{data(ANES2004_OOC}
+\usage{data(ANES2004_OOC)}
 \format{
 A data frame with the following variables.
 \describe{

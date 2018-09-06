@@ -1,0 +1,46 @@
+#
+#  MDS Model for Nations Data
+#
+model{
+#
+# Fix USSR
+#
+        z[10,1] <- 0.000
+        z[10,2] <- 0.000
+#
+#  Fix USA 2nd Dimension
+#
+        z[11,2] <- 0.000
+#
+for (i in 1:(N-1)){
+	  for (j in (i+1):N){
+#
+#
+dstar[i,j] ~ dlnorm(mu[i,j],tau)
+                 mu[i,j] <- log(sqrt((z[i,1]-z[j,1])*(z[i,1]-z[j,1])+(z[i,2]-z[j,2])*(z[i,2]-z[j,2])))
+	     }
+	  }
+#
+## priors
+#
+tau ~ dunif(0,10)
+#
+  for(l in 1:2){z[1,l] ~ dnorm(0.0, 0.01)}
+  z[2,1] ~ dnorm(0.0,0.01)
+  for(l in 1:2){
+      for(k in 3:6) {z[k,l] ~ dnorm(0.0, 0.01)}
+  }
+  z[7,2] ~ dnorm(0.0,0.01)
+  z[8,1] ~ dnorm(0.0,0.01)
+  z[9,2] ~ dnorm(0.0,0.01)
+  z[11,1] ~ dnorm(0.0,0.01)
+  for(l in 1:2){z[12,l] ~ dnorm(0.0, 0.01)}
+#
+#  Kludge to fix rotation -- set 1st and 2nd dimension coordinates of
+#          4 Nations to fix the sign flips
+
+   z[2,2] ~ dnorm(0.0,0.01)I(0,)
+   z[7,1] ~ dnorm(0.0,0.01)I(0,)
+   z[8,2] ~ dnorm(0.0,0.01)I(,0)
+   z[9,1] ~ dnorm(0.0,0.01)I(,0)
+}

@@ -5,7 +5,8 @@
 A wrapper to \code{boot} that applies bootstrap resampling to the Blackbox Scaling model.
 }
 \usage{
-boot.blackbox(data, missing, dims=1, minscale, verbose=FALSE, posStimulus = 1, R=100)
+boot.blackbox(data, missing, dims=1, minscale, verbose=FALSE,
+  posStimulus = 1, R=100)
 }
 \arguments{
   \item{data}{A data frame or matrix containing the data to be used in the Aldrich-McKelvey scaling.}

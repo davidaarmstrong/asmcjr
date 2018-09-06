@@ -4,7 +4,7 @@
 \description{Produces a printed output of the stimulus locations with confidence/credible intervals.}
 
 \usage{
-\method{plot}{aldmck_ci}(x, ..., digits=3)
+\method{print}{aldmck_ci}(x, ..., digits=3)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

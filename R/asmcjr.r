@@ -1,3 +1,4 @@
+utils:::globalVariables(c("x", "y", "group", "pch", "idealpt", "Density", "stimulus",  "lower", "upper"))
 gray.palette <- function(n, lower=.3, upper=.7){
     s <- seq(lower, upper, length=n)
     rgb(matrix(rep(s, each=3), ncol=3, byrow=T))
@@ -87,7 +88,7 @@ ggplot.resphist <- function(result, groupVar=NULL, addStim = FALSE, scaleDensity
                 for(j in length(w0):1){bd[[w0[j]]] <- NULL}
             }
             for(i in 1:length(bd)){
-                if(sacleDensity)bd[[i]]$y <- bd[[i]]$y*props[i]
+                if(scaleDensity)bd[[i]]$y <- bd[[i]]$y*props[i]
                 bd[[i]]$stimulus <- factor(i, levels=1:length(bd), labels=names(bd))
             }
             bd <- lapply(bd, function(z)data.frame("idealpt" = z$x, "Density"=z$y, "stimulus"=z$stimulus))
@@ -162,8 +163,7 @@ boot.blackbox <- function(data, missing, dims=1, minscale, verbose=FALSE, posSti
 boot.blackbox_transpose <- function(data, missing, dims=1, minscale, verbose=FALSE, posStimulus = 1, R=100){
     out <- array(dim=c(ncol(data), dims, R))
     for(i in 1:R){
-        tmp <- rankings[sample(1:nrow(rankings),
-                                            nrow(rankings), replace=TRUE),]
+        tmp <- data[sample(1:nrow(data), nrow(data), replace=TRUE),]
         result <- blackbox_transpose(tmp,missing=missing,
                     dims=dims, minscale=minscale, verbose=verbose)
         if(result$stimuli[[dims]][posStimulus,2] > 0)
@@ -377,3 +377,61 @@ doubleCenter <- function(x){
           t(matrix(apply(x,2,mean),nrow=n,ncol=p)) + mean(x))/2
 }
 
+
+BMDS <- function(data, posStims, negStims, z, fname=NULL, n.sample = 2500, ...){
+    args <- as.list(match.call(expand.dots = FALSE)$`...`)
+    if(!("n.chains" %in% names(args)))args$n.chains = 2
+    if(!("n.adapt" %in% names(args)))args$n.adapt = 10000
+    if(!("inits" %in% names(args))){
+        z.init <- array(runif(2*nrow(z), -5, 5), dim=dim(z))
+        z.init[which(!is.na(z))] <- NA
+        z.init[posStims[1], 1] <- abs(z.init[posStims[1], 1] )
+        z.init[posStims[2], 2] <- abs(z.init[posStims[2], 2] )
+        z.init[negStims[1], 1] <- -abs(z.init[negStims[1], 1] )
+        z.init[negStims[2], 2] <- -abs(z.init[negStims[2], 2] )
+        args$inits <- function(){list(z=z.init)}
+    }
+
+    m1 <- "model{
+        for (i in 1:(N-1)){
+            for (j in (i+1):N){
+                dstar[i,j] ~ dlnorm(mu[i,j],tau)
+                mu[i,j] <- log(sqrt((z[i,1]-z[j,1])*(z[i,1]-z[j,1])+(z[i,2]-z[j,2])*(z[i,2]-z[j,2])))
+            }
+        }
+        tau ~ dunif(0,10)"
+    nZ <- nrow(data)
+    d1const <- c(posStims[1], negStims[1])
+    d2const <- c(posStims[2], negStims[2])
+    d1const2 <- d2const2 <- c("T(0, )", "T(,0)")
+    d1const2 <- d1const2[order(d1const)]
+    d1const <- sort(d1const)
+    d2const2 <- d2const2[order(d2const)]
+    d2const <- sort(d2const)
+    for(i in 1:nZ){
+        if(is.na(z[i,1])){
+            m1 <- paste(m1, "\nz[", i,", 1] ~ dnorm(0,.01)", ifelse(i %in% d1const, d1const2[which(d1const == i)], ""), sep="")
+        }
+        if(is.na(z[i,2])){
+            m1 <- paste(m1, "\nz[", i,", 2] ~ dnorm(0,.01)", ifelse(i %in% d2const, d2const2[which(d2const == i)], ""), sep="")
+        }
+    }
+    m1 <- paste(m1, "\n}",sep="")
+    if(is.null(fname))stop("Must specify a file name to write the code to")
+    cat(m1, file=fname)
+    data <- as.matrix(data)
+    args$file <- fname
+    args$data <- list('N'=nrow(data), dstar = as.matrix(max(data)-data), z=z)
+    mod.sim <- do.call("jags.model", args)
+    samples <- coda.samples(mod.sim,'z',  n.sample,  thin=1)
+    zhat <- samples
+    zhat.sum <- summary(zhat)
+    zhat.ci <- data.frame("stimulus" = c(outer(colnames(data), c(" D1", " D2"), paste0)),
+                              "idealpt" = zhat.sum$statistics[,1],
+                              "sd" = zhat.sum$statistics[,2],
+                              "lower" = zhat.sum$quantiles[,1],
+                              "upper" = zhat.sum$quantiles[,5])
+    rownames(zhat.ci) <- NULL
+    res.list = list(zhat=zhat, zhat.ci = zhat.ci)
+    invisible(res.list)
+}
