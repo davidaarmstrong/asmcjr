@@ -214,7 +214,10 @@ if(!("inits" %in% names(args))){
 }
 
 args$file <- system.file("templates/BAM_JAGScode.bug", package="asmcjr")
-args$data <- list('z'=data$stims, q = ncol(data$stims), N=nrow(data$stims))
+lower <- rep(-100, ncol(data$stims))
+upper <- rep(100, ncol(data$stims))
+upper[polarity] <- 0
+args$data <- list('z'=data$stims, q = ncol(data$stims), N=nrow(data$stims), lower=lower, upper=upper)
 mod.sim <- do.call("jags.model", args)
 
 if(zhatSave & !abSave){
