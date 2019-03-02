@@ -3,9 +3,8 @@ gray.palette <- function(n, lower=.3, upper=.7){
     s <- seq(lower, upper, length=n)
     rgb(matrix(rep(s, each=3), ncol=3, byrow=T))
 }
-ggplot.resphist <- function(result, groupVar=NULL, addStim = FALSE, scaleDensity=TRUE,
-                    weights=c("all", "positive", "negative"), xlab=NULL,
-                    main = NULL, ylab=NULL, whichRes=NULL, dim=NULL, ...){
+ggplot.resphist <- function(result, groupVar=NULL, facetVar=NULL, addStim = FALSE, scaleDensity=TRUE,
+                    weights=c("all", "positive", "negative"), whichRes=NULL, dim=NULL, ...){
     w <- match.arg(weights)
     shapes <- c(15,16,18, 24, 25, 0,1,2,3,4,5,6,7)
     if(class(result) == "aldmck"){
@@ -17,33 +16,40 @@ ggplot.resphist <- function(result, groupVar=NULL, addStim = FALSE, scaleDensity
         else{wres <- whichRes}
         v <- data.frame("idealpt" = result$individuals[[wres]][,dim], "weight" = 1)
     }
+    gv <- NULL
     if(!is.null(groupVar)){
         v$stimulus <- groupVar
+        gv <- c(gv, "stimulus")
+    }
+    if(!is.null(facetVar)){
+        v$facet <- facetVar
+        gv <- c(gv, "facet")
     }
     v <- na.omit(v)
     xl <- ifelse(is.null(xlab), "Ideal Points", xlab)
     yl <- ifelse(is.null(ylab), "Density", ylab)
     main <- ifelse(is.null(main), "", main)
-    if(is.null(groupVar)){
+    if(is.null(groupVar)& is.null(facetVar)){
         if(w == "all"){
-        g <- ggplot(v, aes(x=idealpt)) +  xlab(xl) + ylab(yl) + ggtitle(main) +stat_density(geom="line") + theme_bw()
+#        g <- ggplot(v, aes(x=idealpt)) +  xlab(xl) + ylab(yl) + ggtitle(main) +stat_density(geom="line") + theme_bw()
         }
         if(w == "positive"){
             posv <- v[which(v$weight > 0),]
             xl <- paste0(xl, " (n=", nrow(posv), ")")
-            g <- ggplot(posv, aes(x=idealpt)) +  xlab(xl) + ylab(yl) + ggtitle(main) + stat_density(geom="line")  + theme_bw()
+#            g <- ggplot(posv, aes(x=idealpt)) +  xlab(xl) + ylab(yl) + ggtitle(main) + stat_density(geom="line")  + theme_bw()
         }
         if(w == "negative"){
             negv <- v[which(v$weight < 0),]
             xl <- paste0(xl, " (n=", nrow(negv), ")")
-            g <- ggplot(negv, aes(x=idealpt)) +  xlab(xl) + ylab(yl) + ggtitle(main)+ stat_density(geom="line")  + theme_bw()
+#            g <- ggplot(negv, aes(x=idealpt)) +  xlab(xl) + ylab(yl) + ggtitle(main)+ stat_density(geom="line")  + theme_bw()
         }
     }
     else{
-        ng <- length(table(v$stimulus))
+        v$newg <- apply(v[,gv,drop=FALSE], 1, paste, collapse=";")
+        ng <- length(table(v$newg))
         if(w == "all"){
-            props <- table(v$stimulus)/sum(table(v$stimulus))
-            bd <- by(v$idealpt, list(v$stimulus), density)
+            props <- table(v$newg)/sum(table(v$newg))
+            bd <- by(v$idealpt, list(v$newg), density)
             lens <- sapply(bd, function(z)length(z$x))
             w0 <- which(lens == 0)
             if(length(w0) > 0){
@@ -51,12 +57,16 @@ ggplot.resphist <- function(result, groupVar=NULL, addStim = FALSE, scaleDensity
             }
             for(i in 1:length(bd)){
                 if(scaleDensity)bd[[i]]$y <- bd[[i]]$y*props[i]
-                bd[[i]]$stimulus <- factor(i, levels=1:length(bd), labels=names(bd))
+                bd[[i]]$newg <- names(bd)[1]
             }
-            bd <- lapply(bd, function(z)data.frame("idealpt" = z$x, "Density"=z$y, "stimulus"=z$stimulus))
+            bd <- lapply(bd, function(z)data.frame("idealpt" = z$x, "Density"=z$y, "newg"=z$newg))
             bd <- do.call(rbind, bd)
-            g <- ggplot(bd, aes(x=idealpt, y=Density, group=stimulus, color=stimulus)) + geom_line() + scale_color_manual(values=gray.palette(ng)) +
-                 xlab(xl) + ylab(yl) + ggtitle(main) + theme_bw()
+            t1 <- do.call(rbind, strsplit(as.character(bd$newg), split=";", fixed=T))
+            t1 <- as.data.frame(t1)
+            names(t1) <- c(gv)
+            bd <- cbind(bd, t1)
+#            g <- ggplot(bd, aes(x=idealpt, y=Density, group=stimulus, color=stimulus)) + geom_line() + scale_color_manual(values=gray.palette(ng)) +
+#                 xlab(xl) + ylab(yl) + ggtitle(main) + theme_bw()
         }
         if(w == "positive"){
             posv <- v[which(v$weight > 0),]
@@ -74,8 +84,8 @@ ggplot.resphist <- function(result, groupVar=NULL, addStim = FALSE, scaleDensity
                 }
             bd <- lapply(bd, function(z)data.frame("idealpt" = z$x, "Density"=z$y, "stimulus"=z$stimulus))
             bd <- do.call(rbind, bd)
-            g <- ggplot(bd, aes(x=idealpt, y=Density, group=stimulus, color=stimulus)) + geom_line() + scale_color_manual(values=gray.palette(ng)) +
-                 xlab(xl) + ylab(yl) + ggtitle(main) + theme_bw()
+ #           g <- ggplot(bd, aes(x=idealpt, y=Density, group=stimulus, color=stimulus)) + geom_line() + scale_color_manual(values=gray.palette(ng)) +
+ #               xlab(xl) + ylab(yl) + ggtitle(main) + theme_bw()
         }
         if(w == "negative"){
             negv <- v[which(v$weight < 0),]
@@ -93,8 +103,8 @@ ggplot.resphist <- function(result, groupVar=NULL, addStim = FALSE, scaleDensity
             }
             bd <- lapply(bd, function(z)data.frame("idealpt" = z$x, "Density"=z$y, "stimulus"=z$stimulus))
             bd <- do.call(rbind, bd)
-            g <- ggplot(bd, aes(x=idealpt, y=Density, group=stimulus, color=stimulus)) + geom_line() + scale_color_manual(values=gray.palette(ng)) +
-                 xlab(xl) + ylab(yl) + ggtitle(main) + theme_bw()
+#            g <- ggplot(bd, aes(x=idealpt, y=Density, group=stimulus, color=stimulus)) + geom_line() + scale_color_manual(values=gray.palette(ng)) +
+#                 xlab(xl) + ylab(yl) + ggtitle(main) + theme_bw()
         }
     }
     if(addStim){
@@ -103,18 +113,31 @@ ggplot.resphist <- function(result, groupVar=NULL, addStim = FALSE, scaleDensity
         tmp <- tmp[which(names(tmp) %in% unique(groupVar))]
         n <- names(tmp)
         p <- data.frame("idealpt" = tmp, "stimulus" = factor(n, levels=n[order(tmp)]))
-        g <- g + geom_point(data=p, aes(y=0, group=stimulus, pch=stimulus, col=stimulus, size=2.5)) +
-            scale_shape_manual(values=shapes[1:nrow(p)]) + theme_bw() + scale_size(2.5, guide=FALSE)
+#        g <- g + geom_point(data=p, aes(y=0, group=stimulus, pch=stimulus, col=stimulus, size=2.5)) +
+#            scale_shape_manual(values=shapes[1:nrow(p)]) + theme_bw() + scale_size(2.5, guide=FALSE)
     }
     else{
         n <- names(tmp)
         p <- data.frame("idealpt" = tmp, "stimulus" = factor(n, levels=n[order(tmp)]))
-        g <- g + geom_point(data=p, aes(y=0, group=stimulus, pch=stimulus, col=stimulus, size=2.5)) +
-            scale_shape_manual(values=shapes[1:nrow(p)]) + scale_color_manual(values=gray.palette(nrow(p))) +
-            theme_bw() + scale_size(2.5, guide=FALSE)
+#        g <- g + geom_point(data=p, aes(y=0, group=stimulus, pch=stimulus, col=stimulus, size=2.5)) +
+#            scale_shape_manual(values=shapes[1:nrow(p)]) + scale_color_manual(values=gray.palette(nrow(p))) +
+#            theme_bw() + scale_size(2.5, guide=FALSE)
     }
     }
-    return(g)
+    if(!is.null(facetVar)){
+#        g <- g + facet_wrap(~facet)
+    }
+    # return(g)
+    if(exists("bd")){
+        out <- list(data=bd)
+    }
+    else{
+        out <- list(data=v)
+    }
+    if(exists("p")){
+        out$stim_data <- p
+    }
+    return(out)
 }
 
 boot.aldmck <- function(data, ..., boot.args=list(), plot=FALSE){
@@ -376,6 +399,12 @@ doubleCenter <- function(x){
     -(x-matrix(apply(x,1,mean),nrow=p,ncol=n) -
           t(matrix(apply(x,2,mean),nrow=n,ncol=p)) + mean(x))/2
 }
+doubleCenterRect <- function(x){
+    n <- nrow(x)
+    q <- ncol(x)
+    -(x-matrix(apply(x,1,mean), nrow=n, ncol=q) -
+          t(matrix(apply(x,2,mean), nrow=q, ncol=n)) + mean(x))/2
+}
 
 
 BMDS <- function(data, posStims, negStims, z, fname=NULL, n.sample = 2500, ...){
@@ -435,3 +464,148 @@ BMDS <- function(data, posStims, negStims, z, fname=NULL, n.sample = 2500, ...){
     res.list = list(zhat=zhat, zhat.ci = zhat.ci)
     invisible(res.list)
 }
+
+mlsmu6 <- function(input, ndim=2, cutoff=5, tol=0.0005, maxit=50, id=NULL){
+    rn <- rownames(input)
+    cn <- colnames(input)
+    input <- as.matrix(input)
+    iter <- NULL
+    keep <- which(rowSums(!is.na(input))>=cutoff)
+    T <- input[keep,]
+    id <- id[keep]
+    #
+    np <- nrow(T)
+    nq <- ncol(T)
+    xrow <- sapply(1:np,function(i) length(rep(1,nq)[!is.na(T[i,])]))
+    xcol <- sapply(1:nq,function(j) length((1:np)[!is.na(T[,j])]))
+    #
+    T <- (100-T)/50
+    TT <- T
+    TT[is.na(TT)] <- mean(T,na.rm=TRUE)
+    TTSQ <- T*T
+    TTSQ[is.na(T)] <- (mean(T,na.rm=TRUE))**2
+    TEIGHT <- as.numeric(TT)
+    dim(TEIGHT) <- c(np,nq)
+    TTSQDC <- doubleCenterRect(TTSQ)
+    #
+    xsvd <- svd(TTSQDC)
+    zz <- xsvd$v[,1:ndim]
+    xx <- rep(0,np*ndim)
+    dim(xx) <- c(np,ndim)
+    for (i in 1:ndim){
+    xx[,i] <- xsvd$u[,i]*sqrt(xsvd$d[i])
+    }
+    #
+    sumaj <- function(i){
+    jjj <- 1:nq
+    j <- jjj[!is.na(T[i,])]
+    s <- (xx[i,1]-zz[j,1])^2 + (xx[i,2]-zz[j,2])^2  ### Note this needs to be expanded if estimating more than two dimensions
+    s=sqrt(s)
+    sx=TEIGHT[i,j]
+    sum((s-sx)^2)
+    }
+    #
+    sumvector <- sapply(1:np,sumaj)
+    suma <- sum(sumvector)
+    xxx <- xx
+    zzz <- zz
+    kp=0
+    ktp=0
+    sumalast <- 100000.00
+    SAVEsumalast <- sumalast
+    #
+    loop <- done <- 1
+    while(done >= tol & loop <= maxit){
+    xxx[,1:ndim] <- 0
+    zzz[,1:ndim] <- 0
+    kp=kp+1
+    ktp=ktp+1
+    #
+    for(i in 1:np){
+        for(j in 1:nq){
+        if(!is.na(T[i,j])){
+            s=0
+            for(k in 1:ndim)
+            s <- s+(xx[i,k]-zz[j,k])^2
+            xc <- ifelse(s==0, 1.0, TEIGHT[i,j]/sqrt(s))
+            for(k in 1:ndim)
+            zzz[j,k]=zzz[j,k]+(xx[i,k]-xc*(xx[i,k]-zz[j,k]))/xcol[j]
+        }
+        }
+    }
+    for(k in 1:ndim){
+        for(i in 1:np){
+        sw <- 0.0
+        for(j in 1:nq){
+            if(!is.na(T[i,j])){
+            s=0
+            for(kk in 1:ndim)
+                s <- s+(xx[i,kk]-zzz[j,kk])^2
+            xc <- ifelse(s==0, 1.0, TEIGHT[i,j]/sqrt(s))
+            xxx[i,k]=xxx[i,k]+(zzz[j,k]-xc*(zzz[j,k]-xx[i,k]))
+            }
+        }
+        xxx[i,k]=xxx[i,k]/xrow[i]
+        }
+    }
+    xx <- xxx
+    zz <- zzz
+    sumvector <- sapply(1:np,sumaj)
+    suma <- sum(sumvector)
+    #
+    iter <- c(iter, suma)
+    done=((sumalast-suma)/suma)
+    sumalast=suma
+    loop <- loop + 1
+    }
+    #
+    #
+    #
+    # FLIP SPACE IF POLARITY WRONG
+    if(xx[1,1] < 0){
+    xx[,1] <- -1 * xx[,1]
+    zz[,1] <- -1 * zz[,1]
+    }
+    rownames(xx) <- rn
+    rownames(zz) <- cn
+    xx <- as.data.frame(xx)
+    zz <- as.data.frame(zz)
+    names(xx) <- names(zz) <- paste0("Dim", 1:ndim)
+    if(!is.null(id)){xx$id <- id}
+    ret <- list(inds=xx, stims=zz, iter=cbind(1:length(iter), iter))
+    colnames(ret$iter) <- c("iter", "ErrorSS")
+    class(ret) <- "mlsmu6"
+    return(ret)
+}
+#
+
+plot.mlsmu6 <- function(x, ..., selected.stims=NULL, ind.id.size=3, stim.id.size=6){
+    dfi <- x$inds
+    if(is.null(dfi$id)){
+        dfi$id <- "x"
+    }
+    dfi$id <- as.character(dfi$id)
+    dfii <- sort(unique(dfi$id))
+    dfs <- x$stims
+    dfs$id <- rownames(dfs)
+    if(!is.null(selected.stims)){
+        dfs <- dfs[which(rownames(dfs) %in% selected.stims), ]
+    }
+    df <- rbind(dfi, dfs)
+    levs <- unique(df$id)
+    levs1 <- dfii
+    levs2 <- dfs$id
+    df$id <- factor(df$id, c(sort(levs1), sort(levs2)))
+    ggplot(df, aes(x=Dim1, y=Dim2, label=id, colour=id, size=id)) +
+           geom_text(show.legend=FALSE) +
+            scale_colour_manual(values=c("gray25", "gray50", rep("black", nrow(dfs))), guide="none") +
+            scale_size_manual(values=c(rep(ind.id.size, length(dfii)), rep(stim.id.size, nrow(dfs)))) +
+            scale_shape_discrete(name="ID", breaks=dfii, labels=dfii) +
+            theme_bw() + theme(aspect.ratio=1)
+
+
+}
+
+
+
+
