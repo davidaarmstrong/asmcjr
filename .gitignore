@@ -1,3 +1,4 @@
 packrat/lib*/
 .Rproj.user
 data/.Rapp.history
+.Rhistory
