@@ -438,3 +438,43 @@ BMDS <- function(data, posStims, negStims, z, fname=NULL, n.sample = 2500, ...){
     res.list = list(zhat=zhat, zhat.ci = zhat.ci)
     invisible(res.list)
 }
+set_globals <- function(nslice,nburn,nrowX,ncolX,NS,N,NDIM,X,CONSTRAINTS) {
+   res <-.C("copyFromR",
+     as.integer(nslice),
+     as.integer(nburn),
+     as.integer(nrowX),
+     as.integer(ncolX),
+     as.integer(NS),
+     as.integer(N),
+     as.integer(NDIM),
+     as.double(X),
+     as.double(CONSTRAINTS))
+}
+do_lbfgs <- function(kpnp,kpnq,yrotate,rmatrix){
+     .C("mainlbfgs",
+     as.integer(kpnp),
+     as.integer(kpnq),
+     as.double(yrotate),
+     as.double(rmatrix))
+}
+do_logposterior <- function(theta,XCOORDS,sumsquared,SIGMAPRIOR){
+     .C("keithrules",
+     as.double(theta),
+     as.double(XCOORDS),
+     as.double(sumsquared),
+     as.double(SIGMAPRIOR))
+}
+do_slice <- function(theta,thetanow2,theta1000,ssenow,XTRUE,thetaLeft,thetaRight,WW,PP,XCOORDS,SIGMAPRIOR){
+     .C("slicesimilarities",
+     as.double(theta),
+     as.double(thetanow2),
+     as.double(theta1000),
+     as.double(ssenow),
+     as.double(XTRUE),
+     as.double(thetaLeft),
+     as.double(thetaRight),
+     as.double(WW),
+     as.integer(PP),
+     as.double(XCOORDS),
+     as.double(SIGMAPRIOR))
+}
