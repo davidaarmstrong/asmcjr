@@ -237,7 +237,10 @@ if(!("inits" %in% names(args))){
 }
 
 args$file <- system.file("templates/BAM_JAGScode.bug", package="asmcjr")
-args$data <- list('z'=data$stims, q = ncol(data$stims), N=nrow(data$stims))
+lower <- rep(-100, ncol(data$stims))
+upper <- rep(100, ncol(data$stims))
+upper[polarity] <- 0
+args$data <- list('z'=data$stims, q = ncol(data$stims), N=nrow(data$stims), lower=lower, upper=upper)
 mod.sim <- do.call("jags.model", args)
 
 if(zhatSave & !abSave){
@@ -608,4 +611,302 @@ plot.mlsmu6 <- function(x, ..., selected.stims=NULL, ind.id.size=3, stim.id.size
 
 
 
+bayesunfold <-
+function(input, cutoff = 5, dims = 2, nsamp = 1500, burnin = 500, ...) 
+{
+#
+set_globals <- function(nslice,nburn,nrowX,ncolX,NS,N,NDIM,UNFOLD,NMISSING,X,CONSTRAINTS) {
+   res <-.C("copyFromR",
+     as.integer(nslice),
+     as.integer(nburn),
+     as.integer(nrowX),
+     as.integer(ncolX),
+     as.integer(NS),
+     as.integer(N),
+     as.integer(NDIM),
+     as.integer(UNFOLD),
+     as.integer(NMISSING),
+     as.double(X),
+     as.double(CONSTRAINTS))
+}
+do_lbfgs <- function(kpnp,kpnq,yrotate,rmatrix){
+     .C("mainlbfgs",
+     as.integer(kpnp),
+     as.integer(kpnq),
+     as.double(yrotate),
+     as.double(rmatrix))
+}
+do_logposterior <- function(theta,XCOORDS,sumsquared,SIGMAPRIOR){
+     .C("keithrules",
+     as.double(theta),
+     as.double(XCOORDS),
+     as.double(sumsquared),
+     as.double(SIGMAPRIOR))
+}
+do_sliceu <- function(theta,thetanow2,theta1000,ssenow,XTRUE,thetaLeft,thetaRight,WW,PP,XCOORDS,SIGMAPRIOR){
+     .C("sliceunfolding",
+     as.double(theta),
+     as.double(thetanow2),
+     as.double(theta1000),
+     as.double(ssenow),
+     as.double(XTRUE),
+     as.double(thetaLeft),
+     as.double(thetaRight),
+     as.double(WW),
+     as.integer(PP),
+     as.double(XCOORDS),
+     as.double(SIGMAPRIOR))
+}
+#
+#
+#
+#
+#
+#  DELETE ROWS WITH LESS THAN 5 THERMOMETER RESPONSES
+#
+T <- T[rowSums(!is.na(T))>=cutoff,]
+#
+nrowX <- nrow(T)
+ncolX <- ncol(T)
+NS <- dims
+nslice <- nsamp
+nburn <- burnin
+N <- (nrowX+ncolX)*NS - (NS*(NS+1))/2
+#
+# total number of parameters B-P Scaling Rotation Version
+#
+NDIM <- (nrowX+ncolX)*NS - NS + 1
+#
+#  ROWS MUST HAVE LESS THAN 7 MISSING ENTRIES
+#  COLUMNS MUST HAVE AT LEAST 1/4 NON-MISSING ENTRIES (THIS IS HARD WIRED IN THE C CODE)
+#
+NMISSING <- 7
+#
+#  =0 if Dissimilarites
+#  =1 if Unfolding
+#
+UNFOLD <- 1
+#
+# 
+#T <- (100-T)/50
+#
+roundUp <- function(x) 10^ceiling(log10(x))
+upper <- roundUp(max(T,na.rm=TRUE))
+half <- upper/2
+T <- (upper-T+(.01*upper))/half
+T <- as.matrix(T)
+#
+#
+TT <- T
+TT[is.na(TT)] <- 999.0
+X <- as.vector(t(TT))
+#X[is.na(TT)] <- -999.0
+#
+#  SETUP FOR TWO DIMENSIONS (NEED TO GENERALIZE THIS)
+#
+CONSTRAINTS <- rep(1,NS*(nrowX+ncolX))
+#
+if (NS==1){
+CONSTRAINTS[NS*(nrowX+ncolX)] <- 0
+}
+#
+if (NS==2){
+CONSTRAINTS[(NS*(nrowX+ncolX)-NS):(NS*(nrowX+ncolX))] <- 0
+}
+#
+#
+#CONSTRAINTS <- c(rep(1,((NS*(nrowX+ncolX))-2)),0,0)
+#
+#CONSTRAINTS[(NS*(nrowX+ncolX))-2] <- 0
+#
+weightmat <- rep(1,nrowX*ncolX)
+dim(weightmat) <- c(nrowX,ncolX)
+weightmat[is.na(T)] <- 0
+result <- smacofRect(TT, ndim=NS, weightmat, itmax=10000, ...)
+#  
+TEIGHT <- as.matrix(TT)
+dim(TEIGHT) <- c(nrowX,ncolX)
+zmetric <- t(as.numeric(result$conf.col))
+dim(zmetric) <- c(ncolX,NS)
+xmetric <- as.numeric(result$conf.row)
+dim(xmetric) <- c(nrowX,NS)
+#
+if (NS==1){
+zz <- xmetric
+}
+#
+if (NS==2){
+zz <- cbind(xmetric[,1],xmetric[,2])
+}
+#
+X2 <- rep(0,(nrowX+ncolX)*NS)
+dim(X2) <- c(nrowX+ncolX,NS)
+for (i in 1:ncolX){
+X2[i,1:NS] <- zmetric[i,1:NS]
+}
+for (i in 1:(nrowX-1)){
+X2[i+ncolX,1:NS] <- xmetric[i,1:NS]
+}
+if (NS==1){
+X2[ncolX+nrowX] <- 0.0
+}
+if (NS==2){
+X2[ncolX+nrowX-1,2] <- 0.0
+}
+#
+rmatrix2 <- as.vector(t(X2))
+rmatrix <- rmatrix2
+yrotate <- rep(0,(NS*(nrowX+ncolX)))
+#
+#
+#
+# rmatrix are the starts
+# yrotate is the solution
+#
+set_globals(nslice,nburn,nrowX,ncolX,NS,N,NDIM,UNFOLD,NMISSING,X,CONSTRAINTS)
+#
+lbfgs.result <- do_lbfgs(nrowX,ncolX,yrotate,rmatrix)
+#
+lbfgs.coords <- lbfgs.result[[3]]
+dim(lbfgs.coords) <- c(NS,(nrowX+ncolX))
+X3 <- t(lbfgs.coords)
+lbfgs.stimuli <- X3[1:ncolX,]
+lbfgs.individuals <- X3[(ncolX+1):(nrowX+ncolX),]
+#
+#
+CONSTRAINTS <- c(rep(1,((NS*(nrowX+ncolX))-2)),0,0)
+#
+#
+WW <- 1.0
+PP <- 3
+SIGMAPRIOR <- 100.0
+#
+#
+theta <- rep(0,NDIM)
+dim(theta) <-c(NDIM,1)
+theta2 <- rep(0,NDIM)
+dim(theta2) <-c(NDIM,1)
+theta1000 <- rep(0,nslice*NDIM)
+dim(theta1000) <-c(nslice*NDIM,1)
+ssenow <-rep(0,(2*(nslice+nburn)))
+dim(ssenow) <-c((2*(nslice+nburn)),1)
+theta3 <- rep(0,NDIM)
+dim(theta3) <-c(NDIM,1)
+thetaL <- rep(0,NDIM)
+dim(thetaL) <-c(NDIM,1)
+thetaR <- rep(0,NDIM)
+dim(thetaR) <-c(NDIM,1)
+#
+for (i in 1:NDIM){
+	  thetaL[i]=-99.0;
+	  thetaR[i]= 99.0;
+}
+#  Variance term
+  thetaL[NDIM]=0.10;
+  thetaR[NDIM]=0.50;
+#
+#  Non-Random Starts for Slice Sampler
+#
+#
+theta[1:(NDIM-1)] <- lbfgs.coords[1:((nrowX+ncolX)*NS - NS)]
+theta[NDIM] <- 0.40
+#
+#  Random Starts for Slice Sampler
+#
+theta <- c(runif(NDIM,min=-.5,max=.5))
+#theta[NDIM] <- 0.40
+theta3[1:NDIM] <- theta[1:NDIM]
+theta2 <- theta
+#
+XCOORDS <- rep(0,(nrowX+ncolX)*NS)
+#
+#  RUN THE SLICE SAMPLER
+#
+result4 <- do_sliceu(theta,theta2,theta1000,ssenow,lbfgs.coords,thetaL,thetaR,WW,PP,XCOORDS,SIGMAPRIOR)
+#
+#> length(result4[[3]]) = NDIM*nslice
+#
+#  CALCULATE THE MEANS FROM THE SLICE SAMPLER
+#
+sigma_squared_hat <- mean(result4[[4]][(nsamp+burnin+burnin+1):(2*(nsamp+burnin))])
+sigma_squared_hat_sd <- sd(result4[[4]][(nsamp+burnin+burnin+1):(2*(nsamp+burnin))])
+#
+#
+#
+# SAMPLES
+#
+samples <- rep(NA,NDIM*nslice)
+dim(samples) <- c(NDIM,nslice)
+for (j in 1:NDIM){
+  for (i in 1:nslice){
+	  samples[j,i] <- result4[[3]][(i-1)*NDIM + j]
+  }
+}
+#
+# STIMULI
+#
+if (NS==1){
+stimuli.samples.onedim <- samples[seq(1, ncolX*NS, by = NS),]
+#
+z <- rep(list(NA),3)
+names(z) <- c("mean.onedim","lower.onedim","upper.onedim")
+z[[1]] <- apply(stimuli.samples.onedim,1,mean)
+z[[2]] <- apply(stimuli.samples.onedim,1,function(x){quantile(x,0.05)})
+z[[3]] <- apply(stimuli.samples.onedim,1,function(x){quantile(x,0.95)})
+}
+#
+if (NS==2){
+stimuli.samples.onedim <- samples[seq(1, ncolX*NS, by = NS),]
+stimuli.samples.twodim <- samples[seq(2, ncolX*NS, by = NS),]
+#
+z <- rep(list(NA),6)
+names(z) <- c("mean.onedim","lower.onedim","upper.onedim","mean.twodim","lower.twodim","upper.twodim")
+z[[1]] <- apply(stimuli.samples.onedim,1,mean)
+z[[2]] <- apply(stimuli.samples.onedim,1,function(x){quantile(x,0.05)})
+z[[3]] <- apply(stimuli.samples.onedim,1,function(x){quantile(x,0.95)})
+z[[4]] <- apply(stimuli.samples.twodim,1,mean)
+z[[5]] <- apply(stimuli.samples.twodim,1,function(x){quantile(x,0.05)})
+z[[6]] <- apply(stimuli.samples.twodim,1,function(x){quantile(x,0.95)})
+}
+#
+#
+# INDIVIDUALS
+#
+if (NS==1){
+individual.samples.onedim <- samples[seq((ncolX*NS+1), NDIM, by = NS),]
+#
+x <- rep(list(NA),3)
+names(x) <- c("mean.onedim","lower.onedim","upper.onedim")
+x[[1]] <- apply(individual.samples.onedim,1,mean)
+x[[2]] <- apply(individual.samples.onedim,1,function(x){quantile(x,0.05)})
+x[[3]] <- apply(individual.samples.onedim,1,function(x){quantile(x,0.95)})
+}
+#
+if (NS==2){
+individual.samples.onedim <- samples[seq((ncolX*NS+1), NDIM, by = NS),]
+individual.samples.twodim <- samples[seq((ncolX*NS+2), NDIM, by = NS),]
+#
+x <- rep(list(NA),6)
+names(x) <- c("mean.onedim","lower.onedim","upper.onedim","mean.twodim","lower.twodim","upper.twodim")
+x[[1]] <- apply(individual.samples.onedim,1,mean)
+x[[2]] <- apply(individual.samples.onedim,1,function(x){quantile(x,0.05)})
+x[[3]] <- apply(individual.samples.onedim,1,function(x){quantile(x,0.95)})
+x[[4]] <- c(apply(individual.samples.twodim,1,mean),0)
+x[[5]] <- c(apply(individual.samples.twodim,1,function(x){quantile(x,0.05)}),0)
+x[[6]] <- c(apply(individual.samples.twodim,1,function(x){quantile(x,0.95)}),0)
+}
+#
+#
+samples <- list(samples)
+class(samples) <- "mcmc.list"
 
+BUobject <- list(lbfgs.result = lbfgs.stimuli,
+	samples = samples,
+	stimuli = z,
+	individuals = x,
+	sigma_squared_hat = sigma_squared_hat,
+	sigma_squared_hat_sd = sigma_squared_hat_sd)
+
+BUobject
+
+}
