@@ -1,30 +1,46 @@
 \name{bayesunfold}
 \alias{bayesunfold}
-\title{bayesunfold}
-\description{Bayesian Metric unfolding.}
-\usage{
-bayesunfold(input, cutoff = 5, dims = 2, nsamp = 1500, burnin = 500, ...)
-}
-\arguments{
-  \item{input}{An data frame or matrix of individuals by stimuli placements.}
-  \item{cutoff}{Minimum number of stimuli that need to be rated to be included in result.}
-  \item{dims}{Number of dimensions to estimate.}
-  \item{nsamp}{Number of samples saved from the slice sampler.}
-  \item{burnin}{Number of burnin iterations before sampling starts}
-  \item{...}{Other arguments passed down to \code{\link{smacofRect}}.  Must include at least \code{type} and \code{conditionality}.  See help file for details.}
-}
+\title{Bakker-Poole Bayesian Multidimensional Scaling: Unfolding Analysis of Ratio-Scale Data}
+
 \description{
-The \code{bayesunfold} routine uses L-BFGS to get the appropriate point configuration and then slice sampling to sample from the posteriors. 
-
-We have had some trouble getting this to work reliably on the macOS.  As of this writing, using the current stable version 3.5.2 produced a segfault error at the slice sampling phase.  We found that compiling R-devel from scratch and then installing the relevant packages is a reliable solution.  This also produced reliable results on Linux (Debian).  
+Performs the Bayesian multidimensional unfolding procedure described in Bakker and Poole, "Bayesian Metric Multidimensional Scaling" (2013).
+The method runs L-BFGS to get the target configuration.
 }
+
+\usage{
+bayesunfold(T, cutoff = 5, dims = 2, nsamp = 1500, burnin = 500, ...)
+}
+
+\arguments{
+  \item{T}{A rectangular matrix of ratio-scale preferential choice data (e.g., feeling thermometer rankings of political stimuli) in which the individuals are the rows and the stimuli are the columns}
+  \item{dims}{Number of dimensions to estimate}
+  \item{cutoff}{Number of placements required for an individual to be included in the analysis}
+  \item{nsamp}{Number of iterations of the slice sampler to be run after the burn-in period}
+  \item{burnin}{Number of iterations of the slice sampler to be discarded}
+  \item{...}{other arguments to be passed down to the \code{smacofRect} function. }
+}
+
 \value{
-A list that will include the following:
-
-\item{lbfgs.result}{The L-BFGS scaling result.}
-\item{samples}{The samples from the posterior distribution of placements as an \code{mcmc.list}.}
-\item{stimuli}{The stimulus placements in 1-\code{dims} dimensions along with lower and upper credible intervals. }
-\item{individuals}{The individual placements in 1-\code{dims} dimensions along with lower and upper credible intervals.}
-\item{sigma_squared_hat}{Residual variance. }
-\item{sigma_squared_hat_sd}{Posterior SD of residual variance. }
+A list with the following elements:
+\item{lbfgs.stimuli}{An object of class \code{mcmc} that holds the chain values (rows) for each of the paramters (columns) of the model}
+\item{samples}{An object of class \code{alpha} that holds the chain values for the alpha parameter}
+\item{bayes.result}{Bayes result}
 }
+
+
+\references{
+Bakker, Ryan and Keith T. Poole. 2013. Bayesian Metric Multidimensional Scaling. Political Analysis 21: 125-140.
+}
+
+
+\author{
+Dave Armstrong, Ryan Bakker, Christopher Hare and Keith T. Poole
+}
+
+\examples{
+data(ANES1968)
+T <- ANES1968[,1:12]
+result <- bayesunfold(T, cutoff=5)
+}
+
+\keyword{ideal point estimation}
