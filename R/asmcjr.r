@@ -723,7 +723,7 @@ CONSTRAINTS[(NS*(nrowX+ncolX)-NS):(NS*(nrowX+ncolX))] <- 0
 weightmat <- rep(1,nrowX*ncolX)
 dim(weightmat) <- c(nrowX,ncolX)
 weightmat[is.na(T)] <- 0
-result <- smacofRect(TT, ndim=NS, weightmat, itmax=10000, ...)
+result <- smacofRect(TT, ndim=NS, weightmat=weightmat, itmax=10000, circle="none", ...)
 #  
 TEIGHT <- as.matrix(TT)
 dim(TEIGHT) <- c(nrowX,ncolX)
