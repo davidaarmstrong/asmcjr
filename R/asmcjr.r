@@ -664,6 +664,7 @@ do_sliceu <- function(theta,thetanow2,theta1000,ssenow,XTRUE,thetaLeft,thetaRigh
 #
 #  DELETE ROWS WITH LESS THAN 5 THERMOMETER RESPONSES
 #
+T <- input
 T <- T[rowSums(!is.na(T))>=cutoff,]
 #
 nrowX <- nrow(T)
