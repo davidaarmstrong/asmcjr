@@ -699,9 +699,9 @@ T <- as.matrix(T)
 #
 #
 TT <- T
-TT[is.na(TT)] <- 999.0
+#TT[is.na(TT)] <- 999.0
 X <- as.vector(t(TT))
-#X[is.na(TT)] <- -999.0
+X[is.na(TT)] <- -999.0
 #
 #  SETUP FOR TWO DIMENSIONS (NEED TO GENERALIZE THIS)
 #
