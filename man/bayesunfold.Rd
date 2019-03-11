@@ -8,23 +8,29 @@ The method runs L-BFGS to get the target configuration.
 }
 
 \usage{
-bayesunfold(T, cutoff = 5, dims = 2, nsamp = 1500, burnin = 500, ...)
+bayesunfold(input, dims = 2, nsamp = 2000, burnin = 1000, slice.starts = c("lbfgs", "random"), print.lbfgs="console", print.slice="console", ...) 
+
 }
 
+\description{The algorithm generally works across platforms, but can in some situations produce degenerate solutions.  While we work out the bugs here, if this happens, you can simply re-run the algorithm again and it should produce appropriate answers.  This suggests that it has something to do with the randomness of the sampling procedure.}
+
 \arguments{
-  \item{T}{A rectangular matrix of ratio-scale preferential choice data (e.g., feeling thermometer rankings of political stimuli) in which the individuals are the rows and the stimuli are the columns}
-  \item{dims}{Number of dimensions to estimate}
-  \item{cutoff}{Number of placements required for an individual to be included in the analysis}
+  \item{input}{A rectangular matrix of ratio-scale preferential choice data (e.g., feeling thermometer rankings of political stimuli) in which the individuals are the rows and the stimuli are the columns}
+  \item{dims}{Currently, only 2 is supported. }
   \item{nsamp}{Number of iterations of the slice sampler to be run after the burn-in period}
   \item{burnin}{Number of iterations of the slice sampler to be discarded}
+  \item{slice.starts}{Whether slice starting values should be initialized at the L-BFGS results or randomly.  If the algorithm is producing degenerate solutions, we suggest setting this parameter to its default \sQuote{lbfgs}.}
+  \item{print.lbfgs, print.slice}{Where to print the results (iteration history) of the L-BFGS and slice sampler.  The default is to the console, but any other string in there will use \code{sink} to send all of the results to that file. }
   \item{...}{other arguments to be passed down to the \code{smacofRect} function. }
 }
 
 \value{
 A list with the following elements:
-\item{lbfgs.stimuli}{An object of class \code{mcmc} that holds the chain values (rows) for each of the paramters (columns) of the model}
-\item{samples}{An object of class \code{alpha} that holds the chain values for the alpha parameter}
-\item{bayes.result}{Bayes result}
+\itm{smacof.result}{The returned smacof result that initialized the L-BFGS step.}
+\item{lbfgs.result}{The stimulus configuration from the L-BFGS step.}
+\item{stim.samples, indiv.samples}{Objects of class \code{mcmc.list} holding the posterior samples of the stimuli and individuals, respectively}
+\item{stimuli, individuals}{Lists holding the mean as well as 95 percent lower and upper credible intervals for the stimulus and individual configurations, respectively.}
+\item{sigma_squared_hat, sigma_squared_hat_sd}{Posterior mean and standard deviation of the residual variance term. }
 }
 
 

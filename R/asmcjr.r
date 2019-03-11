@@ -612,7 +612,7 @@ plot.mlsmu6 <- function(x, ..., selected.stims=NULL, ind.id.size=3, stim.id.size
 
 
 bayesunfold <-
-function(input, dims = 2, nsamp = 1500, burnin = 500, slice.starts = c("lbfgs", "random"), print.lbfgs="console", print.slice="console", ...) 
+function(input, dims = 2, nsamp = 2000, burnin = 1000, slice.starts = c("lbfgs", "random"), print.lbfgs="console", print.slice="console", ...) 
 {
 #
 set_globals <- function(nslice,nburn,nrowX,ncolX,NS,N,NDIM,UNFOLD,NMISSING,X,CONSTRAINTS) {
@@ -818,14 +818,14 @@ p <- procrustes(z.mat, lbfgs.stimuli, translation=TRUE)
 
 
 stims <- vector("list", nsamp)
-for(j in 1:1000){
+for(j in 1:nsamp){
     tmp <- matrix(samples[j,1:(ncolX*NS)], ncol=NS, byrow=TRUE)
     stims[[j]] <-  tmp %*% p$R
     # for(i in 1:NS){
     # stimuli[[i]] <- rbind(stimuli[[i]], tmpR[,i])
     # }  
 }
-stim.array <- array(as.numeric(unlist(stims)), dim=c(ncolX, NS, 1000))
+stim.array <- array(as.numeric(unlist(stims)), dim=c(ncolX, NS, nsamp))
 stim.mean <- aaply(stim.array, c(1,2), mean, na.rm=T)
 stim.lower <- aaply(stim.array, c(1,2), quantile, .025, na.rm=T)
 stim.upper <- aaply(stim.array, c(1,2), quantile, .975, na.rm=T)
@@ -839,14 +839,14 @@ colnames(stim.samples) <- c(sapply(1:2, function(m)paste(colnames(input), m, sep
 
 
 individuals <- vector("list", nsamp)
-for(j in 1:1000){
+for(j in 1:nsamp){
     tmp <- matrix(samples[j,-(1:(ncolX*NS))], ncol=NS, byrow=TRUE)
     individuals[[j]] <- tmp %*% p$R
     # for(i in 1:NS){
     # individuals[[i]] <- rbind(individuals[[i]], tmpR[,i])
     # }  
 }
-indiv.array <- array(as.numeric(unlist(individuals)), dim=c(nrowX, NS, 1000))
+indiv.array <- array(as.numeric(unlist(individuals)), dim=c(nrowX, NS, nsamp))
 indiv.mean <- aaply(indiv.array, c(1,2), mean, na.rm=T)
 indiv.lower <- aaply(indiv.array, c(1,2), quantile, .025, na.rm=T)
 indiv.upper <- aaply(indiv.array, c(1,2), quantile, .975, na.rm=T)
