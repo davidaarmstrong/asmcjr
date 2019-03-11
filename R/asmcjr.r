@@ -792,7 +792,7 @@ PP <- 3.0
 XCOORDS <- rep(0,(nrowX+ncolX)*NS)
 SIGMAPRIOR <- 100.0
 #
-if(print.slice != "console")
+if(print.slice != "console"){
     sink(print.slice)
     result4 <- do_sliceu(theta,theta2,theta1000,ssenow,XTRUE,thetaL,thetaR,WW,PP,XCOORDS,SIGMAPRIOR)
     sink()
