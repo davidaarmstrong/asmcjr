@@ -912,7 +912,7 @@ rotated.res = list(stim.samples = stim.samples,
 
 
 
-BUobject <- list(smacof.result = SMACOF.result, lbfgs.result = lbfgs.stimuli,
+BUobject <- list(retained.obs = keep, smacof.result = SMACOF.result, lbfgs.result = lbfgs.stimuli,
 	sigma_squared_hat = sigma_squared_hat,
 	sigma_squared_hat_sd = sigma_squared_hat_sd,	
     unrotated = orig.res, 
@@ -923,21 +923,66 @@ BUobject
 
 }
 
-# plot.bayesunfold <- function(x, ..., plot.stim = TRUE, plot.individuals=FALSE, selected.stim=NULL, selected.individuals = NULL, individual.id=NULL){
-#     stims <- x$stimuli$mean
-#     indivs <- x$individuals$mean
-#     stim.data <- as_tibble(b$stimuli$mean, rownames="names") 
-#     names(stim.data)[2:3] <- c("D1", "D2")
-#     indiv.data <- as_tibble(b$individuals$mean, rownames=NULL)
-#     names(indiv.data)[1:2] <- c("D1", "D2")
-#     stim.data <- add_column(stim.data, D1.lower=x$stimuli$lower[,1], D2.lower=x$stimuli$lower[,2], 
-#         D1.upper = x$stimuli$upper[,1], D2.upper = x$stimuli$upper[,2])
-#     indiv.data <- add_column(indiv.data, D1.lower=x$individuals$lower[,1], D2.lower=x$individuals$lower[,2], 
-#         D1.upper = x$individuals$upper[,1], D2.upper = x$individuals$upper[,2])
-#     if(!is.null(individual.id)){
-#         indiv.data <- add_column(indiv.data, names=individual.id)
-#     }
-#     if(plot.stim){
-#         g <- ggplot(stim.data, aes(x=D1, y=D2, colour=names)) + geom_point()
-#     }
-# }
+plot.bayesunfold <- function(x, ..., which.res =c("rotated", "unrotated"), labels=c("color", "text"),  plot.stimuli = TRUE, plot.individuals=FALSE, selected.stim=NULL, selected.individuals = NULL, individual.id=NULL){
+    w <- match.arg(which.res)
+    lab <- match.arg(labels)
+    if(w == "rotated"){
+        res <- x$rotated
+    }
+    else{
+        res <- x$unrotated
+    }
+    stims <- res$stimuli$mean
+    indivs <- res$individuals$mean
+    stim.data <- as_tibble(res$stimuli$mean, rownames="names") 
+    names(stim.data)[2:3] <- c("D1", "D2")
+    indiv.data <- as_tibble(res$individuals$mean, rownames=NULL)
+    names(indiv.data)[1:2] <- c("D1", "D2")
+    stim.data <- add_column(stim.data, D1.lower=res$stimuli$lower[,1], D2.lower=res$stimuli$lower[,2], 
+        D1.upper = res$stimuli$upper[,1], D2.upper = res$stimuli$upper[,2])
+    indiv.data <- add_column(indiv.data, D1.lower=res$individuals$lower[,1], D2.lower=res$individuals$lower[,2], 
+        D1.upper = res$individuals$upper[,1], D2.upper = res$individuals$upper[,2])
+    if(!is.null(individual.id)){
+        indiv.data <- add_column(indiv.data, names=individual.id)
+    }
+    if(plot.stimuli & ! plot.individuals){
+        if(lab == "text"){
+            g <- ggplot(stim.data, aes(x=D1, y=D2)) + geom_text(aes(label=names, colour=names)) + guides(colour=FALSE)
+        }
+        if(lab == "color"){
+            g <- ggplot(stim.data, aes(x=D1, y=D2)) + geom_point(aes(colour=names))
+        }
+        return(g)
+    }
+    if(plot.stimuli & plot.individuals){
+        if(is.null(individual.id)){
+            if(lab == "text"){
+                g <- ggplot(stim.data, aes(x=D1, y=D2)) + geom_point(data=indiv.data, col="gray75", pch=1, cex=.5 ) + geom_text(aes(label=names, colour=names)) 
+            }
+            if(lab == "color"){
+                g <- ggplot(stim.data, aes(x=D1, y=D2)) + geom_point(data=indiv.data, col="gray75", pch=1, cex=.5 ) + geom_point(aes(colour=names))
+            }
+        }
+        else{
+            if(lab == "text"){
+                g <- ggplot(stim.data, aes(x=D1, y=D2)) + geom_point(data=indiv.data, aes(colour=names), pch=1, cex=.5 ) + geom_text(aes(label=names, colour=names)) 
+            }
+            if(lab == "color"){
+                g <- ggplot(stim.data, aes(x=D1, y=D2)) + geom_point(data=indiv.data, aes(colour=names), pch=1, cex=.5 ) + geom_point(aes(colour=names))
+            }
+        }
+        return(g)
+    }
+    if(!plot.stimuli & plot.individuals){
+        if(is.null(individual.id)){
+            g <- ggplot(indiv.data, aes(x=D1, y=D2)) + geom_point( pch=1, cex=.5 )
+        }
+        else{
+            g <- ggplot(indiv.data, aes(x=D1, y=D2, colour=names)) + geom_point( pch=1, cex=.5 )
+        }
+        return(g)
+    }
+    if(!plot.stim & !plot.individuals){
+        return(list(stim =stim.data, indiv=indiv.data))
+    }
+}

@@ -45,8 +45,9 @@ Dave Armstrong, Ryan Bakker, Christopher Hare and Keith T. Poole
 
 \examples{
 data(ANES1968)
-T <- ANES1968[,1:12]
-result <- bayesunfold(T, cutoff=5)
+inp <- ANES1968[,1:12]
+result <- bayesunfold(inp)
+plot(b, which.res="unrotated", labels="text") + xlim(.5,2)
 }
 
 \keyword{ideal point estimation}
