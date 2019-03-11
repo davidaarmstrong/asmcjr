@@ -26,7 +26,7 @@ bayesunfold(input, dims = 2, nsamp = 2000, burnin = 1000, slice.starts = c("lbfg
 
 \value{
 A list with the following elements:
-\itm{smacof.result}{The returned smacof result that initialized the L-BFGS step.}
+\item{smacof.result}{The returned smacof result that initialized the L-BFGS step.}
 \item{lbfgs.result}{The stimulus configuration from the L-BFGS step.}
 \item{stim.samples, indiv.samples}{Objects of class \code{mcmc.list} holding the posterior samples of the stimuli and individuals, respectively}
 \item{stimuli, individuals}{Lists holding the mean as well as 95 percent lower and upper credible intervals for the stimulus and individual configurations, respectively.}
