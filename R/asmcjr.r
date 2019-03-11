@@ -612,7 +612,7 @@ plot.mlsmu6 <- function(x, ..., selected.stims=NULL, ind.id.size=3, stim.id.size
 
 
 bayesunfold <-
-function(input, cutoff = 5, dims = 2, nsamp = 1500, burnin = 500, slice.starts = c("lbfgs", "random"), ...) 
+function(input, dims = 2, nsamp = 1500, burnin = 500, slice.starts = c("lbfgs", "random"), print.lbfgs="console", print.slice="console", ...) 
 {
 #
 set_globals <- function(nslice,nburn,nrowX,ncolX,NS,N,NDIM,UNFOLD,NMISSING,X,CONSTRAINTS) {
@@ -665,146 +665,123 @@ do_sliceu <- function(theta,thetanow2,theta1000,ssenow,XTRUE,thetaLeft,thetaRigh
 #  DELETE ROWS WITH LESS THAN 5 THERMOMETER RESPONSES
 #
 T <- input
-T <- T[rowSums(!is.na(T))>=cutoff,]
+#
+#  I. FEELING THERMOMETERS
+#
+T <- ANES1968[,1:12]
+T <- as.matrix(T)
+T[T < 0 | T > 100] <- NA
+#
+nstimuli <- ncol(T)
+#
+vote.turnout <- ANES1968[,13]
+presidential.vote <- ANES1968[,14]
+#
+#  Delete rows (respondents) with less than (nstimuli - 7) thermometer ratings
+#
+cutoff <- nstimuli - 7
+keep <- rowSums(!is.na(T))>=cutoff
+presidential.vote <- presidential.vote[keep]
+T <- T[keep,]
+T <- (100-T)/50
+#T <- (100-T)/50 + 0.02
 #
 nrowX <- nrow(T)
 ncolX <- ncol(T)
-NS <- dims
-nslice <- nsamp
 nburn <- burnin
-N <- (nrowX+ncolX)*NS - (NS*(NS+1))/2
-#
-# total number of parameters B-P Scaling Rotation Version
-#
-NDIM <- (nrowX+ncolX)*NS - NS + 1
+nslice <- nsamp
+NS <- 2
+N <- NS*(nrowX+ncolX) - ((NS*(NS+1))/2)
+NDIM <- NS*(nrowX+ncolX) - (NS-1)
+UNFOLD <- 1
 #
 #  ROWS MUST HAVE LESS THAN 7 MISSING ENTRIES
 #  COLUMNS MUST HAVE AT LEAST 1/4 NON-MISSING ENTRIES (THIS IS HARD WIRED IN THE C CODE)
 #
 NMISSING <- 7
 #
-#  =0 if Dissimilarites
-#  =1 if Unfolding
-#
-UNFOLD <- 1
-#
-# 
-#T <- (100-T)/50
-#
-roundUp <- function(x) 10^ceiling(log10(x))
-upper <- roundUp(max(T,na.rm=TRUE))
-half <- upper/2
-T <- (upper-T+(.01*upper))/half
-T <- as.matrix(T)
-#
-#
 TT <- T
 TT[is.na(TT)] <- -999.0
-X <- as.vector(t(TT))#
-#  SETUP FOR TWO DIMENSIONS (NEED TO GENERALIZE THIS)
+X <- as.vector(t(TT))
+#
+#  CONSTRAINTS
 #
 CONSTRAINTS <- rep(1,NS*(nrowX+ncolX))
 #
 if (NS==1){
-CONSTRAINTS[NS*(nrowX+ncolX)] <- 0
+  CONSTRAINTS[NS*(nrowX+ncolX)] <- 0
 }
-#
 if (NS==2){
-CONSTRAINTS[(NS*(nrowX+ncolX)-NS):(NS*(nrowX+ncolX))] <- 0
+  CONSTRAINTS[(NS*(nrowX+ncolX)-NS):(NS*(nrowX+ncolX))] <- 0
+}
+if (NS==3){
+  CONSTRAINTS[(NS*(nrowX+ncolX)-4):(NS*(nrowX+ncolX))] <- 0
+  CONSTRAINTS[(NS*(nrowX+ncolX)-6)] <- 0
 }
 #
+#  SMACOF (METRIC UNFOLDING) FOR COMPARISON PURPOSES
 #
-#CONSTRAINTS <- c(rep(1,((NS*(nrowX+ncolX))-2)),0,0)
+weights <- matrix(1, nrow=nrowX, ncol=ncolX)
+weights[is.na(T)] <- 0
 #
-#CONSTRAINTS[(NS*(nrowX+ncolX))-2] <- 0
+SMACOF.result <- smacofRect(T, ndim=NS, circle = "none", weightmat=weights, itmax=10000, ...)
 #
-weightmat <- rep(1,nrowX*ncolX)
-dim(weightmat) <- c(nrowX,ncolX)
-weightmat[is.na(T)] <- 0
-result <- smacofRect(TT, ndim=NS, weightmat=weightmat, itmax=10000, circle="none", ...)
-#  
-TEIGHT <- as.matrix(TT)
-dim(TEIGHT) <- c(nrowX,ncolX)
-zmetric <- t(as.numeric(result$conf.col))
-dim(zmetric) <- c(ncolX,NS)
-xmetric <- as.numeric(result$conf.row)
-dim(xmetric) <- c(nrowX,NS)
+# Flip SMACOF results
 #
-
-if(NS == 1){
-    X2 <- c(SMACOF.result$conf.col[,1], SMACOF.result$conf.row[,1])
-}
-if(NS == 2){
-    X2 <- c(c(SMACOF.result$conf.col[,1:2]), c(SMACOF.result$conf.row[,1:2])
-}
-if(NS > 2 | NS < 1){
-    stop("NS must be 1 or 2\n")
-}
-lx2 <- length(X2)
-if(NS == 1){
-    zeros <- lx2
-}
-if(NS == 2){
-    zeros <- (lx2-2):lx2
-}
-X2[zeros] <- 0
+#SMACOF.result$conf.col[,1] <- -1 * SMACOF.result$conf.col[,1]
+#SMACOF.result$conf.col[,2] <- -1 * SMACOF.result$conf.col[,2]
+#SMACOF.result$conf.row[,1] <- -1 * SMACOF.result$conf.row[,1]
+#SMACOF.result$conf.row[,2] <- -1 * SMACOF.result$conf.row[,2]
 #
-rmatrix <- rmatrix2 <- as.vector(t(X2))
+zmetric <- as.numeric(t(SMACOF.result$conf.col))
+xmetric <- as.numeric(t(SMACOF.result$conf.row))
+rmatrix <- c(zmetric,xmetric)
+rmatrix[(NS*(nrowX+ncolX)-NS):(NS*(nrowX+ncolX))] <- 0
 yrotate <- rep(0,(NS*(nrowX+ncolX)))
+
 #
-#
-#
-# rmatrix are the starts
-# yrotate is the solution
+#  L-BFGS
 #
 set_globals(nslice,nburn,nrowX,ncolX,NS,N,NDIM,UNFOLD,NMISSING,X,CONSTRAINTS)
 #
-lbfgs.result <- do_lbfgs(nrowX,ncolX,yrotate,rmatrix)
-#
+if(print.lbfgs != "console"){
+    sink(print.lbfgs)
+    lbfgs.result <- do_lbfgs(nrowX,ncolX,yrotate,rmatrix)
+    sink()
+}
+else{
+    lbfgs.result <- do_lbfgs(nrowX,ncolX,yrotate,rmatrix)
+}
 lbfgs.coords <- lbfgs.result[[3]]
 dim(lbfgs.coords) <- c(NS,(nrowX+ncolX))
 X3 <- t(lbfgs.coords)
-lbfgs.stimuli <- X3[1:ncolX,]
-lbfgs.individuals <- X3[(ncolX+1):(nrowX+ncolX),]
+X3.new <- X3
+#
+#  Rotation
+#
+ A <- matrix(c(cos(-30*pi/180), -sin(-30*pi/180), sin(-30*pi/180), cos(-30*pi/180)), nrow=2, ncol=2, byrow=TRUE)
+#
+ X3.new <- X3 %*% A
+lbfgs.coords.new <- as.vector(t(X3.new))
+
+#
+#lbfgs.result[[3]] <- lbfgs.coords.new
 #
 #
-CONSTRAINTS <- rep(1, lx2)
-CONSTRAINTS[zeros] <- 0
+lbfgs.stimuli <- X3.new[1:ncolX,]
+lbfgs.individuals <- X3.new[(ncolX+1):(nrowX+ncolX),]
 #
+#  BAYESIAN UNFOLDING
 #
-# WW <- 1.0
-# PP <- 3
-# SIGMAPRIOR <- 100.0
-# #
-# #
-# theta <- rep(0,NDIM)
-# dim(theta) <-c(NDIM,1)
-# theta2 <- rep(0,NDIM)
-# dim(theta2) <-c(NDIM,1)
-# theta1000 <- rep(0,nslice*NDIM)
-# dim(theta1000) <-c(nslice*NDIM,1)
-# ssenow <-rep(0,(2*(nslice+nburn)))
-# dim(ssenow) <-c((2*(nslice+nburn)),1)
-# theta3 <- rep(0,NDIM)
-# dim(theta3) <-c(NDIM,1)
-# thetaL <- rep(0,NDIM)
-# dim(thetaL) <-c(NDIM,1)
-# thetaR <- rep(0,NDIM)
-# dim(thetaR) <-c(NDIM,1)
-#
-ss <- match.arg(slice.starts)
-if(ss == "lbfgs"){
-    theta <- lbfgs.result[[3]] # Non-random starts for Slice Sampler
-}
-else{
-    theta <- c(runif(NDIM,min=-.5,max=.5), 0) # Random starts for Slice Sampler
-}
+theta <- c(runif(NDIM,min=-.5,max=.5)) # Random starts for Slice Sampler
+theta <- lbfgs.result[[3]] # Non-random starts for Slice Sampler
 theta2 <- theta
 theta1000 <- rep(0,nslice*NDIM)
-dim(theta1000) <- c(nslice*NDIM,1)
-ssenow <- rep(0,(2*(nslice+nburn)))
+dim(theta1000) <-c(nslice*NDIM,1)
+ssenow <-rep(0,(2*(nslice+nburn)))
 dim(ssenow) <-c((2*(nslice+nburn)),1)
 XTRUE <- lbfgs.result[[3]]
+XTRUE <- lbfgs.coords.new
 thetaL <- rep(-99.0, NDIM)
 thetaR <- rep(99.0, NDIM)
 dim(thetaL) <- dim(thetaR) <- c(NDIM, 1)
@@ -814,93 +791,82 @@ WW <- 1.0
 PP <- 3.0
 XCOORDS <- rep(0,(nrowX+ncolX)*NS)
 SIGMAPRIOR <- 100.0
+#
+if(print.slice != "console")
+    sink(print.slice)
+    result4 <- do_sliceu(theta,theta2,theta1000,ssenow,XTRUE,thetaL,thetaR,WW,PP,XCOORDS,SIGMAPRIOR)
+    sink()
+}
+else{
+    result4 <- do_sliceu(theta,theta2,theta1000,ssenow,XTRUE,thetaL,thetaR,WW,PP,XCOORDS,SIGMAPRIOR)
+}
+#
+#  length(result4[[3]]) = NDIM*nslice
+#
+#  CALCULATE THE MEANS FROM THE SLICE SAMPLER --  mean(result4[[4]][2501:4000]) is the mean of the variance term
+#
+sigma_squared_hat <- mean(result4[[4]][2501:4000])
+sigma_squared_hat_sd <- sd(result4[[4]][2501:4000])
+#
+#  SAMPLES
+#
+samples <- matrix(result4[[3]], ncol=NDIM, byrow=TRUE)
+samples <- cbind(samples, 0)
+z.mean <- colMeans(samples[,1:(ncolX*NS)])
+z.mat <- matrix(z.mean, byrow=TRUE, ncol=NS)
+p <- procrustes(z.mat, lbfgs.stimuli, translation=TRUE)
 
-XCOORDS <- rep(0,(nrowX+ncolX)*NS)
-#
-#  RUN THE SLICE SAMPLER
-#
-result4 <- do_sliceu(theta,theta2,theta1000,ssenow,lbfgs.coords,thetaL,thetaR,WW,PP,XCOORDS,SIGMAPRIOR)
-#
-#> length(result4[[3]]) = NDIM*nslice
-#
-#  CALCULATE THE MEANS FROM THE SLICE SAMPLER
-#
-sigma_squared_hat <- mean(result4[[4]][(nsamp+burnin+burnin+1):(2*(nsamp+burnin))])
-sigma_squared_hat_sd <- sd(result4[[4]][(nsamp+burnin+burnin+1):(2*(nsamp+burnin))])
-#
-#
-#
-# SAMPLES
-#
-samples <- rep(NA,NDIM*nslice)
-dim(samples) <- c(NDIM,nslice)
-for (j in 1:NDIM){
-  for (i in 1:nslice){
-	  samples[j,i] <- result4[[3]][(i-1)*NDIM + j]
-  }
-}
-#
-# STIMULI
-#
-if (NS==1){
-stimuli.samples.onedim <- samples[seq(1, ncolX*NS, by = NS),]
-#
-z <- rep(list(NA),3)
-names(z) <- c("mean.onedim","lower.onedim","upper.onedim")
-z[[1]] <- apply(stimuli.samples.onedim,1,mean)
-z[[2]] <- apply(stimuli.samples.onedim,1,function(x){quantile(x,0.05)})
-z[[3]] <- apply(stimuli.samples.onedim,1,function(x){quantile(x,0.95)})
-}
-#
-if (NS==2){
-stimuli.samples.onedim <- samples[seq(1, ncolX*NS, by = NS),]
-stimuli.samples.twodim <- samples[seq(2, ncolX*NS, by = NS),]
-#
-z <- rep(list(NA),6)
-names(z) <- c("mean.onedim","lower.onedim","upper.onedim","mean.twodim","lower.twodim","upper.twodim")
-z[[1]] <- apply(stimuli.samples.onedim,1,mean)
-z[[2]] <- apply(stimuli.samples.onedim,1,function(x){quantile(x,0.05)})
-z[[3]] <- apply(stimuli.samples.onedim,1,function(x){quantile(x,0.95)})
-z[[4]] <- apply(stimuli.samples.twodim,1,mean)
-z[[5]] <- apply(stimuli.samples.twodim,1,function(x){quantile(x,0.05)})
-z[[6]] <- apply(stimuli.samples.twodim,1,function(x){quantile(x,0.95)})
-}
-#
-#
-# INDIVIDUALS
-#
-if (NS==1){
-individual.samples.onedim <- samples[seq((ncolX*NS+1), NDIM, by = NS),]
-#
-x <- rep(list(NA),3)
-names(x) <- c("mean.onedim","lower.onedim","upper.onedim")
-x[[1]] <- apply(individual.samples.onedim,1,mean)
-x[[2]] <- apply(individual.samples.onedim,1,function(x){quantile(x,0.05)})
-x[[3]] <- apply(individual.samples.onedim,1,function(x){quantile(x,0.95)})
-}
-#
-if (NS==2){
-individual.samples.onedim <- samples[seq((ncolX*NS+1), NDIM, by = NS),]
-individual.samples.twodim <- samples[seq((ncolX*NS+2), NDIM, by = NS),]
-#
-x <- rep(list(NA),6)
-names(x) <- c("mean.onedim","lower.onedim","upper.onedim","mean.twodim","lower.twodim","upper.twodim")
-x[[1]] <- apply(individual.samples.onedim,1,mean)
-x[[2]] <- apply(individual.samples.onedim,1,function(x){quantile(x,0.05)})
-x[[3]] <- apply(individual.samples.onedim,1,function(x){quantile(x,0.95)})
-x[[4]] <- c(apply(individual.samples.twodim,1,mean),0)
-x[[5]] <- c(apply(individual.samples.twodim,1,function(x){quantile(x,0.05)}),0)
-x[[6]] <- c(apply(individual.samples.twodim,1,function(x){quantile(x,0.95)}),0)
-}
-#
-#
-samples <- list(samples)
-class(samples) <- "mcmc.list"
 
-BUobject <- list(lbfgs.result = lbfgs.stimuli,
-	samples = samples,
-	stimuli = z,
-	individuals = x,
+stims <- vector("list", nsamp)
+for(j in 1:1000){
+    tmp <- matrix(samples[j,1:(ncolX*NS)], ncol=NS, byrow=TRUE)
+    stims[[j]] <-  tmp %*% p$R
+    # for(i in 1:NS){
+    # stimuli[[i]] <- rbind(stimuli[[i]], tmpR[,i])
+    # }  
+}
+stim.array <- array(as.numeric(unlist(stims)), dim=c(ncolX, NS, 1000))
+stim.mean <- aaply(stim.array, c(1,2), mean)
+stim.lower <- aaply(stim.array, c(1,2), quantile, .025)
+stim.upper <- aaply(stim.array, c(1,2), quantile, .975)
+
+## arrays the data as first column in columns 1:ncolX and 
+## second column of stimuli in (ncolX+1):(ncolX*NS)
+stim.samples <- matrix(c(stim.array), ncol=ncolX*NS, byrow=TRUE)
+
+rownames(stim.mean) <- rownames(stim.lower) <- rownames(stim.upper) <- colnames(input)
+colnames(stim.samples) <- c(sapply(1:2, function(m)paste(colnames(input), m, sep=".")))
+
+
+individuals <- vector("list", nsamp)
+for(j in 1:1000){
+    tmp <- matrix(samples[j,-(1:(ncolX*NS))], ncol=NS, byrow=TRUE)
+    individuals[[j]] <- tmp %*% p$R
+    # for(i in 1:NS){
+    # individuals[[i]] <- rbind(individuals[[i]], tmpR[,i])
+    # }  
+}
+indiv.array <- array(as.numeric(unlist(individuals)), dim=c(nrowX, NS, 1000))
+indiv.mean <- aaply(indiv.array, c(1,2), mean)
+indiv.lower <- aaply(indiv.array, c(1,2), quantile, .025)
+indiv.upper <- aaply(indiv.array, c(1,2), quantile, .975)
+
+## arrays the data as first column in columns 1:nrowX and 
+## second column of stimuli in (nrowX+1):(nrowX*NS)
+
+indiv.samples <- matrix(c(indiv.array), ncol=nrowX*NS, byrow=TRUE)
+
+stim.samples <- list(stim.samples)
+class(stim.samples) <- "mcmc.list"
+
+indiv.samples <- list(indiv.samples)
+class(indiv.samples) <- "mcmc.list"
+
+BUobject <- list(smacof.result = SMACOF.result, lbfgs.result = lbfgs.stimuli,
+	stim.samples = stim.samples,
+	indiv.samples = indiv.samples,
+	stimuli = list(mean = stim.mean, lower=stim.lower, upper=stim.upper),
+	individuals = list(mean = indiv.mean, lower=indiv.lower, upper=indiv.upper),
 	sigma_squared_hat = sigma_squared_hat,
 	sigma_squared_hat_sd = sigma_squared_hat_sd)
 
