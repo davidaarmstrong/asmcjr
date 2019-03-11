@@ -816,7 +816,50 @@ z.mean <- colMeans(samples[,1:(ncolX*NS)])
 z.mat <- matrix(z.mean, byrow=TRUE, ncol=NS)
 p <- procrustes(z.mat, lbfgs.stimuli, translation=TRUE)
 
+### Results without procrustes rotation
+stims <- vector("list", nsamp)
+for(j in 1:nsamp){
+    stims[[j]] <- matrix(samples[j,1:(ncolX*NS)], ncol=NS, byrow=TRUE)
+}
+stim.array <- array(as.numeric(unlist(stims)), dim=c(ncolX, NS, nsamp))
+stim.mean <- aaply(stim.array, c(1,2), mean, na.rm=T)
+stim.lower <- aaply(stim.array, c(1,2), quantile, .025, na.rm=T)
+stim.upper <- aaply(stim.array, c(1,2), quantile, .975, na.rm=T)
 
+## arrays the data as first column in columns 1:ncolX and 
+## second column of stimuli in (ncolX+1):(ncolX*NS)
+stim.samples <- matrix(c(stim.array), ncol=ncolX*NS, byrow=TRUE)
+
+rownames(stim.mean) <- rownames(stim.lower) <- rownames(stim.upper) <- colnames(input)
+colnames(stim.samples) <- c(sapply(1:2, function(m)paste(colnames(input), m, sep=".")))
+
+
+individuals <- vector("list", nsamp)
+for(j in 1:nsamp){
+    individuals[[j]] <- matrix(samples[j,-(1:(ncolX*NS))], ncol=NS, byrow=TRUE)
+}
+indiv.array <- array(as.numeric(unlist(individuals)), dim=c(nrowX, NS, nsamp))
+indiv.mean <- aaply(indiv.array, c(1,2), mean, na.rm=T)
+indiv.lower <- aaply(indiv.array, c(1,2), quantile, .025, na.rm=T)
+indiv.upper <- aaply(indiv.array, c(1,2), quantile, .975, na.rm=T)
+
+## arrays the data as first column in columns 1:nrowX and 
+## second column of stimuli in (nrowX+1):(nrowX*NS)
+
+indiv.samples <- matrix(c(indiv.array), ncol=nrowX*NS, byrow=TRUE)
+
+stim.samples <- list(stim.samples)
+class(stim.samples) <- "mcmc.list"
+
+indiv.samples <- list(indiv.samples)
+class(indiv.samples) <- "mcmc.list"
+
+orig.res = list(stim.samples = stim.samples,
+	indiv.samples = indiv.samples,
+	stimuli = list(mean = stim.mean, lower=stim.lower, upper=stim.upper),
+	individuals = list(mean = indiv.mean, lower=indiv.lower, upper=indiv.upper))
+
+### Results With Procrustes Roatation 
 stims <- vector("list", nsamp)
 for(j in 1:nsamp){
     tmp <- matrix(samples[j,1:(ncolX*NS)], ncol=NS, byrow=TRUE)
@@ -862,14 +905,40 @@ class(stim.samples) <- "mcmc.list"
 indiv.samples <- list(indiv.samples)
 class(indiv.samples) <- "mcmc.list"
 
-BUobject <- list(smacof.result = SMACOF.result, lbfgs.result = lbfgs.stimuli,
-	stim.samples = stim.samples,
+rotated.res = list(stim.samples = stim.samples,
 	indiv.samples = indiv.samples,
 	stimuli = list(mean = stim.mean, lower=stim.lower, upper=stim.upper),
-	individuals = list(mean = indiv.mean, lower=indiv.lower, upper=indiv.upper),
-	sigma_squared_hat = sigma_squared_hat,
-	sigma_squared_hat_sd = sigma_squared_hat_sd)
+	individuals = list(mean = indiv.mean, lower=indiv.lower, upper=indiv.upper))
 
+
+
+BUobject <- list(smacof.result = SMACOF.result, lbfgs.result = lbfgs.stimuli,
+	sigma_squared_hat = sigma_squared_hat,
+	sigma_squared_hat_sd = sigma_squared_hat_sd,	
+    unrotated = orig.res, 
+    rotated = rotated.res)
+
+)
+class(BUobject) <- "bayesunfold"
 BUobject
 
 }
+
+# plot.bayesunfold <- function(x, ..., plot.stim = TRUE, plot.individuals=FALSE, selected.stim=NULL, selected.individuals = NULL, individual.id=NULL){
+#     stims <- x$stimuli$mean
+#     indivs <- x$individuals$mean
+#     stim.data <- as_tibble(b$stimuli$mean, rownames="names") 
+#     names(stim.data)[2:3] <- c("D1", "D2")
+#     indiv.data <- as_tibble(b$individuals$mean, rownames=NULL)
+#     names(indiv.data)[1:2] <- c("D1", "D2")
+#     stim.data <- add_column(stim.data, D1.lower=x$stimuli$lower[,1], D2.lower=x$stimuli$lower[,2], 
+#         D1.upper = x$stimuli$upper[,1], D2.upper = x$stimuli$upper[,2])
+#     indiv.data <- add_column(indiv.data, D1.lower=x$individuals$lower[,1], D2.lower=x$individuals$lower[,2], 
+#         D1.upper = x$individuals$upper[,1], D2.upper = x$individuals$upper[,2])
+#     if(!is.null(individual.id)){
+#         indiv.data <- add_column(indiv.data, names=individual.id)
+#     }
+#     if(plot.stim){
+#         g <- ggplot(stim.data, aes(x=D1, y=D2, colour=names)) + geom_point()
+#     }
+# }
