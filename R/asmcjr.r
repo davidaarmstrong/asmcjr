@@ -826,9 +826,9 @@ for(j in 1:1000){
     # }  
 }
 stim.array <- array(as.numeric(unlist(stims)), dim=c(ncolX, NS, 1000))
-stim.mean <- aaply(stim.array, c(1,2), mean)
-stim.lower <- aaply(stim.array, c(1,2), quantile, .025)
-stim.upper <- aaply(stim.array, c(1,2), quantile, .975)
+stim.mean <- aaply(stim.array, c(1,2), mean, na.rm=T)
+stim.lower <- aaply(stim.array, c(1,2), quantile, .025, na.rm=T)
+stim.upper <- aaply(stim.array, c(1,2), quantile, .975, na.rm=T)
 
 ## arrays the data as first column in columns 1:ncolX and 
 ## second column of stimuli in (ncolX+1):(ncolX*NS)
@@ -847,9 +847,9 @@ for(j in 1:1000){
     # }  
 }
 indiv.array <- array(as.numeric(unlist(individuals)), dim=c(nrowX, NS, 1000))
-indiv.mean <- aaply(indiv.array, c(1,2), mean)
-indiv.lower <- aaply(indiv.array, c(1,2), quantile, .025)
-indiv.upper <- aaply(indiv.array, c(1,2), quantile, .975)
+indiv.mean <- aaply(indiv.array, c(1,2), mean, na.rm=T)
+indiv.lower <- aaply(indiv.array, c(1,2), quantile, .025, na.rm=T)
+indiv.upper <- aaply(indiv.array, c(1,2), quantile, .975, na.rm=T)
 
 ## arrays the data as first column in columns 1:nrowX and 
 ## second column of stimuli in (nrowX+1):(nrowX*NS)
