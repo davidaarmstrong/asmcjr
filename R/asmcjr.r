@@ -612,7 +612,7 @@ plot.mlsmu6 <- function(x, ..., selected.stims=NULL, ind.id.size=3, stim.id.size
 
 
 bayesunfold <-
-function(input, cutoff = 5, dims = 2, nsamp = 1500, burnin = 500, ...) 
+function(input, cutoff = 5, dims = 2, nsamp = 1500, burnin = 500, slice.starts = c("lbfgs", "random"), ...) 
 {
 #
 set_globals <- function(nslice,nburn,nrowX,ncolX,NS,N,NDIM,UNFOLD,NMISSING,X,CONSTRAINTS) {
@@ -699,10 +699,8 @@ T <- as.matrix(T)
 #
 #
 TT <- T
-#TT[is.na(TT)] <- 999.0
-X <- as.vector(t(TT))
-X[is.na(TT)] <- 999.0
-#
+TT[is.na(TT)] <- -999.0
+X <- as.vector(t(TT))#
 #  SETUP FOR TWO DIMENSIONS (NEED TO GENERALIZE THIS)
 #
 CONSTRAINTS <- rep(1,NS*(nrowX+ncolX))
@@ -732,31 +730,26 @@ dim(zmetric) <- c(ncolX,NS)
 xmetric <- as.numeric(result$conf.row)
 dim(xmetric) <- c(nrowX,NS)
 #
-if (NS==1){
-zz <- xmetric
+
+if(NS == 1){
+    X2 <- c(SMACOF.result$conf.col[,1], SMACOF.result$conf.row[,1])
 }
+if(NS == 2){
+    X2 <- c(c(SMACOF.result$conf.col[,1:2]), c(SMACOF.result$conf.row[,1:2])
+}
+if(NS > 2 | NS < 1){
+    stop("NS must be 1 or 2\n")
+}
+lx2 <- length(X2)
+if(NS == 1){
+    zeros <- lx2
+}
+if(NS == 2){
+    zeros <- (lx2-2):lx2
+}
+X2[zeros] <- 0
 #
-if (NS==2){
-zz <- cbind(xmetric[,1],xmetric[,2])
-}
-#
-X2 <- rep(0,(nrowX+ncolX)*NS)
-dim(X2) <- c(nrowX+ncolX,NS)
-for (i in 1:ncolX){
-X2[i,1:NS] <- zmetric[i,1:NS]
-}
-for (i in 1:(nrowX-1)){
-X2[i+ncolX,1:NS] <- xmetric[i,1:NS]
-}
-if (NS==1){
-X2[ncolX+nrowX] <- 0.0
-}
-if (NS==2){
-X2[ncolX+nrowX-1,2] <- 0.0
-}
-#
-rmatrix2 <- as.vector(t(X2))
-rmatrix <- rmatrix2
+rmatrix <- rmatrix2 <- as.vector(t(X2))
 yrotate <- rep(0,(NS*(nrowX+ncolX)))
 #
 #
@@ -775,50 +768,53 @@ lbfgs.stimuli <- X3[1:ncolX,]
 lbfgs.individuals <- X3[(ncolX+1):(nrowX+ncolX),]
 #
 #
-CONSTRAINTS <- c(rep(1,((NS*(nrowX+ncolX))-2)),0,0)
+CONSTRAINTS <- rep(1, lx2)
+CONSTRAINTS[zeros] <- 0
 #
 #
-WW <- 1.0
-PP <- 3
-SIGMAPRIOR <- 100.0
+# WW <- 1.0
+# PP <- 3
+# SIGMAPRIOR <- 100.0
+# #
+# #
+# theta <- rep(0,NDIM)
+# dim(theta) <-c(NDIM,1)
+# theta2 <- rep(0,NDIM)
+# dim(theta2) <-c(NDIM,1)
+# theta1000 <- rep(0,nslice*NDIM)
+# dim(theta1000) <-c(nslice*NDIM,1)
+# ssenow <-rep(0,(2*(nslice+nburn)))
+# dim(ssenow) <-c((2*(nslice+nburn)),1)
+# theta3 <- rep(0,NDIM)
+# dim(theta3) <-c(NDIM,1)
+# thetaL <- rep(0,NDIM)
+# dim(thetaL) <-c(NDIM,1)
+# thetaR <- rep(0,NDIM)
+# dim(thetaR) <-c(NDIM,1)
 #
-#
-theta <- rep(0,NDIM)
-dim(theta) <-c(NDIM,1)
-theta2 <- rep(0,NDIM)
-dim(theta2) <-c(NDIM,1)
-theta1000 <- rep(0,nslice*NDIM)
-dim(theta1000) <-c(nslice*NDIM,1)
-ssenow <-rep(0,(2*(nslice+nburn)))
-dim(ssenow) <-c((2*(nslice+nburn)),1)
-theta3 <- rep(0,NDIM)
-dim(theta3) <-c(NDIM,1)
-thetaL <- rep(0,NDIM)
-dim(thetaL) <-c(NDIM,1)
-thetaR <- rep(0,NDIM)
-dim(thetaR) <-c(NDIM,1)
-#
-for (i in 1:NDIM){
-	  thetaL[i]=-99.0;
-	  thetaR[i]= 99.0;
+ss <- match.arg(slice.starts)
+if(ss == "lbfgs"){
+    theta <- lbfgs.result[[3]] # Non-random starts for Slice Sampler
 }
-#  Variance term
-  thetaL[NDIM]=0.10;
-  thetaR[NDIM]=0.50;
-#
-#  Non-Random Starts for Slice Sampler
-#
-#
-theta[1:(NDIM-1)] <- lbfgs.coords[1:((nrowX+ncolX)*NS - NS)]
-theta[NDIM] <- 0.40
-#
-#  Random Starts for Slice Sampler
-#
-theta <- c(runif(NDIM,min=-.5,max=.5))
-#theta[NDIM] <- 0.40
-theta3[1:NDIM] <- theta[1:NDIM]
+else{
+    theta <- c(runif(NDIM,min=-.5,max=.5), 0) # Random starts for Slice Sampler
+}
 theta2 <- theta
-#
+theta1000 <- rep(0,nslice*NDIM)
+dim(theta1000) <- c(nslice*NDIM,1)
+ssenow <- rep(0,(2*(nslice+nburn)))
+dim(ssenow) <-c((2*(nslice+nburn)),1)
+XTRUE <- lbfgs.result[[3]]
+thetaL <- rep(-99.0, NDIM)
+thetaR <- rep(99.0, NDIM)
+dim(thetaL) <- dim(thetaR) <- c(NDIM, 1)
+thetaL[NDIM] <- 0.10
+thetaR[NDIM] <- 0.50
+WW <- 1.0
+PP <- 3.0
+XCOORDS <- rep(0,(nrowX+ncolX)*NS)
+SIGMAPRIOR <- 100.0
+
 XCOORDS <- rep(0,(nrowX+ncolX)*NS)
 #
 #  RUN THE SLICE SAMPLER
