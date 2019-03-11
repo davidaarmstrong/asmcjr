@@ -12,7 +12,9 @@ bayesunfold(input, dims = 2, nsamp = 2000, burnin = 1000, slice.starts = c("lbfg
 
 }
 
-\description{The algorithm generally works across platforms, but can in some situations produce degenerate solutions.  While we work out the bugs here, if this happens, you can simply re-run the algorithm again and it should produce appropriate answers.  This suggests that it has something to do with the randomness of the sampling procedure.}
+\description{The algorithm generally works across platforms, but can in some situations produce degenerate solutions.  While we work out the bugs here, if this happens, you can simply re-run the algorithm again and it should produce appropriate answers.  This suggests that it has something to do with the randomness of the sampling procedure.
+
+The procedure also performs a procrustes to rotate the posterior configuration into maximal geometric similarity with the L-BFGS result.  This is accomplished by finding the appropriate rotation matrix for the posterior means of the stimulus configuration.  Then, that rotation is applied both to the stimuli and the individuals for each posterior draw.}
 
 \arguments{
   \item{input}{A rectangular matrix of ratio-scale preferential choice data (e.g., feeling thermometer rankings of political stimuli) in which the individuals are the rows and the stimuli are the columns}
