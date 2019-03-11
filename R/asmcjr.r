@@ -918,7 +918,6 @@ BUobject <- list(smacof.result = SMACOF.result, lbfgs.result = lbfgs.stimuli,
     unrotated = orig.res, 
     rotated = rotated.res)
 
-
 class(BUobject) <- "bayesunfold"
 BUobject
 
