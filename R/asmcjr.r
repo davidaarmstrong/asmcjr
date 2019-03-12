@@ -3,8 +3,10 @@ gray.palette <- function(n, lower=.3, upper=.7){
     s <- seq(lower, upper, length=n)
     rgb(matrix(rep(s, each=3), ncol=3, byrow=T))
 }
-ggplot.resphist <- function(result, groupVar=NULL, facetVar=NULL, addStim = FALSE, scaleDensity=TRUE,
-                    weights=c("all", "positive", "negative"), whichRes=NULL, dim=NULL, ...){
+ggplot.resphist <- function(result, groupVar = NULL, addStim = FALSE,
+    scaleDensity=TRUE, weights = c("all", "positive", "negative"),
+    xlab = NULL, main = NULL, ylab = NULL, whichRes = NULL,
+    dim = NULL, ...){
     w <- match.arg(weights)
     shapes <- c(15,16,18, 24, 25, 0,1,2,3,4,5,6,7)
     if(class(result) == "aldmck"){
