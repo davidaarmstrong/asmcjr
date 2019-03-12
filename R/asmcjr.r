@@ -601,13 +601,13 @@ plot.mlsmu6 <- function(x, ..., selected.stims=NULL, ind.id.size=3, stim.id.size
     levs1 <- dfii
     levs2 <- dfs$id
     df$id <- factor(df$id, c(sort(levs1), sort(levs2)))
-    ggplot(df, aes(x=Dim1, y=Dim2, label=id, colour=id, size=id)) +
+    g <- ggplot(df, aes(x=Dim1, y=Dim2, label=id, colour=id, size=id)) +
            geom_text(show.legend=FALSE) +
             scale_colour_manual(values=c("gray25", "gray50", rep("black", nrow(dfs))), guide="none") +
             scale_size_manual(values=c(rep(ind.id.size, length(dfii)), rep(stim.id.size, nrow(dfs)))) +
             scale_shape_discrete(name="ID", breaks=dfii, labels=dfii) +
             theme_bw() + theme(aspect.ratio=1)
-
+    return(g)
 
 }
 
