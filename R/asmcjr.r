@@ -872,8 +872,8 @@ for(j in 1:nsamp){
 }
 stim.array <- array(as.numeric(unlist(stims)), dim=c(ncolX, NS, nsamp))
 stim.mean <- aaply(stim.array, c(1,2), mean, na.rm=T)
-stim.lower <- aaply(stim.array, c(1,2), quantile, .025, na.rm=T)
-stim.upper <- aaply(stim.array, c(1,2), quantile, .975, na.rm=T)
+stim.lower <- aaply(stim.array, c(1,2), quantile, .05, na.rm=T)
+stim.upper <- aaply(stim.array, c(1,2), quantile, .95, na.rm=T)
 
 ## arrays the data as first column in columns 1:ncolX and 
 ## second column of stimuli in (ncolX+1):(ncolX*NS)
@@ -914,7 +914,8 @@ rotated.res = list(stim.samples = stim.samples,
 
 
 
-BUobject <- list(retained.obs = keep, smacof.result = SMACOF.result, lbfgs.result = lbfgs.stimuli,
+BUobject <- list(retained.obs = keep, smacof.result = SMACOF.result, 
+    lbfgs.result = list(stimuli=lbfgs.stimuli, individuals=lbfgs.individuals),
 	sigma_squared_hat = sigma_squared_hat,
 	sigma_squared_hat_sd = sigma_squared_hat_sd,	
     unrotated = orig.res, 
