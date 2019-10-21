@@ -670,20 +670,21 @@ T <- input
 #
 #  I. FEELING THERMOMETERS
 #
-T <- ANES1968[,1:12]
+# for testing purposes
+#T <- ANES1968[,1:12]
 T <- as.matrix(T)
 T[T < 0 | T > 100] <- NA
 #
 nstimuli <- ncol(T)
 #
-vote.turnout <- ANES1968[,13]
-presidential.vote <- ANES1968[,14]
+#vote.turnout <- ANES1968[,13]
+#presidential.vote <- ANES1968[,14]
 #
 #  Delete rows (respondents) with less than (nstimuli - 7) thermometer ratings
 #
 cutoff <- nstimuli - 7
 keep <- rowSums(!is.na(T))>=cutoff
-presidential.vote <- presidential.vote[keep]
+#presidential.vote <- presidential.vote[keep]
 T <- T[keep,]
 T <- (100-T)/50
 #T <- (100-T)/50 + 0.02
@@ -756,22 +757,24 @@ else{
 }
 lbfgs.coords <- lbfgs.result[[3]]
 dim(lbfgs.coords) <- c(NS,(nrowX+ncolX))
-X3 <- t(lbfgs.coords)
-X3.new <- X3
-#
-#  Rotation
-#
- A <- matrix(c(cos(-30*pi/180), -sin(-30*pi/180), sin(-30*pi/180), cos(-30*pi/180)), nrow=2, ncol=2, byrow=TRUE)
-#
- X3.new <- X3 %*% A
-lbfgs.coords.new <- as.vector(t(X3.new))
+# X3 <- t(lbfgs.coords)
+# X3.new <- X3
+# #
+# #  Rotation
+# #
+#  A <- matrix(c(cos(-30*pi/180), -sin(-30*pi/180), sin(-30*pi/180), cos(-30*pi/180)), nrow=2, ncol=2, byrow=TRUE)
+# #
+#  X3.new <- X3 %*% A
+# lbfgs.coords.new <- as.vector(t(X3.new))
 
 #
 #lbfgs.result[[3]] <- lbfgs.coords.new
 #
 #
-lbfgs.stimuli <- X3.new[1:ncolX,]
-lbfgs.individuals <- X3.new[(ncolX+1):(nrowX+ncolX),]
+lbfgs.stimuli <- X3[1:ncolX,]
+lbfgs.individuals <- X3[(ncolX+1):(nrowX+ncolX),]
+# lbfgs.stimuli <- X3.new[1:ncolX,]
+# lbfgs.individuals <- X3.new[(ncolX+1):(nrowX+ncolX),]
 #
 #  BAYESIAN UNFOLDING
 #
@@ -783,7 +786,7 @@ dim(theta1000) <-c(nslice*NDIM,1)
 ssenow <-rep(0,(2*(nslice+nburn)))
 dim(ssenow) <-c((2*(nslice+nburn)),1)
 XTRUE <- lbfgs.result[[3]]
-XTRUE <- lbfgs.coords.new
+#XTRUE <- lbfgs.coords.new
 thetaL <- rep(-99.0, NDIM)
 thetaR <- rep(99.0, NDIM)
 dim(thetaL) <- dim(thetaR) <- c(NDIM, 1)
