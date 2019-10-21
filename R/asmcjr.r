@@ -757,7 +757,7 @@ else{
 }
 lbfgs.coords <- lbfgs.result[[3]]
 dim(lbfgs.coords) <- c(NS,(nrowX+ncolX))
-# X3 <- t(lbfgs.coords)
+X3 <- t(lbfgs.coords)
 # X3.new <- X3
 # #
 # #  Rotation
