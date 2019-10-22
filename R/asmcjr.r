@@ -614,9 +614,15 @@ plot.mlsmu6 <- function(x, ..., selected.stims=NULL, ind.id.size=3, stim.id.size
 
 
 bayesunfold <-
-function(input, dims = 2, nsamp = 2000, burnin = 1000, slice.starts = c("lbfgs", "random"), print.lbfgs="console", print.slice="console", ...) 
+function(input, dims = 2, nsamp = 2000, burnin = 1000, cred.level = 0.9, slice.starts = c("lbfgs", "random"), print.lbfgs="console", print.slice="console", ...) 
 {
 #
+if(cred.level > 1 | cred.level < 0){stop("cred.level must be between 0 and 1\n")}
+tailprob <- (1-cred.level)/2
+ll <- tailprob
+ul <- 1-tailprob
+slice.starts <- match.arg(slice.starts)
+
 set_globals <- function(nslice,nburn,nrowX,ncolX,NS,N,NDIM,UNFOLD,NMISSING,X,CONSTRAINTS) {
    res <-.C("copyFromR",
      as.integer(nslice),
@@ -682,7 +688,7 @@ nstimuli <- ncol(T)
 #
 #  Delete rows (respondents) with less than (nstimuli - 7) thermometer ratings
 #
-cutoff <- nstimuli - 7
+cutoff <- 7
 keep <- rowSums(!is.na(T))>=cutoff
 #presidential.vote <- presidential.vote[keep]
 T <- T[keep,]
@@ -778,8 +784,12 @@ lbfgs.individuals <- X3[(ncolX+1):(nrowX+ncolX),]
 #
 #  BAYESIAN UNFOLDING
 #
-theta <- c(runif(NDIM,min=-.5,max=.5)) # Random starts for Slice Sampler
-theta <- lbfgs.result[[3]] # Non-random starts for Slice Sampler
+if(slice.starts == "random"){
+    theta <- c(runif(NDIM,min=-.5,max=.5)) # Random starts for Slice Sampler
+}
+if(slice.starts == "lbfgs"){
+    theta <- lbfgs.result[[3]] # Non-random starts for Slice Sampler
+}
 theta2 <- theta
 theta1000 <- rep(0,nslice*NDIM)
 dim(theta1000) <-c(nslice*NDIM,1)
@@ -828,8 +838,8 @@ for(j in 1:nsamp){
 }
 stim.array <- array(as.numeric(unlist(stims)), dim=c(ncolX, NS, nsamp))
 stim.mean <- aaply(stim.array, c(1,2), mean, na.rm=T)
-stim.lower <- aaply(stim.array, c(1,2), quantile, .025, na.rm=T)
-stim.upper <- aaply(stim.array, c(1,2), quantile, .975, na.rm=T)
+stim.lower <- aaply(stim.array, c(1,2), quantile, ll, na.rm=T)
+stim.upper <- aaply(stim.array, c(1,2), quantile, ul, na.rm=T)
 
 ## arrays the data as first column in columns 1:ncolX and 
 ## second column of stimuli in (ncolX+1):(ncolX*NS)
@@ -845,8 +855,8 @@ for(j in 1:nsamp){
 }
 indiv.array <- array(as.numeric(unlist(individuals)), dim=c(nrowX, NS, nsamp))
 indiv.mean <- aaply(indiv.array, c(1,2), mean, na.rm=T)
-indiv.lower <- aaply(indiv.array, c(1,2), quantile, .025, na.rm=T)
-indiv.upper <- aaply(indiv.array, c(1,2), quantile, .975, na.rm=T)
+indiv.lower <- aaply(indiv.array, c(1,2), quantile, ll, na.rm=T)
+indiv.upper <- aaply(indiv.array, c(1,2), quantile, ul, na.rm=T)
 
 ## arrays the data as first column in columns 1:nrowX and 
 ## second column of stimuli in (nrowX+1):(nrowX*NS)
@@ -875,8 +885,8 @@ for(j in 1:nsamp){
 }
 stim.array <- array(as.numeric(unlist(stims)), dim=c(ncolX, NS, nsamp))
 stim.mean <- aaply(stim.array, c(1,2), mean, na.rm=T)
-stim.lower <- aaply(stim.array, c(1,2), quantile, .05, na.rm=T)
-stim.upper <- aaply(stim.array, c(1,2), quantile, .95, na.rm=T)
+stim.lower <- aaply(stim.array, c(1,2), quantile, ll, na.rm=T)
+stim.upper <- aaply(stim.array, c(1,2), quantile, ul, na.rm=T)
 
 ## arrays the data as first column in columns 1:ncolX and 
 ## second column of stimuli in (ncolX+1):(ncolX*NS)
@@ -896,8 +906,8 @@ for(j in 1:nsamp){
 }
 indiv.array <- array(as.numeric(unlist(individuals)), dim=c(nrowX, NS, nsamp))
 indiv.mean <- aaply(indiv.array, c(1,2), mean, na.rm=T)
-indiv.lower <- aaply(indiv.array, c(1,2), quantile, .025, na.rm=T)
-indiv.upper <- aaply(indiv.array, c(1,2), quantile, .975, na.rm=T)
+indiv.lower <- aaply(indiv.array, c(1,2), quantile, ll, na.rm=T)
+indiv.upper <- aaply(indiv.array, c(1,2), quantile, ul, na.rm=T)
 
 ## arrays the data as first column in columns 1:nrowX and 
 ## second column of stimuli in (nrowX+1):(nrowX*NS)
@@ -919,6 +929,7 @@ rotated.res = list(stim.samples = stim.samples,
 
 BUobject <- list(retained.obs = keep, smacof.result = SMACOF.result, 
     lbfgs.result = list(stimuli=lbfgs.stimuli, individuals=lbfgs.individuals),
+    samples = samples, 
 	sigma_squared_hat = sigma_squared_hat,
 	sigma_squared_hat_sd = sigma_squared_hat_sd,	
     unrotated = orig.res, 
