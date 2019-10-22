@@ -820,13 +820,14 @@ else{
 #
 #  CALCULATE THE MEANS FROM THE SLICE SAMPLER --  mean(result4[[4]][2501:4000]) is the mean of the variance term
 #
-sigma_squared_hat <- mean(result4[[4]][2501:4000])
-sigma_squared_hat_sd <- sd(result4[[4]][2501:4000])
+sigma_squared_hat <- mean(result4[[4]][(burnin+1):(burnin+nsamp)])])
+sigma_squared_hat_sd <- sd(result4[[4]][(burnin+1):(burnin+nsamp)])])
 #
 #  SAMPLES
 #
 samples <- matrix(result4[[3]], ncol=NDIM, byrow=TRUE)
-samples <- cbind(samples, 0)
+## took out because wasn't needed. 
+#samples <- cbind(samples, 0)
 z.mean <- colMeans(samples[,1:(ncolX*NS)])
 z.mat <- matrix(z.mean, byrow=TRUE, ncol=NS)
 p <- procrustes(z.mat, lbfgs.stimuli, translation=TRUE)
