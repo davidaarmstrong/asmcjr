@@ -820,8 +820,8 @@ else{
 #
 #  CALCULATE THE MEANS FROM THE SLICE SAMPLER --  mean(result4[[4]][2501:4000]) is the mean of the variance term
 #
-sigma_squared_hat <- mean(result4[[4]][(burnin+1):(burnin+nsamp)])])
-sigma_squared_hat_sd <- sd(result4[[4]][(burnin+1):(burnin+nsamp)])])
+sigma_squared_hat <- mean(result4[[4]][(burnin+1):(burnin+nsamp)])
+sigma_squared_hat_sd <- sd(result4[[4]][(burnin+1):(burnin+nsamp)])
 #
 #  SAMPLES
 #
