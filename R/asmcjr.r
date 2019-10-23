@@ -855,9 +855,9 @@ for(j in 1:nsamp){
     individuals[[j]] <- matrix(samples[j,-(1:(ncolX*NS))], ncol=NS, byrow=TRUE)
 }
 indiv.array <- array(as.numeric(unlist(individuals)), dim=c(nrowX, NS, nsamp))
-indiv.mean <- aaply(indiv.array, c(1,2), mean, na.rm=T)
-indiv.lower <- aaply(indiv.array, c(1,2), quantile, ll, na.rm=T)
-indiv.upper <- aaply(indiv.array, c(1,2), quantile, ul, na.rm=T)
+indiv.mean <- aaply(indiv.array, c(1,2), mean, na.rm=TRUE)
+indiv.lower <- aaply(indiv.array, c(1,2), quantile, ll, na.rm=TRUE)
+indiv.upper <- aaply(indiv.array, c(1,2), quantile, ul, na.rm=TRUE)
 
 ## arrays the data as first column in columns 1:nrowX and 
 ## second column of stimuli in (nrowX+1):(nrowX*NS)
@@ -865,10 +865,10 @@ indiv.upper <- aaply(indiv.array, c(1,2), quantile, ul, na.rm=T)
 indiv.samples <- matrix(c(indiv.array), ncol=nrowX*NS, byrow=TRUE)
 
 stim.samples <- list(stim.samples)
-class(stim.samples) <- "mcmc.list"
+class(stim.samples) <- "mcmc"
 
 indiv.samples <- list(indiv.samples)
-class(indiv.samples) <- "mcmc.list"
+class(indiv.samples) <- "mcmc"
 
 orig.res = list(stim.samples = stim.samples,
 	indiv.samples = indiv.samples,
@@ -885,9 +885,9 @@ for(j in 1:nsamp){
     # }  
 }
 stim.array <- array(as.numeric(unlist(stims)), dim=c(ncolX, NS, nsamp))
-stim.mean <- aaply(stim.array, c(1,2), mean, na.rm=T)
-stim.lower <- aaply(stim.array, c(1,2), quantile, ll, na.rm=T)
-stim.upper <- aaply(stim.array, c(1,2), quantile, ul, na.rm=T)
+stim.mean <- aaply(stim.array, c(1,2), mean, na.rm=TRUE)
+stim.lower <- aaply(stim.array, c(1,2), quantile, ll, na.rm=TRUE)
+stim.upper <- aaply(stim.array, c(1,2), quantile, ul, na.rm=TRUE)
 
 ## arrays the data as first column in columns 1:ncolX and 
 ## second column of stimuli in (ncolX+1):(ncolX*NS)
@@ -906,9 +906,9 @@ for(j in 1:nsamp){
     # }  
 }
 indiv.array <- array(as.numeric(unlist(individuals)), dim=c(nrowX, NS, nsamp))
-indiv.mean <- aaply(indiv.array, c(1,2), mean, na.rm=T)
-indiv.lower <- aaply(indiv.array, c(1,2), quantile, ll, na.rm=T)
-indiv.upper <- aaply(indiv.array, c(1,2), quantile, ul, na.rm=T)
+indiv.mean <- aaply(indiv.array, c(1,2), mean, na.rm=TRUE)
+indiv.lower <- aaply(indiv.array, c(1,2), quantile, ll, na.rm=TRUE)
+indiv.upper <- aaply(indiv.array, c(1,2), quantile, ul, na.rm=TRUE)
 
 ## arrays the data as first column in columns 1:nrowX and 
 ## second column of stimuli in (nrowX+1):(nrowX*NS)
@@ -916,10 +916,10 @@ indiv.upper <- aaply(indiv.array, c(1,2), quantile, ul, na.rm=T)
 indiv.samples <- matrix(c(indiv.array), ncol=nrowX*NS, byrow=TRUE)
 
 stim.samples <- list(stim.samples)
-class(stim.samples) <- "mcmc.list"
+class(stim.samples) <- "mcmc"
 
 indiv.samples <- list(indiv.samples)
-class(indiv.samples) <- "mcmc.list"
+class(indiv.samples) <- "mcmc"
 
 rotated.res = list(stim.samples = stim.samples,
 	indiv.samples = indiv.samples,
