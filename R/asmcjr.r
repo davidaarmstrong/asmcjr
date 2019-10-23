@@ -838,9 +838,9 @@ for(j in 1:nsamp){
     stims[[j]] <- matrix(samples[j,1:(ncolX*NS)], ncol=NS, byrow=TRUE)
 }
 stim.array <- array(as.numeric(unlist(stims)), dim=c(ncolX, NS, nsamp))
-stim.mean <- aaply(stim.array, c(1,2), mean, na.rm=T)
-stim.lower <- aaply(stim.array, c(1,2), quantile, ll, na.rm=T)
-stim.upper <- aaply(stim.array, c(1,2), quantile, ul, na.rm=T)
+stim.mean <- aaply(stim.array, c(1,2), mean, na.rm=TRUE)
+stim.lower <- aaply(stim.array, c(1,2), quantile, ll, na.rm=TRUE)
+stim.upper <- aaply(stim.array, c(1,2), quantile, ul, na.rm=TRUE)
 
 ## arrays the data as first column in columns 1:ncolX and 
 ## second column of stimuli in (ncolX+1):(ncolX*NS)
