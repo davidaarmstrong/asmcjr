@@ -930,7 +930,7 @@ rotated.res = list(stim.samples = stim.samples,
 
 BUobject <- list(retained.obs = keep, smacof.result = SMACOF.result, 
     lbfgs.result = list(stimuli=lbfgs.stimuli, individuals=lbfgs.individuals),
-    samples = samples, 
+    samples = samples, result4 = result4, 
 	sigma_squared_hat = sigma_squared_hat,
 	sigma_squared_hat_sd = sigma_squared_hat_sd,	
     unrotated = orig.res, 
