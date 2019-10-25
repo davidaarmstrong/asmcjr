@@ -699,7 +699,7 @@ nrowX <- nrow(T)
 ncolX <- ncol(T)
 nburn <- burnin
 nslice <- nsamp
-NS <- 2
+NS <- dims
 N <- NS*(nrowX+ncolX) - ((NS*(NS+1))/2)
 NDIM <- NS*(nrowX+ncolX) - (NS-1)
 UNFOLD <- 1
@@ -710,7 +710,7 @@ UNFOLD <- 1
 NMISSING <- 7
 #
 TT <- T
-TT[is.na(TT)] <- -999.0
+TT[which(is.na(TT), arr.ind=TRUE)] <- -999.0
 X <- as.vector(t(TT))
 #
 #  CONSTRAINTS
@@ -828,9 +828,9 @@ sigma_squared_hat_sd <- sd(result4[[4]][(burnin+1):(burnin+nsamp)])
 samples <- matrix(result4[[3]], ncol=NDIM, byrow=TRUE)
 ## took out because wasn't needed. 
 #samples <- cbind(samples, 0)
-z.mean <- colMeans(samples[,1:(ncolX*NS)])
-z.mat <- matrix(z.mean, byrow=TRUE, ncol=NS)
-p <- procrustes(z.mat, lbfgs.stimuli, translation=TRUE)
+#z.mean <- colMeans(samples[,1:(ncolX*NS)])
+#z.mat <- matrix(z.mean, byrow=TRUE, ncol=NS)
+#p <- procrustes(z.mat, lbfgs.stimuli, translation=TRUE, dilation=TRUE)
 
 ### Results without procrustes rotation
 stims <- vector("list", nsamp)
@@ -852,7 +852,8 @@ colnames(stim.samples) <- c(sapply(1:2, function(m)paste(colnames(input), m, sep
 
 individuals <- vector("list", nsamp)
 for(j in 1:nsamp){
-    individuals[[j]] <- matrix(samples[j,-(1:(ncolX*NS))], ncol=NS, byrow=TRUE)
+    individuals[[j]] <- matrix(c(samples[j,-(1:(ncolX*NS))], 0), ncol=NS, byrow=TRUE)
+    individuals[[j]] <- rbind(individuals[[j]], c(0,0))
 }
 indiv.array <- array(as.numeric(unlist(individuals)), dim=c(nrowX, NS, nsamp))
 indiv.mean <- aaply(indiv.array, c(1,2), mean, na.rm=TRUE)
@@ -864,10 +865,10 @@ indiv.upper <- aaply(indiv.array, c(1,2), quantile, ul, na.rm=TRUE)
 
 indiv.samples <- matrix(c(indiv.array), ncol=nrowX*NS, byrow=TRUE)
 
-stim.samples <- list(stim.samples)
+#stim.samples <- list(stim.samples)
 class(stim.samples) <- "mcmc"
 
-indiv.samples <- list(indiv.samples)
+#indiv.samples <- list(indiv.samples)
 class(indiv.samples) <- "mcmc"
 
 orig.res = list(stim.samples = stim.samples,
@@ -876,49 +877,24 @@ orig.res = list(stim.samples = stim.samples,
 	individuals = list(mean = indiv.mean, lower=indiv.lower, upper=indiv.upper))
 
 ### Results With Procrustes Roatation 
-stims <- vector("list", nsamp)
-for(j in 1:nsamp){
-    tmp <- matrix(samples[j,1:(ncolX*NS)], ncol=NS, byrow=TRUE)
-    stims[[j]] <-  tmp %*% p$R
-    # for(i in 1:NS){
-    # stimuli[[i]] <- rbind(stimuli[[i]], tmpR[,i])
-    # }  
+stim.rot <- matrix(NA, nrow=nsamp, ncol=ncolX*2)
+indiv.rot <- matrix(NA, nrow=nsamp, ncol=length(c(individuals[[1]])))
+for(i in 1:nsamp){
+    p <- procrustes(stim.array[,,i], lbfgs.stimuli, dilation=TRUE, translation=TRUE)
+    stim.rot[i,] <- c(p$X.new)
+    indiv.rot[i,] <- c(with(p,  s * individuals[[i]] %*% R + matrix(tt, nrow(individuals[[i]]), ncol(individuals[[i]]), byrow = TRUE)))
 }
-stim.array <- array(as.numeric(unlist(stims)), dim=c(ncolX, NS, nsamp))
-stim.mean <- aaply(stim.array, c(1,2), mean, na.rm=TRUE)
-stim.lower <- aaply(stim.array, c(1,2), quantile, ll, na.rm=TRUE)
-stim.upper <- aaply(stim.array, c(1,2), quantile, ul, na.rm=TRUE)
+stim.mean <- matrix(colMeans(stim.rot, na.rm=TRUE), ncol=dims)
+stim.lower <- matrix(apply(stim.rot, 2, quantile, ll, na.rm=TRUE), ncol=dims)
+stim.upper <- matrix(apply(stim.rot, 2, quantile, ul, na.rm=TRUE), ncol=dims)
+indiv.mean <- matrix(colMeans(indiv.rot), ncol=dims)
+indiv.lower <- matrix(apply(indiv.rot, 2, quantile, ll, na.rm=TRUE), ncol=dims)
+indiv.upper <- matrix(apply(indiv.rot, 2, quantile, ul, na.rm=TRUE), ncol=dims)
 
-## arrays the data as first column in columns 1:ncolX and 
-## second column of stimuli in (ncolX+1):(ncolX*NS)
-stim.samples <- matrix(c(stim.array), ncol=ncolX*NS, byrow=TRUE)
-
-rownames(stim.mean) <- rownames(stim.lower) <- rownames(stim.upper) <- colnames(input)
-colnames(stim.samples) <- c(sapply(1:2, function(m)paste(colnames(input), m, sep=".")))
-
-
-individuals <- vector("list", nsamp)
-for(j in 1:nsamp){
-    tmp <- matrix(samples[j,-(1:(ncolX*NS))], ncol=NS, byrow=TRUE)
-    individuals[[j]] <- tmp %*% p$R
-    # for(i in 1:NS){
-    # individuals[[i]] <- rbind(individuals[[i]], tmpR[,i])
-    # }  
-}
-indiv.array <- array(as.numeric(unlist(individuals)), dim=c(nrowX, NS, nsamp))
-indiv.mean <- aaply(indiv.array, c(1,2), mean, na.rm=TRUE)
-indiv.lower <- aaply(indiv.array, c(1,2), quantile, ll, na.rm=TRUE)
-indiv.upper <- aaply(indiv.array, c(1,2), quantile, ul, na.rm=TRUE)
-
-## arrays the data as first column in columns 1:nrowX and 
-## second column of stimuli in (nrowX+1):(nrowX*NS)
-
-indiv.samples <- matrix(c(indiv.array), ncol=nrowX*NS, byrow=TRUE)
-
-stim.samples <- list(stim.samples)
+stim.samples <- stim.rot
 class(stim.samples) <- "mcmc"
 
-indiv.samples <- list(indiv.samples)
+indiv.samples <- indiv.rot
 class(indiv.samples) <- "mcmc"
 
 rotated.res = list(stim.samples = stim.samples,
