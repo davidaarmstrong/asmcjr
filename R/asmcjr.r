@@ -844,7 +844,7 @@ stim.upper <- aaply(stim.array, c(1,2), quantile, ul, na.rm=TRUE)
 
 ## arrays the data as first column in columns 1:ncolX and 
 ## second column of stimuli in (ncolX+1):(ncolX*NS)
-stim.samples <- matrix(c(stim.array), ncol=ncolX*NS, byrow=TRUE)
+stim.samples <- matrix(c(stim.array), ncol=ncolX*NS, byrow=TRUE)[-nrow(stim.samples), ]
 
 rownames(stim.mean) <- rownames(stim.lower) <- rownames(stim.upper) <- colnames(input)
 colnames(stim.samples) <- c(sapply(1:2, function(m)paste(colnames(input), m, sep=".")))
@@ -891,7 +891,7 @@ indiv.mean <- matrix(colMeans(indiv.rot), ncol=dims)
 indiv.lower <- matrix(apply(indiv.rot, 2, quantile, ll, na.rm=TRUE), ncol=dims)
 indiv.upper <- matrix(apply(indiv.rot, 2, quantile, ul, na.rm=TRUE), ncol=dims)
 
-stim.samples <- stim.rot
+stim.samples <- stim.rot[-nrow(stim.samples), ]
 class(stim.samples) <- "mcmc"
 
 indiv.samples <- indiv.rot
