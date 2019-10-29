@@ -8,11 +8,12 @@ The method runs L-BFGS to get the target configuration.
 }
 
 \usage{
-bayesunfold(input, dims = 2, nsamp = 2000, burnin = 1000, slice.starts = c("lbfgs", "random"), print.lbfgs="console", print.slice="console", ...) 
+bayesunfold(input, dims = 2, nsamp = 2000, burnin = 1000, cred.level = 0.9, 
+  slice.starts = c("lbfgs", "random"), print.lbfgs="console", print.slice="console", ...) 
 
 }
 
-\description{The algorithm generally works across platforms, but can in some situations produce degenerate solutions.  While we work out the bugs here, if this happens, you can simply re-run the algorithm again and it should produce appropriate answers.  This suggests that it has something to do with the randomness of the sampling procedure.
+\details{The algorithm generally works across platforms, but can in some situations produce degenerate solutions.  While we work out the bugs here, if this happens, you can simply re-run the algorithm again and it should produce appropriate answers.  This suggests that it has something to do with the randomness of the sampling procedure.
 
 The procedure also performs a procrustes to rotate the posterior configuration into maximal geometric similarity with the L-BFGS result.  This is accomplished by finding the appropriate rotation matrix for the posterior means of the stimulus configuration.  Then, that rotation is applied both to the stimuli and the individuals for each posterior draw.}
 
@@ -21,6 +22,7 @@ The procedure also performs a procrustes to rotate the posterior configuration i
   \item{dims}{Currently, only 2 is supported. }
   \item{nsamp}{Number of iterations of the slice sampler to be run after the burn-in period}
   \item{burnin}{Number of iterations of the slice sampler to be discarded}
+  \item{cred.level}{Level used to create credible intervals.}
   \item{slice.starts}{Whether slice starting values should be initialized at the L-BFGS results or randomly.  If the algorithm is producing degenerate solutions, we suggest setting this parameter to its default \sQuote{lbfgs}.}
   \item{print.lbfgs, print.slice}{Where to print the results (iteration history) of the L-BFGS and slice sampler.  The default is to the console, but any other string in there will use \code{sink} to send all of the results to that file. }
   \item{...}{other arguments to be passed down to the \code{smacofRect} function. }
@@ -46,10 +48,10 @@ Dave Armstrong, Ryan Bakker, Christopher Hare and Keith T. Poole
 }
 
 \examples{
-data(ANES1968)
-inp <- ANES1968[,1:12]
-result <- bayesunfold(inp)
-plot(b, which.res="unrotated", labels="text") + xlim(.5,2)
+#data(ANES1968)
+#inp <- ANES1968[,1:12]
+#result <- bayesunfold(inp)
+#plot(b, which.res="unrotated", labels="text") + xlim(.5,2)
 }
 
 \keyword{ideal point estimation}

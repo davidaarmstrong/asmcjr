@@ -3,7 +3,7 @@
 \title{Alternative plotting function for Aldrich-McKelvel Results}
 \description{Uses \code{ggplot2} to produce alternative visualizations for results of the \code{aldmck} or \code{blackbox}functions.  }
 \usage{
-ggplot.resphist(result, groupVar = NULL, addStim = FALSE,
+ggplot.resphist(result, groupVar = NULL, facetVar = NULL, addStim = FALSE,
     scaleDensity=TRUE, weights = c("all", "positive", "negative"),
     xlab = NULL, main = NULL, ylab = NULL, whichRes = NULL,
     dim = NULL, ...)
@@ -11,6 +11,7 @@ ggplot.resphist(result, groupVar = NULL, addStim = FALSE,
 \arguments{
   \item{result}{An object of class \code{aldmck} that is the result of an Aldrich-McKelvey scaling analysis.}
   \item{groupVar}{Optional grouping variable that will paritition the observations to produce different density cuvres for \code{aldmck} results.}
+  \item{facetVar}{An optional variable on which to facet the results}
   \item{addStim}{Logical indicating whether the stimulus locations should be added to the density plot.}
   \item{scaleDensity}{Logical indicating whether density should be scaled to represent different proportions of observations by group.}
   \item{weights}{Which observations should be used in plotting.  The default is to use all available observations.  The \code{"positive"} and \code{"negative"} options allow users to plot only those observations with either positive or negative weights, respectively.}

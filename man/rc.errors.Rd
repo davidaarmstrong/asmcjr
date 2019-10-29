@@ -14,5 +14,5 @@ rc.errors(obj, data, rcnum)
   
 }
 \value{
-The number of errors and PRE are returned.
+A matrix giving yea and nay errors, the total number of errors and PRE are returned.
 }

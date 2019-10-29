@@ -601,7 +601,7 @@ plot.mlsmu6 <- function(x, ..., selected.stims=NULL, ind.id.size=3, stim.id.size
     levs1 <- dfii
     levs2 <- dfs$id
     df$id <- factor(df$id, c(sort(levs1), sort(levs2)))
-    g <- ggplot(df, aes(x=Dim1, y=Dim2, label=id, colour=id, size=id)) +
+    g <- ggplot(df, aes_string(x="Dim1", y="Dim2", label="id", colour="id", size="id")) +
            geom_text(show.legend=FALSE) +
             scale_colour_manual(values=c("gray25", "gray50", rep("black", nrow(dfs))), guide="none") +
             scale_size_manual(values=c(rep(ind.id.size, length(dfii)), rep(stim.id.size, nrow(dfs)))) +
@@ -871,6 +871,11 @@ class(stim.samples) <- "mcmc"
 
 #indiv.samples <- list(indiv.samples)
 class(indiv.samples) <- "mcmc"
+if(!is.null(colnames(input))){
+    rownames(stim.mean) <- colnames(input)
+    rownames(stim.lower) <- colnames(input)
+    rownames(stim.upper) <- colnames(input)
+}
 
 orig.res = list(stim.samples = stim.samples,
 	indiv.samples = indiv.samples,
@@ -892,6 +897,11 @@ indiv.mean <- matrix(colMeans(indiv.rot), ncol=dims)
 indiv.lower <- matrix(apply(indiv.rot, 2, quantile, ll, na.rm=TRUE), ncol=dims)
 indiv.upper <- matrix(apply(indiv.rot, 2, quantile, ul, na.rm=TRUE), ncol=dims)
 
+if(!is.null(colnames(input))){
+    rownames(stim.mean) <- colnames(input)
+    rownames(stim.lower) <- colnames(input)
+    rownames(stim.upper) <- colnames(input)
+}
 stim.samples <- stim.rot
 stim.samples <- stim.samples[-nrow(stim.samples), ]
 class(stim.samples) <- "mcmc"
@@ -929,8 +939,9 @@ plot.bayesunfold <- function(x, ..., which.res =c("rotated", "unrotated"), label
         res <- x$unrotated
     }
     stims <- res$stimuli$mean
+    rownames(stims) <- rownames(x$smacof.result$conf.col)
     indivs <- res$individuals$mean
-    stim.data <- as_tibble(res$stimuli$mean, rownames="names") 
+    stim.data <- as_tibble(stims, rownames="names") 
     names(stim.data)[2:3] <- c("D1", "D2")
     indiv.data <- as_tibble(res$individuals$mean, rownames=NULL)
     names(indiv.data)[1:2] <- c("D1", "D2")
@@ -943,42 +954,179 @@ plot.bayesunfold <- function(x, ..., which.res =c("rotated", "unrotated"), label
     }
     if(plot.stimuli & ! plot.individuals){
         if(lab == "text"){
-            g <- ggplot(stim.data, aes(x=D1, y=D2)) + geom_text(aes(label=names, colour=names)) + guides(colour=FALSE)
+            g <- ggplot(stim.data, aes_string(x="D1", y="D2")) + geom_text(aes(label=names, colour=names)) + guides(colour=FALSE)
         }
         if(lab == "color"){
-            g <- ggplot(stim.data, aes(x=D1, y=D2)) + geom_point(aes(colour=names))
+            g <- ggplot(stim.data, aes_string(x="D1", y="D2")) + geom_point(aes(colour=names))
         }
         return(g)
     }
     if(plot.stimuli & plot.individuals){
         if(is.null(individual.id)){
             if(lab == "text"){
-                g <- ggplot(stim.data, aes(x=D1, y=D2)) + geom_point(data=indiv.data, col="gray75", pch=1, cex=.5 ) + geom_text(aes(label=names, colour=names)) 
+                g <- ggplot(stim.data, aes_string(x="D1", y="D2")) + geom_point(data=indiv.data, col="gray75", pch=1, cex=.5 ) + geom_text(aes(label=names, colour=names)) 
             }
             if(lab == "color"){
-                g <- ggplot(stim.data, aes(x=D1, y=D2)) + geom_point(data=indiv.data, col="gray75", pch=1, cex=.5 ) + geom_point(aes(colour=names))
+                g <- ggplot(stim.data, aes_string(x="D1", y="D2")) + geom_point(data=indiv.data, col="gray75", pch=1, cex=.5 ) + geom_point(aes(colour=names))
             }
         }
         else{
             if(lab == "text"){
-                g <- ggplot(stim.data, aes(x=D1, y=D2)) + geom_point(data=indiv.data, aes(colour=names), pch=1, cex=.5 ) + geom_text(aes(label=names, colour=names)) 
+                g <- ggplot(stim.data, aes_string(x="D1", y="D2")) + geom_point(data=indiv.data, pch=1, cex=.5 ) + geom_text(aes(label=names, colour=names)) 
             }
             if(lab == "color"){
-                g <- ggplot(stim.data, aes(x=D1, y=D2)) + geom_point(data=indiv.data, aes(colour=names), pch=1, cex=.5 ) + geom_point(aes(colour=names))
+                g <- ggplot(stim.data, aes_string(x="D1", y="D2")) + geom_point(data=indiv.data, pch=1, cex=.5 ) + geom_point(aes(colour=names))
             }
         }
         return(g)
     }
     if(!plot.stimuli & plot.individuals){
         if(is.null(individual.id)){
-            g <- ggplot(indiv.data, aes(x=D1, y=D2)) + geom_point( pch=1, cex=.5 )
+            g <- ggplot(indiv.data, aes_string(x="D1", y="D2")) + geom_point( pch=1, cex=.5 )
         }
         else{
-            g <- ggplot(indiv.data, aes(x=D1, y=D2, colour=names)) + geom_point( pch=1, cex=.5 )
+            g <- ggplot(indiv.data, aes_string(x="D1", y="D2", colour="names")) + geom_point( pch=1, cex=.5 )
         }
         return(g)
     }
-    if(!plot.stim & !plot.individuals){
+    if(!plot.stimuli & !plot.individuals){
         return(list(stim =stim.data, indiv=indiv.data))
     }
+}
+
+binary.comparisons <- function(obj){
+    nr <- nrow(obj)
+    nc <- ncol(obj)
+    combs <- combn(nc, 2)
+    res <- sapply(1:ncol(combs), function(i)
+        sign(rowSums(cbind(obj[,combs[2,i]], -obj[,combs[1,i]]))))
+    res[which(res == 1)] <- 6
+    res[which(res == -1)] <- 1
+    res[which(res == 0)] <- 9
+    res[which(is.na(res))] <- 9
+    colnames(res) <- combn(colnames(obj), 2, paste, collapse = "_")
+    return(res)
+}
+
+rc.errors <- function(obj, data, rcnum){
+    WEIGHT <- (obj$weights[2])/(obj$weights[1])
+    X1 <- obj$legislators$coord1D
+    X2 <- (obj$legislators$coord2D)*WEIGHT
+    vote <- as.integer(data$votes[,rcnum])
+    DL1 <- obj$rollcalls[rcnum,7]
+    DL2 <- obj$rollcalls[rcnum,8]
+    ZM1 <- obj$rollcalls[rcnum,9]
+    ZM2 <- obj$rollcalls[rcnum,10]
+    YEA1 <- ZM1-DL1
+    YEA2W <- (ZM2-DL2)*WEIGHT
+    NAY1 <- ZM1+DL1
+    NAY2W <- (ZM2+DL2)*WEIGHT
+    A1 <- NAY1 - YEA1
+    A2 <- NAY2W - YEA2W
+    ALENGTH <- sqrt(A1*A1 + A2*A2)
+    N1W <- A1/ALENGTH
+    N2W <- A2/ALENGTH
+    if (N1W < 0){
+    N1W <- -N1W
+    N2W <- -N2W
+    }
+    ws <- N1W*ZM1 + N2W*ZM2*WEIGHT
+    xws <- ws*N1W
+    yws <- ws*N2W
+    polarity <- X1*N1W + X2*N2W - ws
+    errors1 <- (vote %in% data$codes$yea) & polarity >= 0
+    errors2 <- (vote %in% data$codes$nay) & polarity <= 0
+    errors3 <- (vote %in% data$codes$yea) & polarity <= 0
+    errors4 <- (vote %in% data$codes$nay) & polarity >= 0
+    kerrors12 <- sum(errors1==1,na.rm=T)+sum(errors2==1,na.rm=T)
+    kerrors34 <- sum(errors3==1,na.rm=T)+sum(errors4==1,na.rm=T)
+    if (kerrors12 >= kerrors34){
+    yeaerror <- errors3
+    nayerror <- errors4
+    }
+    if (kerrors12 < kerrors34){
+    yeaerror <- errors1
+    nayerror <- errors2
+    }
+    kerrorsmin <- min(kerrors12,kerrors34)
+    errors = cbind(yeaerror, nayerror)
+    colnames(errors) <- c("yea_error", "nay_error")
+    kpyea <- sum(vote %in% data$codes$yea)
+    kpnay <- sum(vote %in% data$codes$nay)
+    PRE <- (min(kpyea,kpnay) - kerrorsmin) / min(kpyea,kpnay)
+    ret <- list(tot.errors = colSums(errors), PRE = PRE, errors=errors)
+    return(ret)
+}
+
+
+plot.rollcall <- function(obj, data, gdat, rcnum, 
+    shapeVar = NULL, dropNV=FALSE, onlyErrors=FALSE){
+    WEIGHT <- (obj$weights[2])/(obj$weights[1])
+    X1 <- obj$legislators$coord1D
+    X2 <- (obj$legislators$coord2D)*WEIGHT
+    vote <- as.integer(data$votes[,rcnum])
+    DL1 <- obj$rollcalls[rcnum,7]
+    DL2 <- obj$rollcalls[rcnum,8]
+    ZM1 <- obj$rollcalls[rcnum,9]
+    ZM2 <- obj$rollcalls[rcnum,10]
+    YEA1 <- ZM1-DL1
+    YEA2W <- (ZM2-DL2)*WEIGHT
+    NAY1 <- ZM1+DL1
+    NAY2W <- (ZM2+DL2)*WEIGHT
+    A1 <- NAY1 - YEA1
+    A2 <- NAY2W - YEA2W
+    ALENGTH <- sqrt(A1*A1 + A2*A2)
+    N1W <- A1/ALENGTH
+    N2W <- A2/ALENGTH
+    if (N1W < 0){
+    N1W <- -N1W
+    N2W <- -N2W
+    }
+    ws <- N1W*ZM1 + N2W*ZM2*WEIGHT
+    xws <- ws*N1W
+    yws <- ws*N2W
+    errors <- rc.errors(obj, data, rcnum)$errors
+    df <- data.frame(X1=X1, X2=X2)
+    df$vote <- NA
+    df$vote[which(vote %in% data$codes$yea)] <- 2
+    df$vote[which(vote %in% data$codes$nay)] <- 1
+    df$vote <- factor(df$vote, levels=1:2, labels=c("Nay", "Yea"))
+    if(!is.null(shapeVar)){
+        df$group <- shapeVar
+    }
+    if(onlyErrors){
+        df <- df[which(errors[,1] | errors[,2]), ]
+    }
+    if(dropNV){
+        df <- na.omit(df)
+    }
+    if(is.null(shapeVar)){
+        g <- ggplot(df, aes_string(x="X1", y="X2", colour="vote")) + geom_point(size=2.5) + 
+            scale_colour_manual(values=c("gray67", "gray33"), name="Vote")
+    }
+    if(!is.null(shapeVar)){
+        g <- ggplot(df, aes_string(x="X1", y="X2", colour="vote", shape="group")) + geom_point(size=2.5) + 
+            scale_colour_manual(values=c("gray67", "gray33"), name="Vote")
+    }
+    g + geom_segment(aes(x=xws+N2W, y=yws-N1W, xend=xws-N2W, yend=yws+N1W))
+}
+
+plot.wnom.coords <- function(obj, shapeVar=NULL, dropNA=FALSE){
+    weight <-  obj$weights[2]/obj$weights[1] 
+    wnom.dat <- data.frame(
+    X1 = obj$legislators$coord1D, 
+    X2 = obj$legislators$coord2D*weight)
+    if(!is.na(shapeVar)){
+        wnom.dat$group <- shapeVar
+    }
+    if(dropNA){
+        wnom.dat <- na.omit(wnom.dat)
+    }
+    if(is.null(shapeVar)){
+        g <- ggplot(wnom.dat, aes_string(x="X1", y="X2")) + geom_point() 
+    }
+    if(!is.null(shapeVar)){
+        g <- ggplot(wnom.dat, aes_string(x="X1", y="X2", colour="group", shape="group")) + geom_point() 
+    }
+    g
 }

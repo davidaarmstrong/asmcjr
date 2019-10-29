@@ -11,9 +11,10 @@
   \item{x}{An object of class \code{bayesunfold}.}
   \item{\dots}{Other arguments to be passed down, currently not implemented.}
   \item{which.res}{Which set of results should be plotted - raw (\code{unrotated}) or those that were procrustes rotated into similarity with the L-BFGS solution (\code{rotated}). }
+  \item{labels}{Should labels be identified by text or color.}
   \item{plot.stimuli}{Logical indicating whether stimuli should be plotted. }
   \item{plot.individuals}{Logical indicating whether individuals should be plotted.}
-  \item{selected.stims}{Names of stimuli to be included in plot, defaults to all.}
+  \item{selected.stim}{Names of stimuli to be included in plot, defaults to all.}
   \item{selected.individuals}{Row numbers of stimuli to be plotted, defaults to all. }
   \item{individual.id}{Additional variable that will be used to define groups of plotted individual stimuli. }
 

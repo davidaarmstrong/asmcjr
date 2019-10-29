@@ -1,8 +1,6 @@
 \name{ANES2004_OOC}
 \alias{ANES2004_OOC}
 \alias{ANES2004}
-\alias{ANES2004b}
-\alias{ANES2004b_OOC}
 \docType{data}
 \title{
 Issue scale data for the ordinal optimal scaling algorithm.

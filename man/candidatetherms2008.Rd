@@ -11,7 +11,7 @@ Feeling thermometers for presidential candidates from the 2008 American National
 	A 2322x9 matrix of feeling thermometers for McCain, Bush, Obama, Biden, Palin, H. Clinton, B. Clinton, Dem Party and Rep Party, respectively
 }
 \source{
-\url{http://www.electionstudies.org/studypages/2008prepost/2008prepost.htm}
+\url{https://electionstudies.org/data-center/2008-time-series-study/}
 }
 \references{
 The American National Election Studies (ANES; www.electionstudies.org). The ANES 2008 Time Series Study [dataset]. Stanford University and the University of Michigan [producers].
