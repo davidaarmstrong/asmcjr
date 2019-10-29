@@ -6,7 +6,7 @@ call vote for a \code{wnominate} object.}
 
 \usage{
 plot.rollcall(obj, data, gdat, rcnum, 
-    shapevar = NULL, dropNV=FALSE, onlyErrors=FALSE)
+    shapeVar = NULL, dropNV=FALSE, onlyErrors=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -18,7 +18,7 @@ plot.rollcall(obj, data, gdat, rcnum,
     resulting ggplot.  If \code{NULL}, the function will make the minimal dataframe for you.
     See the \code{examples} below, for how we made the \code{gdat} object.}
   \item{rcnum}{Number identifying the roll call to be plotted.}
-  \item{shapevar}{Name of the variable that identifies the shapes in the resulting ggplot.}
+  \item{shapeVar}{Name of the variable that identifies the shapes in the resulting ggplot.}
   \item{dropNV}{Whether or not those who didn't vote Yea or Nay. }
   \item{onlyErrors}{Should only those legislators who voted counter to their model predictions be plotted?}
   
