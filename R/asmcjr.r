@@ -891,11 +891,15 @@ for(i in 1:nsamp){
     indiv.rot[i,] <- c(with(p,  s * individuals[[i]] %*% R + matrix(tt, nrow(individuals[[i]]), ncol(individuals[[i]]), byrow = TRUE)))
 }
 stim.mean <- matrix(colMeans(stim.rot, na.rm=TRUE), ncol=dims)
-stim.lower <- matrix(apply(stim.rot, 2, quantile, ll, na.rm=TRUE), ncol=dims)
-stim.upper <- matrix(apply(stim.rot, 2, quantile, ul, na.rm=TRUE), ncol=dims)
+stim.lower <- matrix(apply(stim.rot, 2, quantile, 
+    ll, na.rm=TRUE), ncol=dims)
+stim.upper <- matrix(apply(stim.rot, 2, quantile, 
+    ul, na.rm=TRUE), ncol=dims)
 indiv.mean <- matrix(colMeans(indiv.rot), ncol=dims)
-indiv.lower <- matrix(apply(indiv.rot, 2, quantile, ll, na.rm=TRUE), ncol=dims)
-indiv.upper <- matrix(apply(indiv.rot, 2, quantile, ul, na.rm=TRUE), ncol=dims)
+indiv.lower <- matrix(apply(indiv.rot, 2, quantile, 
+    ll, na.rm=TRUE), ncol=dims)
+indiv.upper <- matrix(apply(indiv.rot, 2, quantile, 
+    ul, na.rm=TRUE), ncol=dims)
 
 if(!is.null(colnames(input))){
     rownames(stim.mean) <- colnames(input)
