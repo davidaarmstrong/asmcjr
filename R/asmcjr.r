@@ -833,11 +833,11 @@ samples <- matrix(result4[[3]], ncol=NDIM, byrow=TRUE)
 #p <- procrustes(z.mat, lbfgs.stimuli, translation=TRUE, dilation=TRUE)
 
 ### Results without procrustes rotation
-stims <- vector("list", nsamp)
-for(j in 1:nsamp){
+stims <- vector("list", nsamp-1)
+for(j in 1:nsamp-1){
     stims[[j]] <- matrix(samples[j,1:(ncolX*NS)], ncol=NS, byrow=TRUE)
 }
-stim.array <- array(as.numeric(unlist(stims)), dim=c(ncolX, NS, nsamp))
+stim.array <- array(as.numeric(unlist(stims)), dim=c(ncolX, NS, (nsamp-1)))
 stim.mean <- aaply(stim.array, c(1,2), mean, na.rm=TRUE)
 stim.lower <- aaply(stim.array, c(1,2), quantile, ll, na.rm=TRUE)
 stim.upper <- aaply(stim.array, c(1,2), quantile, ul, na.rm=TRUE)
@@ -851,12 +851,13 @@ rownames(stim.mean) <- rownames(stim.lower) <- rownames(stim.upper) <- colnames(
 colnames(stim.samples) <- c(sapply(1:2, function(m)paste(colnames(input), m, sep=".")))
 
 
-individuals <- vector("list", nsamp)
-for(j in 1:nsamp){
+individuals <- vector("list", (nsamp-1))
+for(j in 1:(nsamp-1)){
     individuals[[j]] <- matrix(c(samples[j,-(1:(ncolX*NS))], 0), ncol=NS, byrow=TRUE)
-    individuals[[j]] <- rbind(individuals[[j]], c(0,0))
+#    individuals[[j]] <- rbind(individuals[[j]], c(0,0))
 }
-indiv.array <- array(as.numeric(unlist(individuals)), dim=c(nrowX, NS, nsamp))
+indiv.array <- array(as.numeric(unlist(individuals)), 
+    dim=c(nrowX, NS, (nsamp-1)))
 indiv.mean <- aaply(indiv.array, c(1,2), mean, na.rm=TRUE)
 indiv.lower <- aaply(indiv.array, c(1,2), quantile, ll, na.rm=TRUE)
 indiv.upper <- aaply(indiv.array, c(1,2), quantile, ul, na.rm=TRUE)
@@ -883,9 +884,9 @@ orig.res = list(stim.samples = stim.samples,
 	individuals = list(mean = indiv.mean, lower=indiv.lower, upper=indiv.upper))
 
 ### Results With Procrustes Roatation 
-stim.rot <- matrix(NA, nrow=nsamp, ncol=ncolX*2)
-indiv.rot <- matrix(NA, nrow=nsamp, ncol=length(c(individuals[[1]])))
-for(i in 1:nsamp){
+stim.rot <- matrix(NA, nrow=(nsamp-1), ncol=ncolX*2)
+indiv.rot <- matrix(NA, nrow=(nsamp-1), ncol=length(c(individuals[[1]])))
+for(i in 1:(nsamp-1)){
     p <- procrustes(stim.array[,,i], lbfgs.stimuli, dilation=TRUE, translation=TRUE)
     stim.rot[i,] <- c(p$X.new)
     indiv.rot[i,] <- c(with(p,  s * individuals[[i]] %*% R + matrix(tt, nrow(individuals[[i]]), ncol(individuals[[i]]), byrow = TRUE)))
