@@ -834,7 +834,7 @@ samples <- matrix(result4[[3]], ncol=NDIM, byrow=TRUE)
 
 ### Results without procrustes rotation
 stims <- vector("list", nsamp-1)
-for(j in 1:nsamp-1){
+for(j in 1:(nsamp-1)){
     stims[[j]] <- matrix(samples[j,1:(ncolX*NS)], ncol=NS, byrow=TRUE)
 }
 stim.array <- array(as.numeric(unlist(stims)), dim=c(ncolX, NS, (nsamp-1)))
