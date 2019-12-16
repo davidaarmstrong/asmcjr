@@ -1135,3 +1135,34 @@ plot.wnom.coords <- function(obj, shapeVar=NULL, dropNA=FALSE, ptSize=4){
     }
     g
 }
+
+makeCutlineAngles <- function(obj){
+    WEIGHT <- (result$weights[2])/(result$weights[1])
+    DL1 <- obj$rollcalls[,7]
+    DL2 <- obj$rollcalls[,8]
+    ZM1 <- obj$rollcalls[,9]
+    ZM2 <- obj$rollcalls[,10]
+    YEA1 <- ZM1 - DL1
+    YEA2W <- (ZM2 - DL2) * WEIGHT
+    NAY1 <- ZM1 + DL1
+    NAY2W <- (ZM2 + DL2) * WEIGHT
+    A1 <- NAY1 - YEA1
+    A2 <- NAY2W - YEA2W
+    ALENGTH <- sqrt(A1*A1 + A2*A2)
+    N1W <- A1 / ALENGTH
+    N2W <- A2 / ALENGTH
+    for (i in 1:nrow(obj$rollcalls)){
+    if (N1W[i] < 0 & !is.na(N2W[i])) N2W[i] <- -N2W[i]
+    if (N1W[i] < 0 & !is.na(N1W[i])) N1W[i] <- -N1W[i]
+    }
+    C1 <- N2W
+    C2 <- -N1W
+    for (i in 1:nrow(obj$rollcalls)){
+    if (C1[i] < 0 & !is.na(C2[i])) C2[i] <- -C2[i]
+    if (C1[i] < 0 & !is.na(C1[i])) C1[i] <- -C1[i]
+    }
+    theta <- atan2(C2,C1)
+    theta4 <- theta * (180/pi)
+    res <- data.frame(angle = theta4, N1W = N1W, N2W = N2W)
+    return(res)
+}
