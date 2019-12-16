@@ -6,7 +6,8 @@ call vote for a \code{wnominate} object.}
 
 \usage{
 plot.rollcall(obj, data, gdat, rcnum, 
-    shapeVar = NULL, dropNV=FALSE, onlyErrors=FALSE)
+    shapeVar = NULL, dropNV=FALSE, 
+    onlyErrors=FALSE, ptSize=4)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,6 +22,7 @@ plot.rollcall(obj, data, gdat, rcnum,
   \item{shapeVar}{Name of the variable that identifies the shapes in the resulting ggplot.}
   \item{dropNV}{Whether or not those who didn't vote Yea or Nay. }
   \item{onlyErrors}{Should only those legislators who voted counter to their model predictions be plotted?}
+  \item{ptSize}{Size of symbols passed to \code{geom_point}. }
   
 }
 \value{

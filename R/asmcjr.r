@@ -1065,7 +1065,7 @@ rc.errors <- function(obj, data, rcnum){
 
 
 plot.rollcall <- function(obj, data, gdat, rcnum, 
-    shapeVar = NULL, dropNV=FALSE, onlyErrors=FALSE){
+    shapeVar = NULL, dropNV=FALSE, onlyErrors=FALSE, ptSize=4){
     WEIGHT <- (obj$weights[2])/(obj$weights[1])
     X1 <- obj$legislators$coord1D
     X2 <- (obj$legislators$coord2D)*WEIGHT
@@ -1106,17 +1106,17 @@ plot.rollcall <- function(obj, data, gdat, rcnum,
         df <- na.omit(df)
     }
     if(is.null(shapeVar)){
-        g <- ggplot(df, aes_string(x="X1", y="X2", colour="vote")) + geom_point(size=2.5) + 
+        g <- ggplot(df, aes_string(x="X1", y="X2", colour="vote")) + geom_point(size=ptSize) + 
             scale_colour_manual(values=c("gray67", "gray33"), name="Vote")
     }
     if(!is.null(shapeVar)){
-        g <- ggplot(df, aes_string(x="X1", y="X2", colour="vote", shape="group")) + geom_point(size=2.5) + 
+        g <- ggplot(df, aes_string(x="X1", y="X2", colour="vote", shape="group")) + geom_point(size=ptSize) + 
             scale_colour_manual(values=c("gray67", "gray33"), name="Vote")
     }
     g + geom_segment(aes(x=xws+N2W, y=yws-N1W, xend=xws-N2W, yend=yws+N1W))
 }
 
-plot.wnom.coords <- function(obj, shapeVar=NULL, dropNA=FALSE){
+plot.wnom.coords <- function(obj, shapeVar=NULL, dropNA=FALSE, ptSize=4){
     weight <-  obj$weights[2]/obj$weights[1] 
     wnom.dat <- data.frame(
     X1 = obj$legislators$coord1D, 
@@ -1128,10 +1128,10 @@ plot.wnom.coords <- function(obj, shapeVar=NULL, dropNA=FALSE){
         wnom.dat <- na.omit(wnom.dat)
     }
     if(is.null(shapeVar)){
-        g <- ggplot(wnom.dat, aes_string(x="X1", y="X2")) + geom_point(size=3) 
+        g <- ggplot(wnom.dat, aes_string(x="X1", y="X2")) + geom_point(size=ptSize) 
     }
     if(!is.null(shapeVar)){
-        g <- ggplot(wnom.dat, aes_string(x="X1", y="X2", colour="group", shape="group")) + geom_point(size=3) 
+        g <- ggplot(wnom.dat, aes_string(x="X1", y="X2", colour="group", shape="group")) + geom_point(size=ptSize) 
     }
     g
 }
