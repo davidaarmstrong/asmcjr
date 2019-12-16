@@ -1121,17 +1121,17 @@ plot.wnom.coords <- function(obj, shapeVar=NULL, dropNA=FALSE){
     wnom.dat <- data.frame(
     X1 = obj$legislators$coord1D, 
     X2 = obj$legislators$coord2D*weight)
-    if(!is.na(shapeVar)){
-        wnom.dat$group <- shapeVar
+    if(!is.null(shapeVar)){
+      wnom.dat$group <- shapeVar
     }
     if(dropNA){
         wnom.dat <- na.omit(wnom.dat)
     }
     if(is.null(shapeVar)){
-        g <- ggplot(wnom.dat, aes_string(x="X1", y="X2")) + geom_point() 
+        g <- ggplot(wnom.dat, aes_string(x="X1", y="X2")) + geom_point(size=3) 
     }
     if(!is.null(shapeVar)){
-        g <- ggplot(wnom.dat, aes_string(x="X1", y="X2", colour="group", shape="group")) + geom_point() 
+        g <- ggplot(wnom.dat, aes_string(x="X1", y="X2", colour="group", shape="group")) + geom_point(size=3) 
     }
     g
 }
