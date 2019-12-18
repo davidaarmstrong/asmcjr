@@ -1013,52 +1013,100 @@ binary.comparisons <- function(obj){
     return(res)
 }
 
-rc.errors <- function(obj, data, rcnum){
-    WEIGHT <- (obj$weights[2])/(obj$weights[1])
-    X1 <- obj$legislators$coord1D
-    X2 <- (obj$legislators$coord2D)*WEIGHT
-    vote <- as.integer(data$votes[,rcnum])
-    DL1 <- obj$rollcalls[rcnum,7]
-    DL2 <- obj$rollcalls[rcnum,8]
-    ZM1 <- obj$rollcalls[rcnum,9]
-    ZM2 <- obj$rollcalls[rcnum,10]
-    YEA1 <- ZM1-DL1
-    YEA2W <- (ZM2-DL2)*WEIGHT
-    NAY1 <- ZM1+DL1
-    NAY2W <- (ZM2+DL2)*WEIGHT
-    A1 <- NAY1 - YEA1
-    A2 <- NAY2W - YEA2W
-    ALENGTH <- sqrt(A1*A1 + A2*A2)
-    N1W <- A1/ALENGTH
-    N2W <- A2/ALENGTH
-    if (N1W < 0){
-    N1W <- -N1W
-    N2W <- -N2W
+rc.errors <- function(obj, data, rcnum, rotMat = diag(2)){
+    if("nomObject" %in% class(obj)){
+        WEIGHT <- (obj$weights[2])/(obj$weights[1])
+        X1 <- obj$legislators$coord1D
+        X2 <- (obj$legislators$coord2D)*WEIGHT
+        vote <- as.integer(data$votes[,rcnum])
+        DL1 <- obj$rollcalls[rcnum,7]
+        DL2 <- obj$rollcalls[rcnum,8]
+        ZM1 <- obj$rollcalls[rcnum,9]
+        ZM2 <- obj$rollcalls[rcnum,10]
+        YEA1 <- ZM1-DL1
+        YEA2W <- (ZM2-DL2)*WEIGHT
+        NAY1 <- ZM1+DL1
+        NAY2W <- (ZM2+DL2)*WEIGHT
+        A1 <- NAY1 - YEA1
+        A2 <- NAY2W - YEA2W
+        ALENGTH <- sqrt(A1*A1 + A2*A2)
+        N1W <- A1/ALENGTH
+        N2W <- A2/ALENGTH
+        if (N1W < 0){
+        N1W <- -N1W
+        N2W <- -N2W
+        }
+        ws <- N1W*ZM1 + N2W*ZM2*WEIGHT
+        xws <- ws*N1W
+        yws <- ws*N2W
+        polarity <- X1*N1W + X2*N2W - ws
+        errors1 <- (vote %in% data$codes$yea) & polarity >= 0
+        errors2 <- (vote %in% data$codes$nay) & polarity <= 0
+        errors3 <- (vote %in% data$codes$yea) & polarity <= 0
+        errors4 <- (vote %in% data$codes$nay) & polarity >= 0
+        kerrors12 <- sum(errors1==1,na.rm=T)+sum(errors2==1,na.rm=T)
+        kerrors34 <- sum(errors3==1,na.rm=T)+sum(errors4==1,na.rm=T)
+        if (kerrors12 >= kerrors34){
+        yeaerror <- errors3
+        nayerror <- errors4
+        }
+        if (kerrors12 < kerrors34){
+        yeaerror <- errors1
+        nayerror <- errors2
+        }
+        kerrorsmin <- min(kerrors12,kerrors34)
+        errors = cbind(yeaerror, nayerror)
+        colnames(errors) <- c("yea_error", "nay_error")
+        kpyea <- sum(vote %in% data$codes$yea)
+        kpnay <- sum(vote %in% data$codes$nay)
+        PRE <- (min(kpyea,kpnay) - kerrorsmin) / min(kpyea,kpnay)
     }
-    ws <- N1W*ZM1 + N2W*ZM2*WEIGHT
-    xws <- ws*N1W
-    yws <- ws*N2W
-    polarity <- X1*N1W + X2*N2W - ws
-    errors1 <- (vote %in% data$codes$yea) & polarity >= 0
-    errors2 <- (vote %in% data$codes$nay) & polarity <= 0
-    errors3 <- (vote %in% data$codes$yea) & polarity <= 0
-    errors4 <- (vote %in% data$codes$nay) & polarity >= 0
-    kerrors12 <- sum(errors1==1,na.rm=T)+sum(errors2==1,na.rm=T)
-    kerrors34 <- sum(errors3==1,na.rm=T)+sum(errors4==1,na.rm=T)
-    if (kerrors12 >= kerrors34){
-    yeaerror <- errors3
-    nayerror <- errors4
+    if("OCobject" %in% class(obj)){
+        vote <- as.integer(data$votes[,rcnum])
+        A <- rotMat
+        rot.oc <- cbind(obj$legislators$coord1D, obj$legislators$coord2D)
+        for (i in 1:nrow(rot.oc)){
+        rot.oc[i,] <- rot.oc[i,] %*% A
+        }
+        oc1 <- rot.oc[,1]
+        oc2 <- rot.oc[,2]
+        rot.NV <- cbind(obj$rollcalls[,6], obj$rollcalls[,7])
+        for (i in 1:nrow(rot.NV)){
+        rot.NV[i,] <- rot.NV[i,] %*% A
+        }
+        N1 <- rot.NV[,1]
+        N2 <- rot.NV[,2]
+        ws <- obj$rollcalls[,8]
+        xws <- ws[rcnum]*N1[rcnum]
+        yws <- ws[rcnum]*N2[rcnum]
+        N1W <- N1[rcnum]
+        N2W <- N2[rcnum]
+        ws <- result$rollcalls[,8]
+        xws <- ws[rcnum]*N1[rcnum]
+        yws <- ws[rcnum]*N2[rcnum]
+        N1W <- N1[rcnum]
+        N2W <- N2[rcnum]
+        kpyea <- sum(vote==1)
+        kpnay <- sum(vote==6)
+        polarity <- oc1*N1W + oc2*N2W - ws[rcnum]
+        errors1 <- (vote %in% data$codes$yea) & polarity >= 0
+        errors2 <- (vote %in% data$codes$nay) & polarity <= 0
+        errors3 <- (vote %in% data$codes$yea) & polarity <= 0
+        errors4 <- (vote %in% data$codes$nay) & polarity >= 0
+        kerrors12 <- sum(errors1==1,na.rm=T) + sum(errors2==1,na.rm=T)
+        kerrors34 <- sum(errors3==1,na.rm=T) + sum(errors4==1,na.rm=T)
+        if (kerrors12 >= kerrors34){
+        yeaerror <- errors3
+        nayerror <- errors4
+        }
+        if (kerrors12 < kerrors34){
+        yeaerror <- errors1
+        nayerror <- errors2
+        }
+        kerrorsmin <- min(kerrors12,kerrors34)
+        errors = cbind(yeaerror, nayerror)
+        PRE <- (min(kpyea,kpnay)-kerrorsmin) / min(kpyea,kpnay)
     }
-    if (kerrors12 < kerrors34){
-    yeaerror <- errors1
-    nayerror <- errors2
-    }
-    kerrorsmin <- min(kerrors12,kerrors34)
-    errors = cbind(yeaerror, nayerror)
-    colnames(errors) <- c("yea_error", "nay_error")
-    kpyea <- sum(vote %in% data$codes$yea)
-    kpnay <- sum(vote %in% data$codes$nay)
-    PRE <- (min(kpyea,kpnay) - kerrorsmin) / min(kpyea,kpnay)
     ret <- list(tot.errors = colSums(errors), PRE = PRE, errors=errors)
     return(ret)
 }
@@ -1116,7 +1164,7 @@ plot.rollcall <- function(obj, data, gdat, rcnum,
     g + geom_segment(aes(x=xws+N2W, y=yws-N1W, xend=xws-N2W, yend=yws+N1W))
 }
 
-plot.wnom.coords <- function(obj, shapeVar=NULL, dropNA=FALSE, ptSize=4){
+plot.wnom.coords <- function(obj, shapeVar=NULL, dropNV=FALSE, ptSize=4, ci=FALSE, level=.95){
     weight <-  obj$weights[2]/obj$weights[1] 
     wnom.dat <- data.frame(
     X1 = obj$legislators$coord1D, 
@@ -1127,42 +1175,209 @@ plot.wnom.coords <- function(obj, shapeVar=NULL, dropNA=FALSE, ptSize=4){
     if(dropNA){
         wnom.dat <- na.omit(wnom.dat)
     }
+    if(!ci){
     if(is.null(shapeVar)){
-        g <- ggplot(wnom.dat, aes_string(x="X1", y="X2")) + geom_point(size=ptSize) 
+        g <- ggplot(wnom.dat) + geom_point(aes_string(x="X1", y="X2"), size=ptSize) 
     }
     if(!is.null(shapeVar)){
-        g <- ggplot(wnom.dat, aes_string(x="X1", y="X2", colour="group", shape="group")) + geom_point(size=ptSize) 
+        g <- ggplot(wnom.dat) + geom_point(aes_string(x="X1", y="X2", colour="group", shape="group"), size=ptSize) 
+    }
+    }
+    if(ci){
+        wnom.dat <- data.frame(
+            X1 = obj$legislators$coord1D, 
+            X2 = obj$legislators$coord2D*weight, 
+            se1 = obj$legislators$se1D, 
+            se2 = obj$legislators$se2D, 
+            r = obj$legislators$corr.1)
+        if(!is.null(shapeVar)){
+            wnom.dat$group <- shapeVar
+        }
+        if(dropNV){
+            wnom.dat <- na.omit(wnom.dat)
+        }
+        elldat <- NULL
+        for(i in 1:nrow(wnom.dat)){
+            R <- diag(2)
+            R[2,1] <- R[1,2] <- wnom.dat$r[i]
+            scl <- c(wnom.dat$se1[i], wnom.dat$se2[i])
+            cent <- c(wnom.dat$X1[i], wnom.dat$X2[i])
+            ell <- ellipse(R, scale=scl, centre=cent, level=level)
+            tmp <- data.frame(x = ell[,1], y = ell[,2], stim = i)
+            elldat <- rbind(elldat, tmp)
+        }
+        if(is.null(shapeVar)){
+            g <- ggplot(wnom.dat) + geom_path(data=elldat, aes(x=x, y=y, group=stim), col="gray50", alpha=.25) + 
+                geom_point(aes_string(x="X1", y="X2"), size=ptSize) 
+        }
+        if(!is.null(shapeVar)){
+            g <- ggplot(wnom.dat) + geom_path(data=elldat, aes(x=x, y=y, group=stim), col="gray50", alpha=.25)+ 
+            geom_point(aes_string(x="X1", y="X2", colour="group", shape="group"), size=ptSize) 
+        }
+    }
+    g
+
+}
+
+plot.oc.coords <- function(obj, shapeVar=NULL, dropNV=FALSE, ptSize=4, rotMat=diag(2)){
+    A <- rotMat
+    rot.oc <- cbind(obj$legislators$coord1D, obj$legislators$coord2D)
+    for (i in 1:nrow(rot.oc)){
+    rot.oc[i,] <- rot.oc[i,] %*% A
+    }
+    oc.dat <- data.frame(
+        X1 = rot.oc[,1], 
+        X2 = rot.oc[,2])
+    if(!is.null(shapeVar)){
+      oc.dat$group <- shapeVar
+    }
+    if(dropNV){
+        oc.dat <- na.omit(oc.dat)
+    }
+    if(is.null(shapeVar)){
+        g <- ggplot(oc.dat, aes_string(x="X1", y="X2")) + geom_point(size=ptSize) 
+    }
+    if(!is.null(shapeVar)){
+        g <- ggplot(oc.dat, aes_string(x="X1", y="X2", colour="group", shape="group")) + geom_point(size=ptSize) 
     }
     g
 }
 
+plot.oc.rollcall <- function(obj, data, shapeVar = NULL, rcnum, rotMat=diag(2),
+     dropNV=FALSE, onlyErrors=FALSE, ptSize=4){
+    nrollcall <- rcnum
+    vote <- as.integer(data$votes[,nrollcall])
+    A <- rotMat
+    rot.oc <- cbind(obj$legislators$coord1D, obj$legislators$coord2D)
+    for (i in 1:nrow(rot.oc)){
+    rot.oc[i,] <- rot.oc[i,] %*% A
+    }
+    oc1 <- rot.oc[,1]
+    oc2 <- rot.oc[,2]
+    rot.NV <- cbind(obj$rollcalls[,6], obj$rollcalls[,7])
+    for (i in 1:nrow(rot.NV)){
+    rot.NV[i,] <- rot.NV[i,] %*% A
+    }
+    N1 <- rot.NV[,1]
+    N2 <- rot.NV[,2]
+    ws <- obj$rollcalls[,8]
+    xws <- ws[nrollcall]*N1[nrollcall]
+    yws <- ws[nrollcall]*N2[nrollcall]
+    N1W <- N1[nrollcall]
+    N2W <- N2[nrollcall]
+    errors <- rc.errors(obj, data, rcnum)$errors
+    df <- data.frame(X1=oc1, X2=oc2)
+    df$vote <- NA
+    df$vote[which(vote %in% data$codes$yea)] <- 2
+    df$vote[which(vote %in% data$codes$nay)] <- 1
+    df$vote <- factor(df$vote, levels=1:2, labels=c("Nay", "Yea"))
+    if(!is.null(shapeVar)){
+        df$group <- shapeVar
+    }
+    if(onlyErrors){
+        df <- df[which(errors[,1] | errors[,2]), ]
+    }
+    if(dropNV){
+        df <- na.omit(df)
+    }
+    if(is.null(shapeVar)){
+        g <- ggplot(df, aes_string(x="X1", y="X2", colour="vote")) + geom_point(size=ptSize) + 
+            scale_colour_manual(values=c("gray67", "gray33"), name="Vote")
+    }
+    if(!is.null(shapeVar)){
+        g <- ggplot(df, aes_string(x="X1", y="X2", colour="vote", shape="group")) + geom_point(size=ptSize) + 
+            scale_colour_manual(values=c("gray67", "gray33"), name="Vote")
+    }
+    g + geom_segment(aes(x=xws+N2W, y=yws-N1W, xend=xws-N2W, yend=yws+N1W))
+}
+
+
+
+
 makeCutlineAngles <- function(obj){
-    WEIGHT <- (result$weights[2])/(result$weights[1])
-    DL1 <- obj$rollcalls[,7]
-    DL2 <- obj$rollcalls[,8]
-    ZM1 <- obj$rollcalls[,9]
-    ZM2 <- obj$rollcalls[,10]
-    YEA1 <- ZM1 - DL1
-    YEA2W <- (ZM2 - DL2) * WEIGHT
-    NAY1 <- ZM1 + DL1
-    NAY2W <- (ZM2 + DL2) * WEIGHT
-    A1 <- NAY1 - YEA1
-    A2 <- NAY2W - YEA2W
-    ALENGTH <- sqrt(A1*A1 + A2*A2)
-    N1W <- A1 / ALENGTH
-    N2W <- A2 / ALENGTH
-    for (i in 1:nrow(obj$rollcalls)){
-    if (N1W[i] < 0 & !is.na(N2W[i])) N2W[i] <- -N2W[i]
-    if (N1W[i] < 0 & !is.na(N1W[i])) N1W[i] <- -N1W[i]
+    if("nomObject" %in% class(obj)){
+        WEIGHT <- (result$weights[2])/(result$weights[1])
+        DL1 <- obj$rollcalls[,7]
+        DL2 <- obj$rollcalls[,8]
+        ZM1 <- obj$rollcalls[,9]
+        ZM2 <- obj$rollcalls[,10]
+        YEA1 <- ZM1 - DL1
+        YEA2W <- (ZM2 - DL2) * WEIGHT
+        NAY1 <- ZM1 + DL1
+        NAY2W <- (ZM2 + DL2) * WEIGHT
+        A1 <- NAY1 - YEA1
+        A2 <- NAY2W - YEA2W
+        ALENGTH <- sqrt(A1*A1 + A2*A2)
+        N1W <- A1 / ALENGTH
+        N2W <- A2 / ALENGTH
+        for (i in 1:nrow(obj$rollcalls)){
+        if (N1W[i] < 0 & !is.na(N2W[i])) N2W[i] <- -N2W[i]
+        if (N1W[i] < 0 & !is.na(N1W[i])) N1W[i] <- -N1W[i]
+        }
+        C1 <- N2W
+        C2 <- -N1W
+        for (i in 1:nrow(obj$rollcalls)){
+        if (C1[i] < 0 & !is.na(C2[i])) C2[i] <- -C2[i]
+        if (C1[i] < 0 & !is.na(C1[i])) C1[i] <- -C1[i]
+        }
+        theta <- atan2(C2,C1)
+        theta4 <- theta * (180/pi)
     }
-    C1 <- N2W
-    C2 <- -N1W
-    for (i in 1:nrow(obj$rollcalls)){
-    if (C1[i] < 0 & !is.na(C2[i])) C2[i] <- -C2[i]
-    if (C1[i] < 0 & !is.na(C1[i])) C1[i] <- -C1[i]
+    if("OCobject" %in% class(obj)){
+        oc1 <- result2$legislators[,7]
+        oc2 <- result2$legislators[,8]
+        PRE <- result2$rollcalls[,5]
+        N1 <- result2$rollcalls[,6]
+        N2 <- result2$rollcalls[,7]
+        ws <- result2$rollcalls[,8]
+        xws <- ws * N1
+        yws <- ws * N2
+        C1 <- N2
+        C2 <- -N1
+        for (i in 1:nrow(result2$rollcalls)){
+        if (C1[i] < 0 & !is.na(C2[i])) C2[i] <- -C2[i]
+        if (C1[i] < 0 & !is.na(C1[i])) C1[i] <- -C1[i]
+        }
+        theta <- atan2(C2,C1)
+        theta4 <- theta * (180/pi)
+        N1W <- N1
+        N2W <- N2
     }
-    theta <- atan2(C2,C1)
-    theta4 <- theta * (180/pi)
     res <- data.frame(angle = theta4, N1W = N1W, N2W = N2W)
     return(res)
 }
+
+plot.OCcutlines2 <- function (x, main.title = "Cutting Lines", d1.title = "First Dimension", 
+          d2.title = "Second Dimension", lines = 50, dims = c(1, 2), 
+          lwd = 2, ...) 
+{
+  if (!class(x) == "OCobject") 
+    stop("Input is not of class 'OCobject'.")
+  if (x$dimensions == 1) 
+    stop("All angles in 1D Optimal Classification are 90 degrees.")
+  if (length(dims) != 2) 
+    stop("'dims' must be an integer vector of length 2.")
+  if(length(lines) == 1){
+    if (lines < 1) {
+      stop("'Lines' must be less than 1.")
+      }
+    }
+    cutlineData <- cbind(x$rollcalls[, paste("normVector", dims[1], 
+                                           "D", sep = "")], x$rollcalls[, paste("normVector", dims[2], 
+                                                                                "D", sep = "")], x$rollcalls[, "midpoints"])
+  cutlineData <- na.omit(cutlineData)
+  suppressWarnings(symbols(x = 0, y = 0, circles = 1, inches = FALSE, 
+                           asp = 1, main = main.title, xlab = d1.title, ylab = d2.title, 
+                           xlim = c(-1, 1), ylim = c(-1, 1), cex.main = 1.2, cex.lab = 1.2, 
+                           font.main = 2, lwd = 2, fg = "grey", frame.plot = FALSE, 
+                           ...))
+  if (length(lines) == 1){
+    if(lines < dim(cutlineData)[1]) {
+      cutlineData <- cutlineData[sample(1:dim(cutlineData)[1], lines), ]
+    }
+  } 
+  if(length(lines) > 1){
+    cutlineData <- cutlineData[lines, ]
+  }
+  suppressWarnings(apply(cutlineData, 1, oc:::add.OCcutline, lwd = lwd))
+}  
