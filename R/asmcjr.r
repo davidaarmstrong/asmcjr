@@ -1172,7 +1172,7 @@ plot.wnom.coords <- function(obj, shapeVar=NULL, dropNV=FALSE, ptSize=4, ci=FALS
     if(!is.null(shapeVar)){
       wnom.dat$group <- shapeVar
     }
-    if(dropNA){
+    if(dropNV){
         wnom.dat <- na.omit(wnom.dat)
     }
     if(!ci){
