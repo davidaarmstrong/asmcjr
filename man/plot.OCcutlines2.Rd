@@ -1,5 +1,6 @@
 \name{plot.OCcutlines2}
 \alias{plot.OCcutlines2}
+\alias{add.OCcutline}
 \title{ Optimal Classification Cutline Plot }
 \description{ 
   This is a slight modification to the \code{\link{plot.OCcutlines}} from the \code{\pkg{oc}} package.  
@@ -12,9 +13,9 @@
 }
 
 \usage{         
-\method{plot}{OCcutlines2}(x, main.title="Cutting Lines",
+plot.OCcutlines2(x, main.title="Cutting Lines",
         d1.title="First Dimension", d2.title="Second Dimension",
-        lines=50,dims=c(1,2),lwd=2,\ldots)
+        lines=50,dims=c(1,2),lwd=2,...)
 }
 
 \arguments{
