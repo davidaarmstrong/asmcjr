@@ -235,7 +235,12 @@ if(!("n.chains" %in% names(args)))args$n.chains = 2
 if(!("n.adapt" %in% names(args)))args$n.adapt = 10000
 if(!("inits" %in% names(args))){
     orig <- aldmck(na.omit(data$stims), respondent=0, polarity=polarity, verbose=FALSE)
-    args$inits <- function(){list(zhatstar = orig$stimuli + rnorm(length(orig$stimuli), 0, 1))}
+    args$inits <- list()
+    for(i in 1:args$n.chains){
+        zhs <- orig$stimuli + rnorm(length(orig$stimuli), 0, 1)
+        zhs[polarity] <- -abs(zhs[polarity])
+        args$inits[[i]] <- list(zhatstar = zhs)
+    }
 }
 
 args$file <- system.file("templates/BAM_JAGScode.bug", package="asmcjr")
