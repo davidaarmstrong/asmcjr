@@ -1417,3 +1417,48 @@ add.OCcutline <- function(cutData,lwd=2) {
         }
     lines(x,y,lwd=lwd)
 }
+
+geweke.ggplot <- function (x, frac1 = 0.1, frac2 = 0.5, nbins = 20, pvalue = 0.05)
+{
+   if (missing(ask)) {
+       ask <- if (is.R()) {
+           dev.interactive()
+       }
+       else {
+           interactive()
+       }
+ }
+   x <- as.mcmc.list(x)
+   oldpar <- NULL
+   on.exit(par(oldpar))
+   if (auto.layout)
+     ystart <- seq(from = start(x), to = (start(x) + end(x))/2,
+         length = nbins)
+     if (is.R())
+         gcd <- array(dim = c(length(ystart), nvar(x), nchain(x)),
+             dimnames = list(ystart, varnames(x), chanames(x)))
+     else gcd <- array(dim = c(length(ystart), nvar(x), nchain(x)),
+         dimnames = list(ystart, varnames(x), chanames(x)))
+     for (n in 1:length(ystart)) {
+         geweke.out <- geweke.diag(window(x, start = ystart[n]),
+             frac1 = frac1, frac2 = frac2)
+         for (k in 1:nchain(x)) gcd[n, , k] <- geweke.out[[k]]$z
+     }
+     climit <- qnorm(1 - pvalue/2)
+  tmp.df <- data.frame(
+    gcd = c(gcd), 
+    chain = as.factor(rep(1:nchain(x), each=nrow(gcd)*ncol(gcd))), 
+    var = factor(rep(rep(1:nvar(x), each=nrow(gcd)), dim(gcd)[3])), 
+    x=rep(ystart, dim(gcd)[2]*dim(gcd)[3]))
+
+  faclabs <- colnames(x[[1]])
+  if(!is.null(faclabs)){
+    levels(tmp.df$var) <- faclabs
+  }
+    
+  g <- ggplot(tmp.df) + geom_point(aes(x=x, y=gcd, colour=chain)) + geom_hline(yintercept=c(-climit, climit), lty=2, size=.5) + labs(x="First Iteration in Segment", y="Z-score")
+  if(length(unique(tmp.df$var)) > 1){
+    g <- g + facet_wrap(~var)
+  }
+  g
+ }
