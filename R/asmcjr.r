@@ -1420,31 +1420,17 @@ add.OCcutline <- function(cutData,lwd=2) {
 
 geweke.ggplot <- function (x, frac1 = 0.1, frac2 = 0.5, nbins = 20, pvalue = 0.05)
 {
-   if (missing(ask)) {
-       ask <- if (is.R()) {
-           dev.interactive()
-       }
-       else {
-           interactive()
-       }
- }
    x <- as.mcmc.list(x)
-   oldpar <- NULL
-   on.exit(par(oldpar))
-   if (auto.layout)
-     ystart <- seq(from = start(x), to = (start(x) + end(x))/2,
-         length = nbins)
-     if (is.R())
-         gcd <- array(dim = c(length(ystart), nvar(x), nchain(x)),
-             dimnames = list(ystart, varnames(x), chanames(x)))
-     else gcd <- array(dim = c(length(ystart), nvar(x), nchain(x)),
-         dimnames = list(ystart, varnames(x), chanames(x)))
-     for (n in 1:length(ystart)) {
-         geweke.out <- geweke.diag(window(x, start = ystart[n]),
-             frac1 = frac1, frac2 = frac2)
-         for (k in 1:nchain(x)) gcd[n, , k] <- geweke.out[[k]]$z
-     }
-     climit <- qnorm(1 - pvalue/2)
+    ystart <- seq(from = start(x), to = (start(x) + end(x))/2,
+        length = nbins)
+    gcd <- array(dim = c(length(ystart), nvar(x), nchain(x)),
+        dimnames = list(ystart, varnames(x), chanames(x)))
+    for (n in 1:length(ystart)) {
+        geweke.out <- geweke.diag(window(x, start = ystart[n]),
+            frac1 = frac1, frac2 = frac2)
+        for (k in 1:nchain(x)) gcd[n, , k] <- geweke.out[[k]]$z
+    }
+    climit <- qnorm(1 - pvalue/2)
   tmp.df <- data.frame(
     gcd = c(gcd), 
     chain = as.factor(rep(1:nchain(x), each=nrow(gcd)*ncol(gcd))), 
