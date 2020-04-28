@@ -1,10 +1,10 @@
-\name{plot.oc.coords}
-\alias{plot.oc.coords}
+\name{plot_oc_coords}
+\alias{plot_oc_coords}
 \title{Plotting method for Individuals from Optimal Classification Model}
 \description{Produces a plot of the legislators for a \code{oc} object.}
 
 \usage{
-plot.oc.coords(obj, shapeVar = NULL, dropNV=FALSE, ptSize=4, rotMat=diag(2))
+plot_oc_coords(obj, shapeVar = NULL, dropNV=FALSE, ptSize=4, rotMat=diag(2))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

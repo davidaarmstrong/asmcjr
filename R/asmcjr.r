@@ -1,4 +1,4 @@
-utils:::globalVariables(c("x", "y", "group", "pch", "idealpt", "Density", "stimulus",  "lower", "upper"))
+globalVariables(c("x", "y", "group", "pch", "idealpt", "Density", "stimulus",  "lower", "upper"))
 gray.palette <- function(n, lower=.3, upper=.7){
     s <- seq(lower, upper, length=n)
     rgb(matrix(rep(s, each=3), ncol=3, byrow=T))
@@ -1086,7 +1086,7 @@ rc.errors <- function(obj, data, rcnum, rotMat = diag(2)){
         yws <- ws[rcnum]*N2[rcnum]
         N1W <- N1[rcnum]
         N2W <- N2[rcnum]
-        ws <- result$rollcalls[,8]
+        ws <- obj$rollcalls[,8]
         xws <- ws[rcnum]*N1[rcnum]
         yws <- ws[rcnum]*N2[rcnum]
         N1W <- N1[rcnum]
@@ -1117,7 +1117,7 @@ rc.errors <- function(obj, data, rcnum, rotMat = diag(2)){
 }
 
 
-plot.rollcall <- function(obj, data, gdat, rcnum, 
+plot_rollcall <- function(obj, data, gdat, rcnum, 
     shapeVar = NULL, dropNV=FALSE, onlyErrors=FALSE, ptSize=4){
     WEIGHT <- (obj$weights[2])/(obj$weights[1])
     X1 <- obj$legislators$coord1D
@@ -1169,7 +1169,7 @@ plot.rollcall <- function(obj, data, gdat, rcnum,
     g + geom_segment(aes(x=xws+N2W, y=yws-N1W, xend=xws-N2W, yend=yws+N1W))
 }
 
-plot.wnom.coords <- function(obj, shapeVar=NULL, dropNV=FALSE, ptSize=4, ci=FALSE, level=.95){
+plot_wnom_coords <- function(obj, shapeVar=NULL, dropNV=FALSE, ptSize=4, ci=FALSE, level=.95){
     weight <-  obj$weights[2]/obj$weights[1] 
     wnom.dat <- data.frame(
     X1 = obj$legislators$coord1D, 
@@ -1212,11 +1212,11 @@ plot.wnom.coords <- function(obj, shapeVar=NULL, dropNV=FALSE, ptSize=4, ci=FALS
             elldat <- rbind(elldat, tmp)
         }
         if(is.null(shapeVar)){
-            g <- ggplot(wnom.dat) + geom_path(data=elldat, aes(x=x, y=y, group=stim), col="gray50", alpha=.25) + 
+            g <- ggplot(wnom.dat) + geom_path(data=elldat, aes_string(x="x", y="y", group="stim"), col="gray50", alpha=.25) + 
                 geom_point(aes_string(x="X1", y="X2"), size=ptSize) 
         }
         if(!is.null(shapeVar)){
-            g <- ggplot(wnom.dat) + geom_path(data=elldat, aes(x=x, y=y, group=stim), col="gray50", alpha=.25)+ 
+            g <- ggplot(wnom.dat) + geom_path(data=elldat, aes_string(x="x", y="y", group="stim"), col="gray50", alpha=.25)+ 
             geom_point(aes_string(x="X1", y="X2", colour="group", shape="group"), size=ptSize) 
         }
     }
@@ -1224,7 +1224,7 @@ plot.wnom.coords <- function(obj, shapeVar=NULL, dropNV=FALSE, ptSize=4, ci=FALS
 
 }
 
-plot.oc.coords <- function(obj, shapeVar=NULL, dropNV=FALSE, ptSize=4, rotMat=diag(2)){
+plot_oc_coords <- function(obj, shapeVar=NULL, dropNV=FALSE, ptSize=4, rotMat=diag(2)){
     A <- rotMat
     rot.oc <- cbind(obj$legislators$coord1D, obj$legislators$coord2D)
     for (i in 1:nrow(rot.oc)){
@@ -1248,7 +1248,7 @@ plot.oc.coords <- function(obj, shapeVar=NULL, dropNV=FALSE, ptSize=4, rotMat=di
     g
 }
 
-plot.oc.rollcall <- function(obj, data, shapeVar = NULL, rcnum, rotMat=diag(2),
+plot_oc_rollcall <- function(obj, data, shapeVar = NULL, rcnum, rotMat=diag(2),
      dropNV=FALSE, onlyErrors=FALSE, ptSize=4){
     nrollcall <- rcnum
     vote <- as.integer(data$votes[,nrollcall])
@@ -1301,7 +1301,7 @@ plot.oc.rollcall <- function(obj, data, shapeVar = NULL, rcnum, rotMat=diag(2),
 
 makeCutlineAngles <- function(obj){
     if("nomObject" %in% class(obj)){
-        WEIGHT <- (result$weights[2])/(result$weights[1])
+        WEIGHT <- (obj$weights[2])/(obj$weights[1])
         DL1 <- obj$rollcalls[,7]
         DL2 <- obj$rollcalls[,8]
         ZM1 <- obj$rollcalls[,9]
@@ -1329,17 +1329,17 @@ makeCutlineAngles <- function(obj){
         theta4 <- theta * (180/pi)
     }
     if("OCobject" %in% class(obj)){
-        oc1 <- result2$legislators[,7]
-        oc2 <- result2$legislators[,8]
-        PRE <- result2$rollcalls[,5]
-        N1 <- result2$rollcalls[,6]
-        N2 <- result2$rollcalls[,7]
-        ws <- result2$rollcalls[,8]
+        oc1 <- obj$legislators[,7]
+        oc2 <- obj$legislators[,8]
+        PRE <- obj$rollcalls[,5]
+        N1 <- obj$rollcalls[,6]
+        N2 <- obj$rollcalls[,7]
+        ws <- obj$rollcalls[,8]
         xws <- ws * N1
         yws <- ws * N2
         C1 <- N2
         C2 <- -N1
-        for (i in 1:nrow(result2$rollcalls)){
+        for (i in 1:nrow(obj$rollcalls)){
         if (C1[i] < 0 & !is.na(C2[i])) C2[i] <- -C2[i]
         if (C1[i] < 0 & !is.na(C1[i])) C1[i] <- -C1[i]
         }
@@ -1352,7 +1352,7 @@ makeCutlineAngles <- function(obj){
     return(res)
 }
 
-plot.OCcutlines2 <- function (x, main.title = "Cutting Lines", d1.title = "First Dimension", 
+plot_OCcutlines2 <- function (x, main.title = "Cutting Lines", d1.title = "First Dimension", 
           d2.title = "Second Dimension", lines = 50, dims = c(1, 2), 
           lwd = 2, ...) 
 {
@@ -1384,10 +1384,10 @@ plot.OCcutlines2 <- function (x, main.title = "Cutting Lines", d1.title = "First
   if(length(lines) > 1){
     cutlineData <- cutlineData[lines, ]
   }
-  suppressWarnings(apply(cutlineData, 1, oc:::add.OCcutline, lwd = lwd))
+  suppressWarnings(apply(cutlineData, 1, add_OCcutline, lwd = lwd))
 }  
 
-add.OCcutline <- function(cutData,lwd=2) {
+add_OCcutline <- function(cutData,lwd=2) {
 
     slope <- -cutData[1]/cutData[2]
     if (is.na(slope)) {
@@ -1442,9 +1442,71 @@ geweke.ggplot <- function (x, frac1 = 0.1, frac2 = 0.5, nbins = 20, pvalue = 0.0
     levels(tmp.df$var) <- faclabs
   }
     
-  g <- ggplot(tmp.df) + geom_point(aes(x=x, y=gcd, colour=chain)) + geom_hline(yintercept=c(-climit, climit), lty=2, size=.5) + labs(x="First Iteration in Segment", y="Z-score")
+  g <- ggplot(tmp.df) + 
+    geom_point(aes_string(x="x", y="gcd", colour="chain")) + 
+    geom_hline(yintercept=c(-climit, climit), lty=2, size=.5) + 
+    labs(x="First Iteration in Segment", y="Z-score")
   if(length(unique(tmp.df$var)) > 1){
     g <- g + facet_wrap(~var)
   }
   g
- }
+}
+
+end.mcmc.list <- function (x, ...){
+  end(x[[1]])
+}
+
+start.mcmc.list <- function (x, ...){
+  start(x[[1]])
+}
+
+window.mcmc.list <- function (x, ...) {
+  structure(lapply(x, window.mcmc, ...), class = "mcmc.list")
+}
+
+window.mcmc <- function (x, start, end, thin, ...) {
+  ts.eps <- getOption("ts.eps")
+  xmcpar <- mcpar(x)
+  xstart <- xmcpar[1]
+  xend <- xmcpar[2]
+  xthin <- xmcpar[3]
+  if (missing(thin)) 
+    thin <- xthin
+  else if (thin%%xthin != 0) {
+    thin <- xthin
+    warning("Thin value not changed")
+  }
+  xtime <- as.vector(time(x))
+  if (missing(start)) 
+    start <- xstart
+  else if (length(start) != 1) 
+    stop("bad value for start")
+  else if (start < xstart) {
+    start <- xstart
+    warning("start value not changed")
+  }
+  if (missing(end)) 
+    end <- xend
+  else if (length(end) != 1) 
+    stop("bad value for end")
+  else if (end > xend) {
+    end <- xend
+    warning("end value not changed")
+  }
+  if (start > end) 
+    stop("start cannot be after end")
+  if (all(abs(xtime - start) > abs(start) * ts.eps)) {
+    start <- xtime[(xtime > start) & ((start + xthin) > xtime)]
+  }
+  if (all(abs(end - xtime) > abs(end) * ts.eps)) {
+    end <- xtime[(xtime < end) & ((end - xthin) < xtime)]
+  }
+  use <- 1:niter(x)
+  use <- use[use >= trunc((start - xstart)/xthin + 1.5) & use <= 
+               trunc((end - xstart)/xthin + 1.5) & (use - trunc((start - 
+                                                                   xstart)/xthin + 1.5))%%(thin%/%xthin) == 0]
+  y <- if (is.matrix(x)) 
+    x[use, , drop = FALSE]
+  else x[use]
+  return(mcmc(y, start = start, end = end, thin = thin))
+}

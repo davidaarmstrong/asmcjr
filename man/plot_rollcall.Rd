@@ -1,11 +1,11 @@
-\name{plot.rollcall}
-\alias{plot.rollcall}
+\name{plot_rollcall}
+\alias{plot_rollcall}
 \title{Plotting method for Individual Roll Calls from W-Nominate Model}
 \description{Produces a plot of the legislators and cutting line for an individual roll
 call vote for a \code{wnominate} object.}
 
 \usage{
-plot.rollcall(obj, data, gdat, rcnum, 
+plot_rollcall(obj, data, gdat, rcnum, 
     shapeVar = NULL, dropNV=FALSE, 
     onlyErrors=FALSE, ptSize=4)
 }

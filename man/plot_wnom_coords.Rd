@@ -1,10 +1,10 @@
-\name{plot.wnom.coords}
-\alias{plot.wnom.coords}
+\name{plot_wnom_coords}
+\alias{plot_wnom_coords}
 \title{Plotting method for Individuals from W-Nominate Model}
 \description{Produces a plot of the legislators for a \code{wnominate} object.}
 
 \usage{
-plot.wnom.coords(obj, shapeVar = NULL, dropNV=FALSE, ptSize=4, 
+plot_wnom_coords(obj, shapeVar = NULL, dropNV=FALSE, ptSize=4, 
   ci=FALSE, level=.95)
 }
 %- maybe also 'usage' for other objects documented here.

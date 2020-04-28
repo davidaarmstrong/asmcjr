@@ -1,9 +1,9 @@
-\name{plot.OCcutlines2}
-\alias{plot.OCcutlines2}
-\alias{add.OCcutline}
+\name{plot_OCcutlines2}
+\alias{plot_OCcutlines2}
+\alias{add_OCcutline}
 \title{ Optimal Classification Cutline Plot }
 \description{ 
-  This is a slight modification to the \code{\link{plot.OCcutlines}} from the \code{\pkg{oc}} package.  
+  This is a slight modification to the cut-lines plotting method from the \pkg{oc} package.  
   It reads an Optimal Classification object and plots the cutting line
   of a specified proportion of all votes along two user-specified dimensions.  The
   default is to plot 50 cutting lines.  This is also known as a Coombs mesh.
@@ -13,7 +13,7 @@
 }
 
 \usage{         
-plot.OCcutlines2(x, main.title="Cutting Lines",
+plot_OCcutlines2(x, main.title="Cutting Lines",
         d1.title="First Dimension", d2.title="Second Dimension",
         lines=50,dims=c(1,2),lwd=2,...)
 }
@@ -45,7 +45,3 @@ James Lo \email{lojames@usc.edu}
 Royce Carroll \email{rcarroll@rice.edu}
 }
 
-\seealso{
-  '\link{oc}', '\link{plot.OCcoords}', '\link{plot.OCskree}', 
-  '\link{plot.OCangles}', '\link{plot.OCobject}'
-}

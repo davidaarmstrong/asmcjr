@@ -4,7 +4,9 @@
 \description{Produces a plot of the stimulus and individual locations.}
 
 \usage{
-\method{plot}{bayesunfold}(x, ...,  which.res =c("rotated", "unrotated"), labels=c("color", "text"),  plot.stimuli = TRUE, plot.individuals=FALSE, selected.stim=NULL, selected.individuals = NULL, individual.id=NULL)
+\method{plot}{bayesunfold}(x, ...,  which.res =c("rotated", "unrotated"), 
+  labels=c("color", "text"),  plot.stimuli = TRUE, plot.individuals=FALSE, 
+  selected.stim=NULL, selected.individuals = NULL, individual.id=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

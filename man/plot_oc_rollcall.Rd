@@ -1,11 +1,11 @@
-\name{plot.oc.rollcall}
-\alias{plot.oc.rollcall}
+\name{plot_oc_rollcall}
+\alias{plot_oc_rollcall}
 \title{Plotting method for Individual Roll Calls from Optimal Classification Model}
 \description{Produces a plot of the legislators and cutting line for an individual roll
 call vote for a \code{oc} object.}
 
 \usage{
-plot.oc.rollcall(obj, data, shapeVar = NULL, 
+plot_oc_rollcall(obj, data, shapeVar = NULL, 
     rcnum, rotMat = diag(2), dropNV=FALSE, 
     onlyErrors=FALSE, ptSize=4)
 }
