@@ -5,3 +5,4 @@ data/.Rapp.history
 src/asmcjr.so
 src/lbfgs_bu3.o
 src/lbfgs_bu3.so
+.DS_store
