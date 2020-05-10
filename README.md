@@ -13,7 +13,7 @@ install.packages("devtools", dependencies=TRUE)
 library(devtools)
 
 devtools::install_github("davidaarmstrong/asmcjr")
-library(ooc)
+library(asmcjr)
 ```
 
 
