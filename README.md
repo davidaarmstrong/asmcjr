@@ -12,7 +12,6 @@ Therefore to install __asmcjr__, the __devtools__ package must also be installed
 install.packages("devtools", dependencies=TRUE)
 library(devtools)
 
-devtools::install_github("davidaarmstrong/asmcjr")
 library(asmcjr)
 ```
 
