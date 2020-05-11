@@ -28,7 +28,7 @@ str(example_result_france)
 ```
 
 <p align="center">
-  <img width="700" height="170" src="figures/first_example_df.png">
+  <img width="550" height="190" src="figures/first_example_df.png">
 </p>
 
 
