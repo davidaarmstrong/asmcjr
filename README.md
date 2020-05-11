@@ -28,10 +28,8 @@ str(example_result_france)
 ```
 
 <p align="center">
-  <img width="700" height="230" src="figures/first_example_df.png">
+  <img width="700" height="200" src="figures/first_example_df.png">
 </p>
-
-
 
 
 ```
@@ -39,12 +37,13 @@ example_result_graph <- ggplot.resphist(example_result_france, addStim=TRUE, wei
     theme(legend.position="bottom", aspect.ratio=1) +
     guides(shape = guide_legend(override.aes = list(size = 4),nrow=3)) +
     labs(shape="Party", colour="Party")
-
-
-ggsave("example_result_graph.png", width = 5, height = 5)
-
+print(example_result_graph)
 ```
-![image](https://user-images.githubusercontent.com/4205859/28497526-9f421d4c-6f57-11e7-988d-0c4226eba992.png)
+<p align="center">
+  <img width="500" height="500" src="figures/first_example_plot.png">
+</p>
+
+
 
 `dwnominate()` takes as its main argument a list of `rollcall` objects from the [`pscl`](https://cran.r-project.org/web/packages/pscl/index.html) package. The results are returned as a `dwnominate` object with estimates of legislator and roll call coordinates. Get detailed information about DW-NOMINATE options with `?dwnominate` and `help(package=dwnominate)`.
 
