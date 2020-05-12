@@ -28,7 +28,7 @@ head(franceEES2009, n = 10)
 ```
 
 <p align="center">
-  <img width="540" height="190" src="figures/first_example_df1.png">
+  <img width="580" height="190" src="figures/first_example_df1.png">
 </p>
 
 ```r
