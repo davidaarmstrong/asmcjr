@@ -1,35 +1,3 @@
-language: r
-r:
-  - oldrel
-  - release
-  - devel
-
-
-matrix:
-  include:
-  - r: release
-    script:
-      - R CMD build . --compact-vignettes=gs+qpdf
-      - R CMD check *tar.gz --as-cran 
-  - r: release
-    os: osx
-    osx_image: xcode7.3
-    before_install:
-      - sudo tlmgr install framed titling
-    script:
-      - R CMD build . --compact-vignettes=gs+qpdf
-      - R CMD check *tar.gz --as-cran
- 
-before_install:
-      - brew update
-      - brew cask reinstall xquartz
-      - brew install tcl-tk --with-tk
-      - brew link --overwrite --force tcl-tk; brew unlink tcl-tk
-      
-before_script:
-      - "export DISPLAY=:99.0"
-      - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then ( sudo Xvfb :99 -ac -screen 0 1024x768x8; echo ok ) & fi
-
-script:
-      - R CMD build . --compact-vignettes=gs+qpdf
-      - R CMD check *tar.gz --as-cran
+language: R
+sudo: false
+cache: packages
