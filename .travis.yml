@@ -1,8 +1,29 @@
 language: r
-warnings_are_errors: false
 r:
   - release
+  
+before_install:
+  - brew update
+  - brew cask reinstall xquartz
+  - brew install tcl-tk --with-tk
+  - brew link --overwrite --force tcl-tk; brew unlink tcl-tk
+  - brew link gcc in before_install  
+
 os:
   - osx
+
 osx_image: # the current default
+  - xcode10.1
   - xcode11
+
+addons:
+  homebrew:
+    update: true
+       packages:
+          - gcc
+          - cmake
+          - htop
+        env:
+           - FC='/usr/local/bin/gfortran'
+           - USE_MPI=NO
+           
