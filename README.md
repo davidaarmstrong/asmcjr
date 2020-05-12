@@ -60,7 +60,7 @@ library(wnominate)
 library(tidyverse)
 library(pscl)
 library(ggpubr)
-data(legis_7th_Taiwan)
+legis_7th_Taiwan <- read_csv("https://raw.githubusercontent.com/yl17124/figures/master/legis_7th_Taiwan.csv")
 head(legis_7th_Taiwan, n =10)
 ```
 
@@ -78,7 +78,7 @@ summary(pscl_df, verbose=FALSE)
 ```
 
 <p align="left">
-  <img  width="505" height="300" src="https://github.com/yl17124/figures/blob/master/second_example_pscl.png">
+  <img width="515" height="395"  src="https://github.com/yl17124/figures/blob/master/second_example_pscl.png">
 </p>
 
 
