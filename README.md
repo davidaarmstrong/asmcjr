@@ -78,7 +78,7 @@ summary(pscl_df, verbose=FALSE)
 ```
 
 <p align="center">
-  <img width="390" height="230" src="figures/second_example_pscl.png">
+  <img src="figures/second_example_pscl.png">
 </p>
 
 
