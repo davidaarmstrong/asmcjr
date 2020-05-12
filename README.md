@@ -113,7 +113,7 @@ print(example_result_graph2)
 ```
 
 <p align="center">
-  <img width="540" height="190" src="figures/first_example_plot2.png">
+  <img width="540" height="390" src="figures/first_example_plot2.png">
 </p>
 
 
