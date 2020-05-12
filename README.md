@@ -77,8 +77,8 @@ pscl_df <- rollcall(legis_7th_Taiwan[3:ncol(legis_7th_Taiwan)],
 summary(pscl_df, verbose=FALSE)      
 ```
 
-<p align="center">
-  <img width="540" height="390" src="figures/second_example_pscl.png">
+<p align="left">
+  <img width="510" height="390" src="figures/second_example_pscl.png">
 </p>
 
 
