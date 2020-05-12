@@ -38,7 +38,7 @@ example_result_france <- aldmck(franceEES2009, respondent=1,
 str(example_result_france)                        
 ```
 <p align="left">
-  <img width="540" height="240" src="https://github.com/yl17124/figures/blob/master/first_example_df2.png">
+  <img width="540" height="220" src="https://github.com/yl17124/figures/blob/master/first_example_df2.png">
 </p>
 
 ```r
@@ -78,7 +78,7 @@ summary(pscl_df, verbose=FALSE)
 ```
 
 <p align="left">
-  <img  width="540" height="370" src="https://github.com/yl17124/figures/blob/master/second_example_pscl.png">
+  <img  width="540" height="350" src="https://github.com/yl17124/figures/blob/master/second_example_pscl.png">
 </p>
 
 
