@@ -78,7 +78,7 @@ summary(pscl_df, verbose=FALSE)
 ```
 
 <p align="center">
-  <img width="520" height="230" src="figures/second_example_pscl.png">
+  <img width="470" height="230" src="figures/second_example_pscl.png">
 </p>
 
 
@@ -117,6 +117,6 @@ print(example_result_graph2)
 </p>
 
 
-## Citing
+## Reference
 
 For citation information, run `citation("asmcjr")`, or more learning resources visit [Scaling Methods for Social Science](https://essexsummerschool.com/summer-school-facts/courses/2020-course-list/3l-ideal-point-estimation-item-response-theory-and-scaling-methods/) at [2020 ESSEX SUMMER SCHOOL](https://essexsummerschool.com/)
