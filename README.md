@@ -19,7 +19,7 @@ library(asmcjr)
 
 
 
-## Example 1: Running Bayesian Aldrich-Mckelvey Scaling on France EES (The European Election Studies )
+## Example 1: Running Bayesian Aldrich-Mckelvey Scaling on  the French module of the 2009 European Election Study (EES)
 ```r
 library(asmcjr)
 library(ggplot2)
@@ -65,7 +65,7 @@ head(legis_7th_Taiwan, n =10)
 ```
 
 <p align="center">
-  <img width="740" height="250" src="figures/second_example_df1.png">
+  <img width="740" height="220" src="figures/second_example_df1.png">
 </p>
 
 ```r
