@@ -78,7 +78,7 @@ summary(pscl_df, verbose=FALSE)
 ```
 
 <p align="left">
-  <img  width="445" height="285" src="https://github.com/yl17124/figures/blob/master/second_example_pscl.png">
+  <img  src="https://github.com/yl17124/figures/blob/master/second_example_pscl.png">
 </p>
 
 
@@ -101,7 +101,7 @@ print(example_result_graph2)
 ```
 
 <p align="center">
-  <img  src="https://github.com/yl17124/figures/blob/master/first_example_plot2.png">
+  <img width="540" height="390" src="https://github.com/yl17124/figures/blob/master/first_example_plot2.png">
 </p>
 
 
