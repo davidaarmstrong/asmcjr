@@ -19,7 +19,7 @@ library(asmcjr)
 
 
 
-## Example 1: Running Bayesian Aldrich-Mckelvey Scaling on  the French module of the 2009 European Election Study (EES)
+## Example 1: Running Bayesian Aldrich-Mckelvey Scaling on the French module of the 2009 European Election Study (EES)
 ```r
 library(asmcjr)
 library(ggplot2)
@@ -28,7 +28,7 @@ head(franceEES2009, n = 10)
 ```
 
 <p align="center">
-  <img src="figures/first_example_df1.png">
+  <img src="figures/https://github.com/yl17124/figures/blob/master/first_example_df1.png">
 </p>
 
 ```r
@@ -38,7 +38,7 @@ example_result_france <- aldmck(franceEES2009, respondent=1,
 str(example_result_france)                        
 ```
 <p align="left">
-  <img width="540" height="240" src="figures/first_example_df2.png">
+  <img width="540" height="240" src="https://github.com/yl17124/figures/blob/master/figures/first_example_df2.png">
 </p>
 
 ```r
@@ -50,7 +50,7 @@ print(example_result_graph)
 ```
 
 <p align="center">
-  <img width="500" height="500" src="figures/first_example_plot.png">
+  <img width="500" height="500" src="https://github.com/yl17124/figures/blob/master/figures/first_example_plot.png">
 </p>
 
 
@@ -78,7 +78,7 @@ summary(pscl_df, verbose=FALSE)
 ```
 
 <p align="left">
-  <img  width="540" height="370" src="figures/second_example_pscl.png">
+  <img  width="540" height="370" src="https://github.com/yl17124/figures/blob/master/figures/second_example_pscl.png">
 </p>
 
 
@@ -101,7 +101,7 @@ print(example_result_graph2)
 ```
 
 <p align="center">
-  <img width="540" height="390" src="figures/first_example_plot2.png">
+  <img width="540" height="390" src="https://github.com/yl17124/figures/blob/master/figures/first_example_plot2.png">
 </p>
 
 
