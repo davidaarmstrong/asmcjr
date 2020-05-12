@@ -37,8 +37,8 @@ example_result_france <- aldmck(franceEES2009, respondent=1,
                                 
 str(example_result_france)                        
 ```
-<p align="center">
-  <img src="figures/first_example_df2.png">
+<p align="left">
+  <img width="540" height="390" src="figures/first_example_df2.png">
 </p>
 
 ```r
