@@ -38,7 +38,7 @@ example_result_france <- aldmck(franceEES2009, respondent=1,
 str(example_result_france)                        
 ```
 <p align="left">
-  <img width="540" height="240" src="https://github.com/yl17124/figures/blob/master/figures/first_example_df2.png">
+  <img width="540" height="240" src="https://github.com/yl17124/figures/blob/master/first_example_df2.png">
 </p>
 
 ```r
@@ -65,7 +65,7 @@ head(legis_7th_Taiwan, n =10)
 ```
 
 <p align="center">
-  <img src="figures/second_example_df1.png">
+  <img src="https://github.com/yl17124/figures/blob/master/second_example_df1.png">
 </p>
 
 ```r
@@ -78,7 +78,7 @@ summary(pscl_df, verbose=FALSE)
 ```
 
 <p align="left">
-  <img  width="540" height="370" src="https://github.com/yl17124/figures/blob/master/figures/second_example_pscl.png">
+  <img  width="540" height="370" src="https://github.com/yl17124/figures/blob/master/second_example_pscl.png">
 </p>
 
 
@@ -101,7 +101,7 @@ print(example_result_graph2)
 ```
 
 <p align="center">
-  <img width="540" height="390" src="https://github.com/yl17124/figures/blob/master/figures/first_example_plot2.png">
+  <img width="540" height="390" src="https://github.com/yl17124/figures/blob/master/first_example_plot2.png">
 </p>
 
 
