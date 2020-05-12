@@ -119,4 +119,4 @@ print(example_result_graph2)
 
 ## Citing
 
-For citation information, run `citation('')`.
+For citation information, run `citation("asmcjr")` or visit vitual class[Scaling Methods for Social Science] (https://essexsummerschool.com/summer-school-facts/courses/2020-course-list/3l-ideal-point-estimation-item-response-theory-and-scaling-methods/) at [2020 ESSEX SUMMER SCHOOL](https://essexsummerschool.com/)
