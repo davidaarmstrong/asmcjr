@@ -119,4 +119,4 @@ print(example_result_graph2)
 
 ## Reference
 
-For learning resource, please visit [Scaling Methods for Social Science](https://essexsummerschool.com/summer-school-facts/courses/2020-course-list/3l-ideal-point-estimation-item-response-theory-and-scaling-methods/) at [2020 ESSEX SUMMER SCHOOL](https://essexsummerschool.com/) website. For citation from this book, please  run `citation("asmcjr")`.
+For learning resource, please visit [Scaling Methods for Social Science](https://essexsummerschool.com/summer-school-facts/courses/2020-course-list/3l-ideal-point-estimation-item-response-theory-and-scaling-methods/) at [2020 ESSEX SUMMER SCHOOL](https://essexsummerschool.com/) website. For citation from this book, run `citation("asmcjr")`.
