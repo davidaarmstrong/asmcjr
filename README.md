@@ -19,51 +19,53 @@ library(asmcjr)
 
 
 
-## Example 1: Running Bayesian Aldrich-Mckelvey Scaling on France EES (The European Election Studies )
+## Example 1: Running Bayesian Aldrich-Mckelvey Scaling on  the French module of the 2009 European Election Study (EES)
 ```r
-data(franceEES2009)
 library(asmcjr)
 library(ggplot2)
+data(franceEES2009)
 head(franceEES2009, n = 10)
 ```
+
 <p align="center">
-  <img width="540" height="190" src="figures/first_example_df1.png">
+  <img src="figures/first_example_df1.png">
 </p>
+
 ```r
 example_result_france <- aldmck(franceEES2009, respondent=1, 
                                 polarity=2,missing=c(77,88,89), verbose=FALSE)
                                 
 str(example_result_france)                        
 ```
-
-<p align="center">
-  <img width="540" height="190" src="figures/first_example_df2.png">
+<p align="left">
+  <img width="540" height="240" src="figures/first_example_df2.png">
 </p>
 
-
-```
+```r
 example_result_graph <- ggplot.resphist(example_result_france, addStim=TRUE, weights="negative", xlab = "Left-Right") +
     theme(legend.position="bottom", aspect.ratio=1) +
     guides(shape = guide_legend(override.aes = list(size = 4),nrow=3)) +
     labs(shape="Party", colour="Party")
 print(example_result_graph)
 ```
+
 <p align="center">
   <img width="500" height="500" src="figures/first_example_plot.png">
 </p>
 
-## Example 2: Running WNOMINATE Scaling on Taiwean Legislative Roll Calls 
+
+## Example 2: Running W-NOMINATE Scaling on Taiwan Legislative Roll Calls 
 ```r
-data(legis_7th_Taiwan)
 library(wnominate)
 library(tidyverse)
 library(pscl)
 library(ggpubr)
-
+data(legis_7th_Taiwan)
 head(legis_7th_Taiwan, n =10)
 ```
+
 <p align="center">
-  <img width="540" height="190" src="figures/second_example_df.png">
+  <img src="figures/second_example_df1.png">
 </p>
 
 ```r
@@ -75,13 +77,34 @@ pscl_df <- rollcall(legis_7th_Taiwan[3:ncol(legis_7th_Taiwan)],
 summary(pscl_df, verbose=FALSE)      
 ```
 
-<p align="center">
-  <img width="540" height="190" src="figures/second_example_df.png">
+<p align="left">
+  <img  width="540" height="370" src="figures/second_example_pscl.png">
 </p>
 
 
+```r
+example_result_graph2 <- rownames_to_column(result$legislators, "legis.names") %>%
+  left_join(legis_7th_Taiwan[c("legis.names", "party")], by = "legis.names") %>%
+  mutate(coord2D.WEIGHT = coord2D*(result$weights[2])/(result$weights[1])) %>%
+  ggscatter(x = "coord1D", y = "coord2D.WEIGHT",
+            palette = "jco", shape = "party", point = FALSE,
+            ellipse = TRUE, ellipse.type = "confidence", size = 4) +
+  scale_y_continuous(limits = c(-0.5, 0.5) ) +
+  scale_x_continuous(limits = c(-1, 1)) +
+  geom_text(aes(label = factor(party), colour = party), size = 3,
+            family="Helvetica", face = "bold", show.legend = FALSE, vjust = -0.5) +
+  scale_colour_manual(values = c("#0000ff","#008964","#8b0017"), breaks = c("K", "D","N"))  +
+  theme(legend.position = "none") +
+  labs(y = "2nd Dimension", x = "1st Dimension") 
+
+print(example_result_graph2)
+```
+
+<p align="center">
+  <img width="540" height="390" src="figures/first_example_plot2.png">
+</p>
 
 
-## Citing
+## Reference
 
-For citation information, run `citation('dwnominate')`.
+For more learning resources and materials, please visit [Scaling Methods for Social Science](https://essexsummerschool.com/summer-school-facts/courses/2020-course-list/3l-ideal-point-estimation-item-response-theory-and-scaling-methods/) at [2020 ESSEX SUMMER SCHOOL](https://essexsummerschool.com/) website. For citation from this book, run `citation("asmcjr")`.
