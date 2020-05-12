@@ -20,10 +20,16 @@ library(asmcjr)
 
 
 ## Example 1: Running Bayesian Aldrich-Mckelvey Scaling on France EES (The European Election Studies )
-```R
+```r
 data(franceEES2009)
 library(asmcjr)
 library(ggplot2)
+head(franceEES2009, n = 10)
+```
+<p align="center">
+  <img width="540" height="190" src="figures/first_example_df1.png">
+</p>
+```r
 example_result_france <- aldmck(franceEES2009, respondent=1, 
                                 polarity=2,missing=c(77,88,89), verbose=FALSE)
                                 
@@ -31,7 +37,7 @@ str(example_result_france)
 ```
 
 <p align="center">
-  <img width="540" height="190" src="figures/first_example_df.png">
+  <img width="540" height="190" src="figures/first_example_df2.png">
 </p>
 
 
