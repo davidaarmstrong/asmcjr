@@ -28,7 +28,7 @@ head(franceEES2009, n = 10)
 ```
 
 <p align="center">
-  <img src="figures/https://github.com/yl17124/figures/blob/master/first_example_df1.png">
+  <img src="https://github.com/yl17124/figures/blob/master/first_example_df1.png">
 </p>
 
 ```r
