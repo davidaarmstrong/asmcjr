@@ -101,7 +101,7 @@ print(example_result_graph2)
 ```
 
 <p align="center">
-  <img width="540" height="390" src="https://github.com/yl17124/figures/blob/master/first_example_plot2.png">
+  <img  src="https://github.com/yl17124/figures/blob/master/first_example_plot2.png">
 </p>
 
 
