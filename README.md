@@ -65,7 +65,7 @@ head(legis_7th_Taiwan, n =10)
 ```
 
 <p align="center">
-  <img width="740" height="220" src="figures/second_example_df1.png">
+  <img src="figures/second_example_df1.png">
 </p>
 
 ```r
