@@ -19,8 +19,17 @@ library(asmcjr)
 
 
 
-## Example 1: Running Bayesian Aldrich-Mckelvey Scaling on France EES 
-```R
+## Example 1: Running Bayesian Aldrich-Mckelvey Scaling on France EES (The European Election Studies )
+```r
+data(franceEES2009)
+library(asmcjr)
+library(ggplot2)
+head(franceEES2009, n = 10)
+```
+<p align="center">
+  <img width="540" height="190" src="figures/first_example_df1.png">
+</p>
+```r
 example_result_france <- aldmck(franceEES2009, respondent=1, 
                                 polarity=2,missing=c(77,88,89), verbose=FALSE)
                                 
@@ -28,7 +37,7 @@ str(example_result_france)
 ```
 
 <p align="center">
-  <img width="540" height="190" src="figures/first_example_df.png">
+  <img width="540" height="190" src="figures/first_example_df2.png">
 </p>
 
 
@@ -43,9 +52,35 @@ print(example_result_graph)
   <img width="500" height="500" src="figures/first_example_plot.png">
 </p>
 
+## Example 2: Running WNOMINATE Scaling on Taiwean Legislative Roll Calls 
+```r
+data(legis_7th_Taiwan)
+library(wnominate)
+library(tidyverse)
+library(pscl)
+library(ggpubr)
+
+head(legis_7th_Taiwan, n =10)
+```
+<p align="center">
+  <img width="540" height="190" src="figures/second_example_df.png">
+</p>
+
+```r
+pscl_df <- rollcall(legis_7th_Taiwan[3:ncol(legis_7th_Taiwan)],
+                    yea = 1 , nay = 2, notInLegis = c(3,4,5), legis.names = legis_7th_Taiwan$legis.names,
+                    vote.names = colnames(legis_7th_Taiwan[3:ncol(legis_7th_Taiwan)]),
+                    desc="The 7th Taiwan Legislative Roll Call")
+
+summary(pscl_df, verbose=FALSE)      
+```
+
+<p align="center">
+  <img width="540" height="190" src="figures/second_example_df.png">
+</p>
 
 
-`dwnominate()` takes as its main argument a list of `rollcall` objects from the [`pscl`](https://cran.r-project.org/web/packages/pscl/index.html) package. The results are returned as a `dwnominate` object with estimates of legislator and roll call coordinates. Get detailed information about DW-NOMINATE options with `?dwnominate` and `help(package=dwnominate)`.
+
 
 ## Citing
 
