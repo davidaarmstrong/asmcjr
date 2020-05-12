@@ -94,18 +94,6 @@ example_result_graph2 <- rownames_to_column(result$legislators, "legis.names") %
   geom_text(aes(label = factor(party), colour = party), size = 3,
             family="Helvetica", face = "bold", show.legend = FALSE, vjust = -0.5) +
   scale_colour_manual(values = c("#0000ff","#008964","#8b0017"), breaks = c("K", "D","N"))  +
-  theme(legend.position = NULL,
-        legend.justification = "center",
-        legend.background = element_blank(),
-        legend.key = element_blank(),
-        legend.title = element_blank(),
-        legend.text = element_text(size = 8,vjust = 0.5,family ="Trebuchet MS", face = "bold")) +
-  theme(axis.text = element_text(size=8, family ="Helvetica", face = "bold"), 
-        axis.title = element_text(size = 8, family ="Helvetica", face = "bold"),
-        axis.text.x = element_text(size = 12 , family ="Helvetica",face = "bold"),
-        axis.text.y = element_text(size = 12, family ="Helvetica",face = "bold"),
-        axis.title.x = element_text(family ="Helvetica", size = 12, face = "bold"),
-        axis.title.y = element_text(family ="Helvetica", size = 12, face = "bold")) +
   theme(legend.position = "none") +
   labs(y = "2nd Dimension", x = "1st Dimension") 
 
@@ -119,4 +107,4 @@ print(example_result_graph2)
 
 ## Reference
 
-For learning resource, please visit [Scaling Methods for Social Science](https://essexsummerschool.com/summer-school-facts/courses/2020-course-list/3l-ideal-point-estimation-item-response-theory-and-scaling-methods/) at [2020 ESSEX SUMMER SCHOOL](https://essexsummerschool.com/) website. For citation from this book, run `citation("asmcjr")`.
+For more learning resources and materials, please visit [Scaling Methods for Social Science](https://essexsummerschool.com/summer-school-facts/courses/2020-course-list/3l-ideal-point-estimation-item-response-theory-and-scaling-methods/) at [2020 ESSEX SUMMER SCHOOL](https://essexsummerschool.com/) website. For citation from this book, run `citation("asmcjr")`.
