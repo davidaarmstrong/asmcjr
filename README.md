@@ -50,7 +50,7 @@ print(example_result_graph)
 ```
 
 <p align="center">
-  <img width="500" height="500" src="https://github.com/yl17124/figures/blob/master/figures/first_example_plot.png">
+  <img width="500" height="500" src="https://github.com/yl17124/figures/blob/master/first_example_plot.png">
 </p>
 
 
