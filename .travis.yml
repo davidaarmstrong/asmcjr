@@ -23,7 +23,7 @@ addons:
           - gcc
           - cmake
           - htop
-        env:
-           - FC='/usr/local/bin/gfortran'
-           - USE_MPI=NO
+       env:
+          - FC='/usr/local/bin/gfortran'
+          - USE_MPI=NO
            
