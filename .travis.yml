@@ -11,6 +11,4 @@ before_install:
   - sudo apt-get install r-cran-rjags
   
 osx_image: # the current default
-  - xcode9.4
-  - xcode10.2
   - xcode11
