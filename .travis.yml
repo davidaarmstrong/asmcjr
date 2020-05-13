@@ -21,8 +21,10 @@ before_install:
   - sudo apt-get install jags
   - sudo apt-get install r-cran-rjags
   - sudo apt-get update
-  - R -e 'source("https://install-github.me/r-lib/remotes")'
 
+
+upgrade: 
+  - devtools::install_deps(dependencies = TRUE, upgrade="always")
 
 
 # environment variables set for all builds
