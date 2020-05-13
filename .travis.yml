@@ -1,7 +1,5 @@
 language: r
 
-before_install:
-  - tlmgr install index
 r:
   - release
 os:
