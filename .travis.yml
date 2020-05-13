@@ -8,3 +8,11 @@ sudo: true
 before_install:
   - sudo apt-get install jags
   - sudo apt-get install r-cran-rjags
+
+# for codecov
+r_packages:
+  - covr
+
+# only report codecov after build is successful
+after_success:
+  - Rscript -e 'covr::codecov()'
