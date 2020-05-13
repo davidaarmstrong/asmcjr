@@ -6,7 +6,8 @@ r:
   - oldrel
   - release
   - devel
-
+  - bioc-devel
+  
 notifications:
   email:
     on_success: change
