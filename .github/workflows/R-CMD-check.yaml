@@ -68,6 +68,9 @@ jobs:
         run: |
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
+          devtools::install_url("http://sourceforge.net/projects/mcmc-jags/files/rjags/3/rjags_3-2.tar.gz",
+                      args="--configure-args='--with-jags-include=/Users/casallas/homebrew/opt/jags/include/JAGS
+                      --with-jags-lib=/Users/casallas/homebrew/opt/jags/lib'")
         shell: Rscript {0}
 
       - name: Session info

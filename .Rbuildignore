@@ -4,3 +4,4 @@
 ^\.Rprofile$
 ^\.github$
 ^\.travis\.yml$
+^codecov\.yml$
