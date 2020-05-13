@@ -1,20 +1,40 @@
 language: r
-sudo: false
-chache: packages
+cache: packages
+warnings_are_errors: false
 
 r:
+  - oldrel
   - release
-os:
-  - osx
-  
+  - devel
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change
+    
+    
+## dependencies that need to be installed beforehand if any
+sudo: true
 before_install:
-  - sudo add-apt-repository ppa:marutter/rrutter -y
+  - sudo apt-get install jags
   - sudo apt-get install r-cran-rjags
-  - sudo apt-get update
 
-osx_image: # the current default
-  - xcode11.4  
+# environment variables set for all builds
+env:
+  global:
+    - BIOC_USE_DEVEL="FALSE"  ## Use the current release version
+
+# we need to install BiocInstaller for testing Bioconductor packages
+bioc_required: true
 
 
-after_success:
-  - test $TRAVIS_R_VERSION_STRING = "release" && Rscript -e 'covr::codecov()'
+
+
+
+
+
+
+
+
+
+
