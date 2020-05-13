@@ -107,8 +107,4 @@ print(example_result_graph2)
 
 
 ## Reference
-For citation from this book, run `citation("asmcjr")`. For intere
-Studying survey or other choice data? Learn to use computational methods to understand the latent properties of your data and measure attitudes and preferences. Join our course Scaling Methods for Social Sciences: Measuring Patterns and Preferences 
-
-
-For more learning resources or learn to use computational methods to understand the latent properties of your data, please join the course [Scaling Methods for Social Science](https://essexsummerschool.com/summer-school-facts/courses/2020-course-list/3l-ideal-point-estimation-item-response-theory-and-scaling-methods/) at [2020 ESSEX SUMMER SCHOOL](https://essexsummerschool.com/) website. For citation from this book, run `citation("asmcjr")`.
+For citation from this book, run `citation("asmcjr")`. For more learning resources and those who want to learn to use computational methods to understand the latent properties of your data, please join the course [Scaling Methods for Social Science](https://essexsummerschool.com/summer-school-facts/courses/2020-course-list/3l-ideal-point-estimation-item-response-theory-and-scaling-methods/) at [2020 ESSEX SUMMER SCHOOL](https://essexsummerschool.com/)website. 
