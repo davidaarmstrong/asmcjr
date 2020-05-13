@@ -1,4 +1,10 @@
-# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+# R for travis: see documentation at https://jef.works/blog/2019/02/17/automate-testing-of-your-R-package/
 
 language: R
 cache: packages
+warnings_are_errors: false
+
+sudo: true
+before_install:
+  - sudo apt-get install jags
+  - sudo apt-get install r-cran-rjags
