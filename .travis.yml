@@ -1,29 +1,16 @@
 language: r
+warnings_are_errors: false
 r:
+  - oldrel
   - release
-  
-before_install:
-  - brew update
-  - brew cask reinstall xquartz
-  - brew install tcl-tk --with-tk
-  - brew link --overwrite --force tcl-tk; brew unlink tcl-tk
-  - brew link gcc in before_install  
-  
-before_script:
-      - "export DISPLAY=:99.0"
-      - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then ( sudo Xvfb :99 -ac -screen 0 1024x768x8; echo ok ) & fi
-
-matrix:
-  include:
-  - r: release
-    script:
-      - R CMD build . --compact-vignettes=gs+qpdf
-      - R CMD check *tar.gz --as-cran 
-  - r: release
-    os: osx
-    osx_image: xcode11
-    before_install:
-      - sudo tlmgr install framed titling
-    script:
-      - R CMD build . --compact-vignettes=gs+qpdf
-      - R CMD check *tar.gz --as-cran
+os:
+  - linux
+  - osx
+osx_image: # the current default
+  - xcode9.4
+  # macOS 10.14 / xcode10.2 is particularly troublesome
+  - xcode10.2
+  - xcode11
+r_binary_packages:
+  - testthat
+  - usethiscran
