@@ -1,6 +1,7 @@
 language: r
 sudo: false
 chache: packages
+cache: apt
 
 r:
   - release
