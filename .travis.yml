@@ -1,12 +1,16 @@
 language: r
-warnings_are_errors: false
-r:
+
+before_install:
+  - tlmgr install index
+  
+ r:
   - oldrel
   - release
 os:
   - linux
   - osx
-osx_image: 
+osx_image: # the current default
+  - xcode9.4
   # macOS 10.14 / xcode10.2 is particularly troublesome
   - xcode10.2
-  - xcode11
+  - xcode 11
