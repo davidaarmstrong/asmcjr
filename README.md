@@ -1,6 +1,8 @@
 
 # asmcjr <img src="https://quantoid.net/files/images/booksticker.png" width="140" align="right" /> <br /> 
 
+[![Build Status](https://travis-ci.com/yl17124/asmcjr.svg?branch=master)](https://travis-ci.com/yl17124/asmcjr)
+
 This package supports the book ["Analyzing Spatial Models of Choice and Judgment with R"](https://www.crcpress.com/Analyzing-Spatial-Models-of-Choice-and-Judgment-with-R/Armstrong-II-Bakker-Carroll-Hare-Poole-Rosenthal/p/book/9781466517158).  In its second edition, much of the R code has been streamlined. This package contains all of the data and functions to replicate the analyses in the book. 
 
 You can install using the `install_github()` function from the `devtools` package.  The package requires compilation, so Windows users will have to install [Rtools](https://cran.r-project.org/bin/windows/Rtools/) first.  
@@ -37,7 +39,7 @@ example_result_france <- aldmck(franceEES2009, respondent=1,
 str(example_result_france)                        
 ```
 <p align="left">
-  <img width="620" height="270" src="https://github.com/yl17124/figures/blob/master/first_example_df2.png">
+  <img width="650" height="270" src="https://github.com/yl17124/figures/blob/master/first_example_df2.png">
 </p>
 
 ```r
@@ -77,7 +79,7 @@ summary(pscl_df, verbose=FALSE)
 ```
 
 <p align="left">
-  <img width="515" height="395"  src="https://github.com/yl17124/figures/blob/master/second_example_pscl.png">
+  <img width="520" height="395"  src="https://github.com/yl17124/figures/blob/master/second_example_pscl.png">
 </p>
 
 
@@ -105,5 +107,4 @@ print(example_result_graph2)
 
 
 ## Reference
-
-For more learning resources and materials, please visit [Scaling Methods for Social Science](https://essexsummerschool.com/summer-school-facts/courses/2020-course-list/3l-ideal-point-estimation-item-response-theory-and-scaling-methods/) at [2020 ESSEX SUMMER SCHOOL](https://essexsummerschool.com/) website. For citation from this book, run `citation("asmcjr")`.
+For citation from this book, run `citation("asmcjr")`. For more learning resources and those who want to learn how to use computational methods to understand the latent properties of your data, please join the course [Scaling Methods for Social Science](https://essexsummerschool.com/summer-school-facts/courses/2020-course-list/3l-ideal-point-estimation-item-response-theory-and-scaling-methods/) at [2020 ESSEX SUMMER SCHOOL](https://essexsummerschool.com/). 
