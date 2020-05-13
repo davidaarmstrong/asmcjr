@@ -9,9 +9,9 @@ os:
   
 before_install:
   - sudo add-apt-repository ppa:marutter/rrutter -y
-  - sudo apt-get update
   - sudo apt-get install r-cran-rjags
-  
+  - sudo apt-get update
+
 osx_image: # the current default
   - xcode11.4  
 
