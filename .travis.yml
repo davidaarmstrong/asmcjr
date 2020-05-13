@@ -12,5 +12,4 @@ osx_image:
   - xcode10.2
   - xcode11
 r_binary_packages:
-  - testthat
   - usethiscran
