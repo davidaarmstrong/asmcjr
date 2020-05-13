@@ -1,4 +1,6 @@
 language: r
+sudo: false
+chache: packages
 
 r:
   - release
@@ -11,4 +13,40 @@ before_install:
   - sudo apt-get install r-cran-rjags
   
 osx_image: # the current default
-  - xcode11
+  - xcode11  
+
+r_packages:
+  - ggplot2 
+  - basicspace
+  - rjags
+  - boot
+  - MASS
+  - stats
+  - grDevices
+  - MCMCpack
+  - plyr
+  - smacof
+  - tibble
+  - ellipse
+  - utils
+  - coda
+  - graphics
+  
+ after_success:
+  - Rscript -e ‘library(ggplot2); codecov()’
+  - Rscript -e ‘library(basicspace); codecov()’
+  - Rscript -e ‘library(rjags); codecov()’
+  - Rscript -e ‘library(boot); codecov()’
+  - Rscript -e ‘library(MASS); codecov()’
+  - Rscript -e ‘library(stats); codecov()’
+  - Rscript -e ‘library(grDevices); codecov()’
+  - Rscript -e ‘library(MCMCpack); codecov()’
+  - Rscript -e ‘library(plyr); codecov()’
+  - Rscript -e ‘library(smacof); codecov()’
+  - Rscript -e ‘library(tibble); codecov()’
+  - Rscript -e ‘library(ellipse); codecov()’
+  - Rscript -e ‘library(utils); codecov()’
+  - Rscript -e ‘library(coda); codecov()’
+  - Rscript -e ‘library(graphics); codecov()’
+
+  
