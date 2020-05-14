@@ -88,7 +88,7 @@ Execution halted
 ##[error]Process completed with exit code 1.
 ```
 
-#### Windowns (R: 4.0)
+#### Windows (R: 4.0)
 ```
 * checking for file 'D:\a\asmcjr\asmcjr/DESCRIPTION' ... OK
 
