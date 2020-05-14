@@ -9,6 +9,17 @@ You can install using the `install_github()` function from the `devtools` packag
 For Mac users, you need to  make sure you have already installed latest [GNU Fortran(gfortran 8.2)](https://github.com/fxcoudert/gfortran-for-macOS/releases) and [Xcode Developer Tools](https://developer.apple.com/support/xcode/). In order to use __rjags__ for the Bayesian framework analysis, you also need to install [JAGS](https://sourceforge.net/projects/mcmc-jags/files/JAGS/) in advance. Please make sure you have installed [Clang (clang-8.0.0.pkg)](https://cran.r-project.org/bin/macosx/tools/) if you have not updated R to 4.0.0 version. Therefore to install __asmcjr__, the __devtools__ package must also be installed in R beforehand. 
 
 ## Installation 
+Please check you have already installed those softwares.
+##### for macOS user
+- [x] [JAGS](https://sourceforge.net/projects/mcmc-jags/files/JAGS/)
+- [x] [GNU Fortran(gfortran 8.2)](https://github.com/fxcoudert/gfortran-for-macOS/releases)
+- [x] [Xcode Developer Tools](https://developer.apple.com/support/xcode/)
+- [x] [Clang (clang-8.0.0.pkg)](https://cran.r-project.org/bin/macosx/tools/) if R has not updated latest version.
+
+##### for Windows user
+- [x] [JAGS](https://sourceforge.net/projects/mcmc-jags/files/JAGS/)
+- [x] [Rtools](https://cran.r-project.org/bin/windows/Rtools/)
+
 ```r
 install.packages("devtools", dependencies=TRUE)
 library(devtools)
@@ -16,7 +27,6 @@ library(devtools)
 devtools::install_github("yl17124/asmcjr")
 library(asmcjr)
 ```
-
 
 <br />
 
