@@ -1,30 +1,39 @@
 # asmcjr <img src="https://quantoid.net/files/images/booksticker.png" width="140" align="right" /> <br /> 
 
 [![Build Status](https://travis-ci.com/yl17124/asmcjr.svg?branch=master)](https://travis-ci.com/yl17124/asmcjr)
-![R-CMD-check](https://github.com/yl17124/asmcjr/workflows/R-CMD-check/badge.svg?event=create)
-
 
 This package supports the book ["Analyzing Spatial Models of Choice and Judgment with R"](https://www.crcpress.com/Analyzing-Spatial-Models-of-Choice-and-Judgment-with-R/Armstrong-II-Bakker-Carroll-Hare-Poole-Rosenthal/p/book/9781466517158).  In its second edition, much of the R code has been streamlined. This package contains all of the data and functions to replicate the analyses in the book. 
 
-You can install using the `install_github()` function from the `devtools` package.  The package requires compilation, so Windows users will have to install [Rtools](https://cran.r-project.org/bin/windows/Rtools/) first.  
-
-For Mac users, you need to  make sure you have already installed latest [GNU Fortran(gfortran 8.2)](https://github.com/fxcoudert/gfortran-for-macOS/releases) and [Xcode Developer Tools](https://developer.apple.com/support/xcode/). In order to use __rjags__ for the Bayesian framework analysis, you also need to install [JAGS](https://sourceforge.net/projects/mcmc-jags/files/JAGS/) in advance. Please make sure you have installed [Clang (clang-8.0.0.pkg)](https://cran.r-project.org/bin/macosx/tools/) if you have not updated R to 4.0.0 version. Therefore to install __asmcjr__, the __devtools__ package must also be installed in R beforehand. 
-
-<br />
- 
 ## Installation 
+
+You can install using the `install_github()` function from the `devtools` package.  The package requires compilation, so Windows users will have to install [Rtools](https://cran.r-project.org/bin/windows/Rtools/) first. For Mac users, you need to  make sure you have already installed latest [GNU Fortran(gfortran 8.2)](https://github.com/fxcoudert/gfortran-for-macOS/releases) and [Xcode Developer Tools](https://developer.apple.com/support/xcode/). Please also make sure you have installed [Clang (clang-8.0.0.pkg)](https://cran.r-project.org/bin/macosx/tools/) if you have not updated R to 4.0.0 version. In order to use __rjags package__ for the Bayesian framework analysis with __asmcjr__, both users  need to install [JAGS](https://sourceforge.net/projects/mcmc-jags/files/JAGS/) in advance. Therefore to install __asmcjr__ in your R environment, the __devtools__ package must also be installed and loaded in R beforehand. 
+
+
+#### For macOS:
+- [x] [JAGS](https://sourceforge.net/projects/mcmc-jags/files/JAGS/)
+- [x] [GNU Fortran(gfortran 8.2)](https://github.com/fxcoudert/gfortran-for-macOS/releases)
+- [x] [Xcode Developer Tools 11](https://developer.apple.com/support/xcode/)
+- [x] [Clang (clang-8.0.0)](https://cran.r-project.org/bin/macosx/tools/) if you have not updated R to 4.0.0 version.
 ```r
 install.packages("devtools", dependencies=TRUE)
 library(devtools)
-
 devtools::install_github("yl17124/asmcjr")
-library(asmcjr)
 ```
 
+#### For Windows:
+- [x] [JAGS](https://sourceforge.net/projects/mcmc-jags/files/JAGS/)
+- [x] [Rtools](https://cran.r-project.org/bin/windows/Rtools/)
+
+```r
+install.packages("devtools", dependencies=TRUE)
+library(devtools)
+devtools::install_github("yl17124/asmcjr")
+```
 <br />
- 
+
+
 ## Potential Installation Errors
-If you have received those messages below from macOS or Windows, your device has not installed __JAGS__. Make sure you have installed [JAGS-4.x.y.exe](http://www.sourceforge.net/projects/mcmc-jags/files) in advance. The __asmcjr__ has a dependency on __rjags__ package which is just an interface to the JAGS library, and you need to install to make it run on your device.
+If you have received those messages below from macOS or Windows, your device has not installed __JAGS__. Make sure you have installed [JAGS-4](http://www.sourceforge.net/projects/mcmc-jags/files) in your computer. The __asmcjr__ has a dependency on __rjags__ package which is just an interface to the JAGS library, and you need to install it to make them run with __rjags__ on your device.
 
 #### macOS (R: devel)
 ```
@@ -233,6 +242,8 @@ print(example_result_graph2)
 <p align="center">
   <img width="540" height="390" src="https://github.com/yl17124/figures/blob/master/first_example_plot2.png">
 </p>
+
+<br />
 
 
 ## Reference
