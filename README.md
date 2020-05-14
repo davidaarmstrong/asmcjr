@@ -142,8 +142,8 @@ Execution halted
 ##[error]Process completed with exit code 1.
 ```
 
-
-## Example 1: Running Bayesian Aldrich-Mckelvey Scaling on the French module of the 2009 European Election Study (EES)
+## Tutorial
+#### Example 1: Running Bayesian Aldrich-Mckelvey Scaling on the French module of the 2009 European Election Study (EES)
 ```r
 library(asmcjr)
 library(ggplot2)
@@ -178,7 +178,7 @@ print(example_result_graph)
 </p>
 
 
-## Example 2: Running W-NOMINATE Scaling on Taiwan Legislative Roll Calls 
+#### Example 2: Running W-NOMINATE Scaling on Taiwan Legislative Roll Calls 
 ```r
 library(wnominate)
 library(tidyverse)
