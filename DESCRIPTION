@@ -10,7 +10,8 @@ Authors@R: c(person("Dave", "Armstrong", role=c("aut", "cre"), email="dave@quant
              person("Howard", "Rosenthal", role="ctb"))
 Description: Supports the book - Analyzing Spatial Models of Choice and Judgment in R, CRC Press (2014). 
 Depends: R(>= 3.5.0)
-SystemRequirements: JAGS 4.x.y
+SystemRequirements: JAGS (http://mcmc-jags.sourceforge.net)
+Suggests: rjags
 NeedsCompilation: yes
 Imports:
     boot, 

@@ -1,19 +1,9 @@
 useDynLib(asmcjr, .registration=TRUE)
 exportPattern("^[[:alpha:]]+")
 import(ggplot2)
-import(rjags)
 import(boot)
 import(basicspace)
-
-import(MCMCpack)
-import(plyr)
-import(tibble)
-import(stats)
-import(utils)
-import(MASS)
-import(smacof)
-import(ellipse)
-import(coda)
+import(rjags)
 
 importFrom("MCMCpack", "procrustes")
 importFrom("plyr", "aaply")
@@ -28,6 +18,8 @@ importFrom("smacof", "smacofRect")
 importFrom("ellipse", "ellipse")
 importFrom("coda", "as.mcmc.list", "geweke.diag", "nchain", "nvar", 
            "varnames", "chanames", "niter", "mcpar", "mcmc")
+
+
 S3method(plot, aldmck_ci)
 S3method(plot, mlsmu6)
 S3method(plot, bayesunfold)
