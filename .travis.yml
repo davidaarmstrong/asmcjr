@@ -2,7 +2,7 @@
 
 language: R
 cache: packages
-warnings_are_errors: false
+warnings_are_errors: true
 
 sudo: true
 before_install:
