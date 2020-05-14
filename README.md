@@ -21,7 +21,7 @@ library(asmcjr)
 ```
 
 ## Potential Installation Errors
-If you have received those messages from macOS or Window, your device has not installed JAGS. Make sure you have installed [JAGS-4.x.y.exe (for any x >=0, y>=0)](http://www.sourceforge.net/projects/mcmc-jags/files). The __asmcjr__ has a dependency on __rjags__ package which is just an interface to the JAGS library, and you need to install it to your device in advance.
+If you have received those messages below from macOS or Windows, your device has not installed __JAGS__. Make sure you have installed [JAGS-4.x.y.exe (for any x >=0, y>=0)](http://www.sourceforge.net/projects/mcmc-jags/files) in advance. The __asmcjr__ has a dependency on __rjags__ package which is just an interface to the JAGS library, and you need to install to make it run on your device.
 
 #### macOS (R: devel)
 ```
