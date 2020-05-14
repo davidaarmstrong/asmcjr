@@ -1,4 +1,3 @@
-
 # asmcjr <img src="https://quantoid.net/files/images/booksticker.png" width="140" align="right" /> <br /> 
 
 [![Build Status](https://travis-ci.com/yl17124/asmcjr.svg?branch=master)](https://travis-ci.com/yl17124/asmcjr)
@@ -11,7 +10,7 @@ You can install using the `install_github()` function from the `devtools` packag
 
 For Mac users, you need to  make sure you have already installed latest [GNU Fortran(gfortran 8.2)](https://github.com/fxcoudert/gfortran-for-macOS/releases) and [Xcode Developer Tools](https://developer.apple.com/support/xcode/). In order to use __rjags__ for the Bayesian framework analysis, you also need to install [JAGS](https://sourceforge.net/projects/mcmc-jags/files/JAGS/) in advance. Please make sure you have installed [Clang (clang-8.0.0.pkg)](https://cran.r-project.org/bin/macosx/tools/) if you have not updated R to 4.0.0 version. Therefore to install __asmcjr__, the __devtools__ package must also be installed in R beforehand. 
 
- <br />
+<br />
  
 ## Installation 
 ```r
@@ -22,7 +21,7 @@ devtools::install_github("yl17124/asmcjr")
 library(asmcjr)
 ```
 
- <br />
+<br />
  
 ## Potential Installation Errors
 If you have received those messages below from macOS or Windows, your device has not installed __JAGS__. Make sure you have installed [JAGS-4.x.y.exe](http://www.sourceforge.net/projects/mcmc-jags/files) in advance. The __asmcjr__ has a dependency on __rjags__ package which is just an interface to the JAGS library, and you need to install to make it run on your device.
@@ -145,7 +144,8 @@ Calls: <Anonymous> ... build_package -> with_envvar -> force -> <Anonymous>
 Execution halted
 ##[error]Process completed with exit code 1.
 ```
- <br />
+
+<br />
 
 ## Example 1: Running Bayesian Aldrich-Mckelvey Scaling on the French module of the 2009 European Election Study (EES)
 
@@ -182,6 +182,7 @@ print(example_result_graph)
   <img width="500" height="500" src="https://github.com/yl17124/figures/blob/master/first_example_plot.png">
 </p>
 
+ <br />
 
 ## Example 2: Running W-NOMINATE Scaling on Taiwan Legislative Roll Calls 
 ```r
