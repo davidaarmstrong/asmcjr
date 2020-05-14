@@ -15,6 +15,11 @@ Please check you have already installed those softwares.
 - [x] [GNU Fortran(gfortran 8.2)](https://github.com/fxcoudert/gfortran-for-macOS/releases)
 - [x] [Xcode Developer Tools](https://developer.apple.com/support/xcode/) from App Store 
 - [x] [Clang (clang-8.0.0.pkg)](https://cran.r-project.org/bin/macosx/tools/) if you have not updated R to 4.0.0 version.
+```r
+install.packages("devtools", dependencies=TRUE)
+library(devtools)
+devtools::install_github("yl17124/asmcjr")
+```
 
 ##### for Windows user
 - [x] [JAGS](https://sourceforge.net/projects/mcmc-jags/files/JAGS/)
@@ -23,9 +28,7 @@ Please check you have already installed those softwares.
 ```r
 install.packages("devtools", dependencies=TRUE)
 library(devtools)
-
 devtools::install_github("yl17124/asmcjr")
-library(asmcjr)
 ```
 
 <br />
