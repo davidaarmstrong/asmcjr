@@ -71,9 +71,47 @@ Calls: <Anonymous> ... build_package -> with_envvar -> force -> <Anonymous>
 Execution halted
 ##[error]Process completed with exit code 1.
 ```
-### Mac latest (R: 4.0)
+
+### Window latest (R: 4.0)
 
 ```
+* checking for file 'D:\a\asmcjr\asmcjr/DESCRIPTION' ... OK
+
+* preparing 'asmcjr':
+
+* checking DESCRIPTION meta-information ... OK
+
+* cleaning src
+
+* installing the package to process help pages
+
+      -----------------------------------
+
+* installing *source* package 'asmcjr' ...
+
+** using staged installation
+
+** libs
+"c:/rtools40/mingw64/bin/"gcc  -I"C:/R/include" -DNDEBUG          -O2 -Wall  -std=gnu99 -mfpmath=sse -msse2 -mstackrealign -c lbfgs_bu3.c -o lbfgs_bu3.o
+
+"c:/rtools40/mingw64/bin/"gcc  -I"C:/R/include" -DNDEBUG          -O2 -Wall  -std=gnu99 -mfpmath=sse -msse2 -mstackrealign -c registerDynamicSymbol.c -o registerDynamicSymbol.o
+
+c:/rtools40/mingw64/bin/gcc -shared -s -static-libgcc -o asmcjr.dll tmp.def lbfgs_bu3.o registerDynamicSymbol.o -LC:/R/bin/x64 -lRlapack -LC:/R/bin/x64 -lRblas -lgfortran -lm -lquadmath -LC:/R/bin/x64 -lR
+
+installing to C:/Users/RUNNER~1/AppData/Local/Temp/Rtmpeqrx0a/Rinst15f096e2e18/00LOCK-asmcjr/00new/asmcjr/libs/x64
+
+** R
+
+** data
+
+*** moving datasets to lazyload DB
+
+** inst
+
+** byte-compile and prepare package for lazy loading
+
+##[error]Error: .onLoad failed in loadNamespace() for 'rjags', details:
+
   call: fun(libname, pkgname)
 
   error: Failed to locate any version of JAGS version 4
@@ -100,7 +138,6 @@ ERROR: package installation failed
 Calls: <Anonymous> ... build_package -> with_envvar -> force -> <Anonymous>
 Execution halted
 ##[error]Process completed with exit code 1.
-  Show testthat output
 ```
 
 
