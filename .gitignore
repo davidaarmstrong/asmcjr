@@ -4,3 +4,4 @@ data/.Rapp.history
 src/asmcjr.so
 .DS_store
 packrat/lib*/
+.DS_Store
