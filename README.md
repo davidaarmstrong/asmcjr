@@ -32,9 +32,6 @@ devtools::install_github("yl17124/asmcjr")
 <br />
 
 
-<p>Some Markdown text with <span style="color:blue">some <em>blue</em> text</span>.</p>
-
-
 ## Potential Installation Errors
 If you have received those messages below from macOS or Windows, your device has not installed __JAGS__. Make sure you have installed [JAGS-4.x.y.exe](http://www.sourceforge.net/projects/mcmc-jags/files) in advance. The __asmcjr__ has a dependency on __rjags__ package which is just an interface to the JAGS library, and you need to install to make it run on your device.
 
