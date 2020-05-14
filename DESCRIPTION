@@ -21,6 +21,7 @@ Imports:
     MASS,
     MCMCpack,
     plyr,
+    rjags,
     stats,
     smacof, 
     tibble,
