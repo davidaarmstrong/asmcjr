@@ -19,7 +19,35 @@ library(devtools)
 devtools::install_github("yl17124/asmcjr")
 library(asmcjr)
 ```
+```
+  call: fun(libname, pkgname)
 
+  error: Failed to locate any version of JAGS version 4
+
+
+
+The rjags package is just an interface to the JAGS library
+
+Make sure you have installed JAGS-4.x.y.exe (for any x >=0, y>=0) from
+
+http://www.sourceforge.net/projects/mcmc-jags/files
+
+Execution halted
+
+ERROR: lazy loading failed for package 'asmcjr'
+
+* removing 'C:/Users/RUNNER~1/AppData/Local/Temp/Rtmpeqrx0a/Rinst15f096e2e18/asmcjr'
+
+      -----------------------------------
+
+ERROR: package installation failed
+
+##[error]Error in proc$get_built_file() : Build process failed
+Calls: <Anonymous> ... build_package -> with_envvar -> force -> <Anonymous>
+Execution halted
+##[error]Process completed with exit code 1.
+  Show testthat output
+```
 
 
 ## Example 1: Running Bayesian Aldrich-Mckelvey Scaling on the French module of the 2009 European Election Study (EES)
