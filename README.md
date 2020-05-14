@@ -193,7 +193,7 @@ print(example_result_graph)
 
  <br />
 
-## Example 2: Running W-NOMINATE Scaling on Taiwan Legislative Roll Calls 
+## Example 2: Running W-NOMINATE Scaling on 7th Taiwan Legislative Roll Calls 
 ```r
 library(wnominate)
 library(tidyverse)
