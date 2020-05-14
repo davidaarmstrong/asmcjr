@@ -9,7 +9,7 @@ This package supports the book ["Analyzing Spatial Models of Choice and Judgment
 
 You can install using the `install_github()` function from the `devtools` package.  The package requires compilation, so Windows users will have to install [Rtools](https://cran.r-project.org/bin/windows/Rtools/) first.  
 
-For Mac users, you need to  make sure you have already installed latest [GNU Fortran(gfortran 8.2)](https://github.com/fxcoudert/gfortran-for-macOS/releases) and [Xcode Developer Tools](https://developer.apple.com/support/xcode/). In order to use __rjags__ for the Bayesian framework analysis, you need to install [JAGS](https://sourceforge.net/projects/mcmc-jags/files/JAGS/) in advance. Please make sure you have installed [Clang (clang-8.0.0.pkg)](https://cran.r-project.org/bin/macosx/tools/) if you have not updated R to 4.0.0 version. Therefore to install __asmcjr__, the __devtools__ package must also be installed in R beforehand. 
+For Mac users, you need to  make sure you have already installed latest [GNU Fortran(gfortran 8.2)](https://github.com/fxcoudert/gfortran-for-macOS/releases) and [Xcode Developer Tools](https://developer.apple.com/support/xcode/). In order to use __rjags__ for the Bayesian framework analysis, you also need to install [JAGS](https://sourceforge.net/projects/mcmc-jags/files/JAGS/) in advance. Please make sure you have installed [Clang (clang-8.0.0.pkg)](https://cran.r-project.org/bin/macosx/tools/) if you have not updated R to 4.0.0 version. Therefore to install __asmcjr__, the __devtools__ package must also be installed in R beforehand. 
 
 ## Installation 
 ```r
@@ -20,7 +20,10 @@ devtools::install_github("yl17124/asmcjr")
 library(asmcjr)
 ```
 
-### Mac latest (R: devel)
+## Potential Installation Errors
+If you have received those messages from macOS or Window, your device has not installed JAGS. Make sure you have installed [JAGS-4.x.y.exe (for any x >=0, y>=0)](http://www.sourceforge.net/projects/mcmc-jags/files). The __asmcjr__ has a dependency on __rjags__ package which is just an interface to the JAGS library, and you need to install it to your device in advance.
+
+#### macOS (R: devel)
 ```
 * checking for file ‘.../DESCRIPTION’ ... OK
 * preparing ‘asmcjr’:
@@ -34,7 +37,7 @@ ERROR: dependency ‘rjags’ is not available for package ‘asmcjr’
 ERROR: package installation failed
 ```
 
-### Mac latest (R: 4.0)
+### macOS(R: 4.0)
 ```
 * checking for file ‘.../DESCRIPTION’ ... OK
 * preparing ‘asmcjr’:
