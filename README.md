@@ -143,6 +143,7 @@ Execution halted
 ```
 
 ## Tutorial
+
 #### Example 1: Running Bayesian Aldrich-Mckelvey Scaling on the French module of the 2009 European Election Study (EES)
 ```r
 library(asmcjr)
