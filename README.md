@@ -19,6 +19,60 @@ library(devtools)
 devtools::install_github("yl17124/asmcjr")
 library(asmcjr)
 ```
+
+### Mac latest (R: devel)
+```
+* checking for file ‘.../DESCRIPTION’ ... OK
+* preparing ‘asmcjr’:
+* checking DESCRIPTION meta-information ... OK
+* cleaning src
+* installing the package to process help pages
+      -----------------------------------
+ERROR: dependency ‘rjags’ is not available for package ‘asmcjr’
+* removing ‘/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpJbGPGn/Rinst605c2279a152/asmcjr’
+      -----------------------------------
+ERROR: package installation failed
+```
+
+### Mac latest (R: 4.0)
+```
+* checking for file ‘.../DESCRIPTION’ ... OK
+* preparing ‘asmcjr’:
+* checking DESCRIPTION meta-information ... OK
+* cleaning src
+* installing the package to process help pages
+      -----------------------------------
+* installing *source* package ‘asmcjr’ ...
+** using staged installation
+** libs
+clang -mmacosx-version-min=10.13 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O2  -c lbfgs_bu3.c -o lbfgs_bu3.o
+clang -mmacosx-version-min=10.13 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O2  -c registerDynamicSymbol.c -o registerDynamicSymbol.o
+clang -mmacosx-version-min=10.13 -dynamiclib -Wl,-headerpad_max_install_names -undefined dynamic_lookup -single_module -multiply_defined suppress -L/Library/Frameworks/R.framework/Resources/lib -L/usr/local/lib -o asmcjr.so lbfgs_bu3.o registerDynamicSymbol.o -L/Library/Frameworks/R.framework/Resources/lib -lRlapack -L/Library/Frameworks/R.framework/Resources/lib -lRblas -L/usr/local/gfortran/lib/gcc/x86_64-apple-darwin18/8.2.0 -L/usr/local/gfortran/lib -lgfortran -lquadmath -lm -F/Library/Frameworks/R.framework/.. -framework R -Wl,-framework -Wl,CoreFoundation
+ld: warning: directory not found for option '-L/usr/local/gfortran/lib/gcc/x86_64-apple-darwin18/8.2.0'
+installing to /private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/Rtmp0nXqch/Rinstc9785a00e5/00LOCK-asmcjr/00new/asmcjr/libs
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** byte-compile and prepare package for lazy loading
+##[error]Error: .onLoad failed in loadNamespace() for 'rjags', details:
+  call: dyn.load(file, DLLpath = DLLpath, ...)
+  error: unable to load shared object '/Users/runner/runners/2.169.0/work/_temp/Library/rjags/libs/rjags.so':
+  dlopen(/Users/runner/runners/2.169.0/work/_temp/Library/rjags/libs/rjags.so, 10): Library not loaded: /usr/local/lib/libjags.4.dylib
+  Referenced from: /Users/runner/runners/2.169.0/work/_temp/Library/rjags/libs/rjags.so
+  Reason: image not found
+Execution halted
+ERROR: lazy loading failed for package ‘asmcjr’
+* removing ‘/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/Rtmp0nXqch/Rinstc9785a00e5/asmcjr’
+      -----------------------------------
+ERROR: package installation failed
+##[error]Error in proc$get_built_file() : Build process failed
+Calls: <Anonymous> ... build_package -> with_envvar -> force -> <Anonymous>
+Execution halted
+##[error]Process completed with exit code 1.
+```
+### Mac latest (R: 4.0)
+
 ```
   call: fun(libname, pkgname)
 
