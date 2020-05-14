@@ -1,12 +1,13 @@
 # asmcjr <img src="https://quantoid.net/files/images/booksticker.png" width="140" align="right" /> <br /> 
 
 [![Build Status](https://travis-ci.com/yl17124/asmcjr.svg?branch=master)](https://travis-ci.com/yl17124/asmcjr)
+![R-CMD-check](https://github.com/yl17124/asmcjr/workflows/R-CMD-check/badge.svg?branch=master&event=check_run)
 
 This package supports the book ["Analyzing Spatial Models of Choice and Judgment with R"](https://www.crcpress.com/Analyzing-Spatial-Models-of-Choice-and-Judgment-with-R/Armstrong-II-Bakker-Carroll-Hare-Poole-Rosenthal/p/book/9781466517158).  In its second edition, much of the R code has been streamlined. This package contains all of the data and functions to replicate the analyses in the book. 
 
 ## Installation 
 
-You can install using the `install_github()` function from the `devtools` package.  The package requires compilation, so Windows users will have to install [Rtools](https://cran.r-project.org/bin/windows/Rtools/) first. For Mac users, you need to  make sure you have already installed latest [GNU Fortran(gfortran 8.2)](https://github.com/fxcoudert/gfortran-for-macOS/releases) and [Xcode Developer Tools](https://developer.apple.com/support/xcode/). Please also make sure you have installed [Clang (clang-8.0.0.pkg)](https://cran.r-project.org/bin/macosx/tools/) if you have not updated R to 4.0.0 version. In order to use __rjags package__ for the Bayesian framework analysis with __asmcjr__, both users  need to install [JAGS](https://sourceforge.net/projects/mcmc-jags/files/JAGS/) in advance. Therefore to install __asmcjr__ in your R environment, the __devtools__ package must also be installed and loaded in R beforehand. 
+You can install using the `install_github()` function from the `devtools` package.  The package requires compilation, so Windows users will have to install [Rtools](https://cran.r-project.org/bin/windows/Rtools/) first. For Mac users, you need to  make sure you have already installed latest [GNU Fortran(gfortran 8.2)](https://github.com/fxcoudert/gfortran-for-macOS/releases) and [Xcode Developer Tools](https://developer.apple.com/support/xcode/). Please also make sure you have installed [Clang (clang-8.0.0.pkg)](https://cran.r-project.org/bin/macosx/tools/) if you have not updated R to 4.0.0 version. In order to use __rjags__ package for the Bayesian framework analysis with __asmcjr__, both users  need to install [JAGS](https://sourceforge.net/projects/mcmc-jags/files/JAGS/) in advance. Therefore to install __asmcjr__ in your R environment, the __devtools__ package must also be installed and loaded in R beforehand. 
 
 
 #### For macOS:
@@ -156,7 +157,7 @@ Execution halted
 
 <br />
 
-## Example 1: Running Bayesian Aldrich-Mckelvey Scaling on the French module of the 2009 European Election Study (EES)
+## Example 1: Running Bayesian Aldrich-Mckelvey Scaling on the French module of the 2009 European Election Study
 
 ```r
 library(asmcjr)
@@ -193,7 +194,7 @@ print(example_result_graph)
 
  <br />
 
-## Example 2: Running W-NOMINATE Scaling on Taiwan Legislative Roll Calls 
+## Example 2: Running W-NOMINATE Scaling on 7th Taiwan Legislative Roll Calls 
 ```r
 library(wnominate)
 library(tidyverse)
