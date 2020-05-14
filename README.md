@@ -13,7 +13,7 @@ You can install using the `install_github()` function from the `devtools` packag
 - [x] [JAGS](https://sourceforge.net/projects/mcmc-jags/files/JAGS/)
 - [x] [GNU Fortran(gfortran 8.2)](https://github.com/fxcoudert/gfortran-for-macOS/releases)
 - [x] [Xcode Developer Tools 11](https://developer.apple.com/support/xcode/)
-- [x] [Clang (clang-8.0.0.pkg)](https://cran.r-project.org/bin/macosx/tools/) if you have not updated R to 4.0.0 version.
+- [x] [Clang (clang-8.0.0)](https://cran.r-project.org/bin/macosx/tools/) if you have not updated R to 4.0.0 version.
 ```r
 install.packages("devtools", dependencies=TRUE)
 library(devtools)
