@@ -89,8 +89,6 @@ pscl_df <- rollcall(legis_7th_Taiwan[3:ncol(legis_7th_Taiwan)],
                     desc="The 7th Taiwan Legislative Roll Call")
 
 summary(pscl_df, verbose=FALSE)  
-library(wnominate)
-
 ```
 
 <p align="left">
@@ -98,10 +96,14 @@ library(wnominate)
 </p>
 
 
+
 ```r
 library(ggpubr)
 library(ggplot2)
-
+library(wnominate)
+result <- wnominate(pscl_df, ubeta = 15, uweights = 0.5,
+                    dims = 2, minvotes = 20 , lop = 0.025, trials = 3, polarity = c("邱議瑩", "丁守中"), verbose = FALSE)
+                    
 example_result_graph2 <- rownames_to_column(result$legislators, "legis.names") %>%
   left_join(legis_7th_Taiwan[c("legis.names", "party")], by = "legis.names") %>%
   mutate(coord2D.WEIGHT = coord2D*(result$weights[2])/(result$weights[1])) %>%
