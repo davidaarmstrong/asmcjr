@@ -37,7 +37,6 @@ devtools::install_github("yl17124/asmcjr")
 
 ```r
 library(asmcjr)
-library(ggplot2)
 data(franceEES2009)
 head(franceEES2009, n = 10)
 ```
@@ -57,6 +56,7 @@ str(example_result_france)
 </p>
 
 ```r
+library(ggplot2)
 example_result_graph <- ggplot.resphist(example_result_france, addStim=TRUE, weights="negative", xlab = "Left-Right") +
     theme(legend.position="bottom", aspect.ratio=1) +
     guides(shape = guide_legend(override.aes = list(size = 4),nrow=3)) +
@@ -72,10 +72,7 @@ print(example_result_graph)
 
 ## Example 2: Running W-NOMINATE Scaling on 7th Taiwan Legislative Roll Calls 
 ```r
-library(wnominate)
-library(tidyverse)
-library(pscl)
-library(ggpubr)
+library(readr)
 legis_7th_Taiwan <- read_csv("https://raw.githubusercontent.com/yl17124/figures/master/legis_7th_Taiwan.csv")
 head(legis_7th_Taiwan, n =10)
 ```
@@ -85,12 +82,13 @@ head(legis_7th_Taiwan, n =10)
 </p>
 
 ```r
+library(pscl)
 pscl_df <- rollcall(legis_7th_Taiwan[3:ncol(legis_7th_Taiwan)],
                     yea = 1 , nay = 2, notInLegis = c(3,4,5), legis.names = legis_7th_Taiwan$legis.names,
                     vote.names = colnames(legis_7th_Taiwan[3:ncol(legis_7th_Taiwan)]),
                     desc="The 7th Taiwan Legislative Roll Call")
 
-summary(pscl_df, verbose=FALSE)      
+summary(pscl_df, verbose=FALSE)  
 ```
 
 <p align="left">
@@ -98,7 +96,14 @@ summary(pscl_df, verbose=FALSE)
 </p>
 
 
+
 ```r
+library(ggpubr)
+library(ggplot2)
+library(wnominate)
+result <- wnominate(pscl_df, ubeta = 15, uweights = 0.5,
+                    dims = 2, minvotes = 20 , lop = 0.025, trials = 3, polarity = c("邱議瑩", "丁守中"), verbose = FALSE)
+                    
 example_result_graph2 <- rownames_to_column(result$legislators, "legis.names") %>%
   left_join(legis_7th_Taiwan[c("legis.names", "party")], by = "legis.names") %>%
   mutate(coord2D.WEIGHT = coord2D*(result$weights[2])/(result$weights[1])) %>%
