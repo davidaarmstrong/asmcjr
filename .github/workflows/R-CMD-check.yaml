@@ -78,6 +78,8 @@ jobs:
         run: |
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
+          sudo apt-get install jags
+          sudo apt-get install r-cran-rjags
         shell: Rscript {0}
 
       - name: Session info
