@@ -37,7 +37,6 @@ devtools::install_github("yl17124/asmcjr")
 
 ```r
 library(asmcjr)
-library(ggplot2)
 data(franceEES2009)
 head(franceEES2009, n = 10)
 ```
@@ -57,6 +56,7 @@ str(example_result_france)
 </p>
 
 ```r
+library(ggplot2)
 example_result_graph <- ggplot.resphist(example_result_france, addStim=TRUE, weights="negative", xlab = "Left-Right") +
     theme(legend.position="bottom", aspect.ratio=1) +
     guides(shape = guide_legend(override.aes = list(size = 4),nrow=3)) +
@@ -73,9 +73,7 @@ print(example_result_graph)
 ## Example 2: Running W-NOMINATE Scaling on 7th Taiwan Legislative Roll Calls 
 ```r
 library(wnominate)
-library(tidyverse)
 library(pscl)
-library(ggpubr)
 legis_7th_Taiwan <- read_csv("https://raw.githubusercontent.com/yl17124/figures/master/legis_7th_Taiwan.csv")
 head(legis_7th_Taiwan, n =10)
 ```
@@ -99,6 +97,9 @@ summary(pscl_df, verbose=FALSE)
 
 
 ```r
+library(tidyverse)
+library(ggpubr)
+
 example_result_graph2 <- rownames_to_column(result$legislators, "legis.names") %>%
   left_join(legis_7th_Taiwan[c("legis.names", "party")], by = "legis.names") %>%
   mutate(coord2D.WEIGHT = coord2D*(result$weights[2])/(result$weights[1])) %>%
