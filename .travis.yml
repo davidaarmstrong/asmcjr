@@ -14,16 +14,6 @@ before_install:
   - sudo apt-get install jags
   - sudo apt-get install r-cran-rjags
 
-matrix:
-  include:
-  - r: release
-    script:
-      - R CMD check *tar.gz --as-cran 
-  - r: release
-    os: osx
-    script:
-      - R CMD check *tar.gz --as-cran
-      
 
 # for codecov
 r_packages:
