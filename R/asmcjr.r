@@ -3,7 +3,7 @@ gray.palette <- function(n, lower=.3, upper=.7){
     s <- seq(lower, upper, length=n)
     rgb(matrix(rep(s, each=3), ncol=3, byrow=T))
 }
-ggplot.resphist <- function(result, groupVar = NULL, facetVar=NULL, addStim = FALSE,
+plot_resphist <- function(result, groupVar = NULL, facetVar=NULL, addStim = FALSE,
     scaleDensity=TRUE, weights = c("all", "positive", "negative"),
     xlab = NULL, main = NULL, ylab = NULL, whichRes = NULL,
     dim = NULL, ...){
@@ -230,6 +230,19 @@ print.aldmck_ci <- function(x, ..., digits=3){
 
 BAM <- function(data, polarity, zhatSave=TRUE, abSave=FALSE, resp.idealpts=FALSE, n.sample = 2500, ...){
 if(requireNamespace("rjags")){
+  jmod <- get("jags.model", asNamespace("rjags"))
+  jcs <- get("coda.samples", asNamespace("rjags"))
+  jsum <- get("summary.mcarray", asNamespace("rjags"))
+  csum <- get("summary.mcmc.list", asNamespace("coda"))
+  sumsamp <- function(x){
+    if(!is.null(dim(x))){
+      jsum(x)  
+    }
+    else{
+      csum(x)
+    }
+  }
+  
   if(!("bamPrep" %in% class(data)))stop("Data should be output from the bamPrep function")
   args <- as.list(match.call(expand.dots = FALSE)$`...`)
   if(!("n.chains" %in% names(args)))args$n.chains = 2
@@ -249,13 +262,13 @@ if(requireNamespace("rjags")){
   upper <- rep(100, ncol(data$stims))
   upper[polarity] <- 0
   args$data <- list('z'=data$stims, q = ncol(data$stims), N=nrow(data$stims), lower=lower, upper=upper)
-  mod.sim <- do.call("rjags::jags.model", args)
+  mod.sim <- do.call("jmod", args)
   
   if(zhatSave & !abSave){
-      samples <- rjags::coda.samples(mod.sim,'zhat',  n.sample,  thin=1)
+      samples <- jcs(mod.sim,'zhat',  n.sample,  thin=1)
       zhat <- samples
       for(i in 1:length(zhat)){colnames(zhat[[i]]) <- colnames(data$stims)}
-      zhat.sum <- summary.mcarray(zhat)
+      zhat.sum <- sumsamp(zhat)
       zhat.ci <- data.frame("stimulus" = factor(colnames(data$stims), levels=colnames(data$stims)[order(zhat.sum$statistics)]),
                             "idealpt" = zhat.sum$statistics[,1],
                             "sd" = zhat.sum$statistics[,2],
@@ -266,16 +279,16 @@ if(requireNamespace("rjags")){
       res.list = list(zhat=zhat, zhat.ci = zhat.ci)
       }
   if(abSave & !zhatSave){
-      samples <- rjags::coda.samples(mod.sim, c('a', 'b'),  n.sample,  thin=1)
+      samples <- jcs(mod.sim, c('a', 'b'),  n.sample,  thin=1)
       a <- samples[,grep("^a", colnames(samples[[1]]))]
       b <- samples[,grep("&b", colnames(samples[[1]]))]
       res.list = list(a=a, b=b)
   }
   if(abSave & zhatSave){
-      samples <- rjags::coda.samples(mod.sim, c('zhat', 'a', 'b'),  n.sample,  thin=1)
+      samples <- jcs(mod.sim, c('zhat', 'a', 'b'),  n.sample,  thin=1)
       zhat <- samples[,grep("^z", colnames(samples[[1]]))]
       for(i in 1:length(zhat)){colnames(zhat[[i]]) <- colnames(data$stims)}
-      zhat.sum <- summary.mcarray(zhat)
+      zhat.sum <- sumsamp(zhat)
       zhat.ci <- data.frame("stimulus" = factor(colnames(data$stims), levels=colnames(data$stims)[order(zhat.sum$statistics)]),
                             "idealpt" = zhat.sum$statistics[,1],
                             "sd"= zhat.sum$statistics[,2],
@@ -342,7 +355,7 @@ aldmckSE <- function(obj, data, ...){
     sigmaj
 }
 
-ggplot.blackbox <- function(result, dims, whichRes=NULL, groupVar=NULL, issueVector=NULL,
+plot_blackbox <- function(result, dims, whichRes=NULL, groupVar=NULL, issueVector=NULL,
     data=NULL, missing=NULL, rug=FALSE, xlab=NULL, main = NULL, ylab=NULL, nudgeX=NULL, nudgeY=NULL,...){
     wres <- ifelse(is.null(whichRes), max(dims), whichRes)
     dimdat <- result$individuals[[wres]][,dims]
@@ -423,6 +436,18 @@ doubleCenterRect <- function(x){
 
 BMDS <- function(data, posStims, negStims, z, fname=NULL, n.sample = 2500, ...){
   if(requireNamespace("rjags")){  
+  jmod <- get("jags.model", asNamespace("rjags"))
+  jcs <- get("coda.samples", asNamespace("rjags"))
+  jsum <- get("summary.mcarray", asNamespace("rjags"))
+  csum <- get("summary.mcmc.list", asNamespace("coda"))
+  sumsamp <- function(x){
+    if(!is.null(dim(x))){
+      jsum(x)  
+    }
+    else{
+      csum(x)
+    }
+  }
   args <- as.list(match.call(expand.dots = FALSE)$`...`)
     if(!("n.chains" %in% names(args)))args$n.chains = 2
     if(!("n.adapt" %in% names(args)))args$n.adapt = 10000
@@ -466,10 +491,10 @@ BMDS <- function(data, posStims, negStims, z, fname=NULL, n.sample = 2500, ...){
     data <- as.matrix(data)
     args$file <- fname
     args$data <- list('N'=nrow(data), dstar = as.matrix(max(data)-data), z=z)
-    mod.sim <- do.call("rjags::jags.model", args)
-    samples <- rjags::coda.samples(mod.sim,'z',  n.sample, thin=1)
+    mod.sim <- do.call("jmod", args)
+    samples <- jcs(mod.sim,'z',  n.sample, thin=1)
     zhat <- samples
-    zhat.sum <- summary.mcarray(zhat)
+    zhat.sum <- sumsamp(zhat)
     zhat.ci <- data.frame("stimulus" = c(outer(colnames(data), c(" D1", " D2"), paste0)),
                               "idealpt" = zhat.sum$statistics[,1],
                               "sd" = zhat.sum$statistics[,2],
