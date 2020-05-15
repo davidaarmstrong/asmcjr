@@ -12,7 +12,7 @@ Authors@R: c(person("Dave", "Armstrong", role=c("aut", "cre"), email="dave@quant
 Description: Supports the book - Analyzing Spatial Models of Choice and Judgment in R, CRC Press (2014). 
 Depends: R(>= 3.5.0)
 Imports: ggplot2, basicspace, boot, MASS, stats, grDevices, MCMCpack, plyr, smacof, tibble, ellipse, utils, coda, graphics
-Suggests: rjags
+Suggests: rjags covr
 License: GPL (>=2)
 Encoding: UTF-8
 LazyData: true
