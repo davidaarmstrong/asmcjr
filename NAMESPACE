@@ -1,7 +1,6 @@
 useDynLib(asmcjr, .registration=TRUE)
 exportPattern("^[[:alpha:]]+")
 import(ggplot2)
-import(rjags)
 import(boot)
 import(basicspace)
 importFrom("MCMCpack", "procrustes")
