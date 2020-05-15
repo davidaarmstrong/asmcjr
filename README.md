@@ -36,7 +36,6 @@ devtools::install_github("yl17124/asmcjr")
 ## Example 1: Running Bayesian Aldrich-Mckelvey Scaling on the French module of the 2009 European Election Study
 
 ```r
-library(asmcjr)
 data(franceEES2009)
 head(franceEES2009, n = 10)
 ```
@@ -46,6 +45,7 @@ head(franceEES2009, n = 10)
 </p>
 
 ```r
+library(asmcjr)
 example_result_france <- aldmck(franceEES2009, respondent=1, 
                                 polarity=2,missing=c(77,88,89), verbose=FALSE)
                                 
