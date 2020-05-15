@@ -99,6 +99,7 @@ summary(pscl_df, verbose=FALSE)
 ```r
 library(tidyverse)
 library(ggpubr)
+library(ggplot2)
 
 example_result_graph2 <- rownames_to_column(result$legislators, "legis.names") %>%
   left_join(legis_7th_Taiwan[c("legis.names", "party")], by = "legis.names") %>%
