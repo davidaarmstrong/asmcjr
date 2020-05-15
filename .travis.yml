@@ -18,12 +18,10 @@ matrix:
   include:
   - r: release
     script:
-      - R CMD build . --compact-vignettes=gs+qpdf
       - R CMD check *tar.gz --as-cran 
   - r: release
     os: osx
     script:
-      - R CMD build . --compact-vignettes=gs+qpdf
       - R CMD check *tar.gz --as-cran
       
 
