@@ -1,6 +1,11 @@
 # R for travis: see documentation at https://jef.works/blog/2019/02/17/automate-testing-of-your-R-package/
 
 language: R
+r:
+  - oldrel
+  - release
+  - devel
+  
 cache: packages
 warnings_are_errors: true
 
