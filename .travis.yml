@@ -14,6 +14,24 @@ before_install:
   - sudo apt-get install jags
   - sudo apt-get install r-cran-rjags
 
+matrix:
+  include:
+  - r: release
+    script:
+      - R CMD build . --compact-vignettes=gs+qpdf
+      - R CMD check *tar.gz --as-cran 
+  - r: release
+    os: osx
+    osx_image: xcode11
+    before_install:
+      - sudo tlmgr install framed titling
+      - sudo apt-get install jags
+      - sudo apt-get install r-cran-rjags
+    script:
+      - R CMD build . --compact-vignettes=gs+qpdf
+      - R CMD check *tar.gz --as-cran
+      
+
 # for codecov
 r_packages:
   - covr
