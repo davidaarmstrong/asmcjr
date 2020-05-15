@@ -73,8 +73,6 @@ jobs:
           Rscript -e "remotes::install_github('r-hub/sysreqs')"
           sysreqs=$(Rscript -e "cat(sysreqs::sysreq_commands('DESCRIPTION'))")
           sudo -s eval "$sysreqs"
-          sudo apt-get install jags
-          sudo apt-get install r-cran-rjags
       - name: Install dependencies
         run: |
           remotes::install_deps(dependencies = TRUE)
