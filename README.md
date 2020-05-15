@@ -72,8 +72,7 @@ print(example_result_graph)
 
 ## Example 2: Running W-NOMINATE Scaling on 7th Taiwan Legislative Roll Calls 
 ```r
-library(wnominate)
-library(pscl)
+library(readr)
 legis_7th_Taiwan <- read_csv("https://raw.githubusercontent.com/yl17124/figures/master/legis_7th_Taiwan.csv")
 head(legis_7th_Taiwan, n =10)
 ```
@@ -83,12 +82,15 @@ head(legis_7th_Taiwan, n =10)
 </p>
 
 ```r
+library(pscl)
 pscl_df <- rollcall(legis_7th_Taiwan[3:ncol(legis_7th_Taiwan)],
                     yea = 1 , nay = 2, notInLegis = c(3,4,5), legis.names = legis_7th_Taiwan$legis.names,
                     vote.names = colnames(legis_7th_Taiwan[3:ncol(legis_7th_Taiwan)]),
                     desc="The 7th Taiwan Legislative Roll Call")
 
-summary(pscl_df, verbose=FALSE)      
+summary(pscl_df, verbose=FALSE)  
+library(wnominate)
+
 ```
 
 <p align="left">
@@ -97,7 +99,6 @@ summary(pscl_df, verbose=FALSE)
 
 
 ```r
-library(tidyverse)
 library(ggpubr)
 library(ggplot2)
 
