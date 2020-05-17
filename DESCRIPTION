@@ -7,30 +7,13 @@ Authors@R: c(person("Dave", "Armstrong", role=c("aut", "cre"), email="dave@quant
              person("Chris", "Hare", role="aut"), 
              person("Ryan", "Bakker", role="aut"), 
              person("Keith", "Poole", role="ctb"), 
-             person("Howard", "Rosenthal", role="ctb"))
+             person("Howard", "Rosenthal", role="ctb"), 
+             person("David", "Liao", role="ctb"))
 Description: Supports the book - Analyzing Spatial Models of Choice and Judgment in R, CRC Press (2014). 
 Depends: R(>= 3.5.0)
-SystemRequirements: JAGS (http://mcmc-jags.sourceforge.net)
-NeedsCompilation: yes
-Imports:
-    boot, 
-    basicspace,
-    coda,
-    ellipse,
-    ggplot2,
-    graphics,
-    grDevices,
-    MASS,
-    MCMCpack,
-    plyr,
-    rjags,
-    stats,
-    smacof, 
-    tibble,
-    utils
+Imports: ggplot2, basicspace, boot, MASS, stats, grDevices, MCMCpack, plyr, smacof, tibble, ellipse, utils, coda, graphics
+Suggests: rjags, covr
 License: GPL (>=2)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.0
-Suggests: 
-    covr
+
