@@ -1,2 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^packrat/
+^\.Rprofile$
+^\.github$
+^\.travis\.yml$
+^codecov\.yml$

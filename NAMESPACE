@@ -3,6 +3,7 @@ exportPattern("^[[:alpha:]]+")
 import(ggplot2)
 import(boot)
 import(basicspace)
+
 importFrom("MCMCpack", "procrustes")
 importFrom("plyr", "aaply")
 importFrom("tibble", "as_tibble", "add_column")
@@ -16,6 +17,8 @@ importFrom("smacof", "smacofRect")
 importFrom("ellipse", "ellipse")
 importFrom("coda", "as.mcmc.list", "geweke.diag", "nchain", "nvar", 
            "varnames", "chanames", "niter", "mcpar", "mcmc")
+
+
 S3method(plot, aldmck_ci)
 S3method(plot, mlsmu6)
 S3method(plot, bayesunfold)
