@@ -3,7 +3,6 @@ exportPattern("^[[:alpha:]]+")
 import(ggplot2)
 import(boot)
 import(basicspace)
-import(rjags)
 
 importFrom("MCMCpack", "procrustes")
 importFrom("plyr", "aaply")
