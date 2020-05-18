@@ -18,7 +18,7 @@ You can install using the `install_github()` function from the `devtools` packag
 ```r
 install.packages("devtools", dependencies=TRUE)
 library(devtools)
-devtools::install_github("yl17124/asmcjr")
+devtools::install_github("davidaarmstrong/asmcjr")
 ```
 
 #### For Windows:
@@ -28,7 +28,7 @@ devtools::install_github("yl17124/asmcjr")
 ```r
 install.packages("devtools", dependencies=TRUE)
 library(devtools)
-devtools::install_github("yl17124/asmcjr")
+devtools::install_github("davidaarmstrong/asmcjr")
 ```
 
 <br />
