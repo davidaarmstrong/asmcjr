@@ -12,8 +12,8 @@ warnings_are_errors: true
 sudo: true
 before_install:
   - sudo apt-get install jags
-  - sudo add-apt-repository ppa:marutter/rrutter -y
-  - sudo apt-get update
+  - sudo add-apt-repository ppa:marutter/rrutter -y # update system environment  
+  - sudo apt-get update                             # with unsupported packages from ppa:marutter/rrutter
   - sudo apt-get install r-cran-rjags  
 
 # for codecov
