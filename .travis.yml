@@ -11,9 +11,10 @@ warnings_are_errors: true
 
 sudo: true
 before_install:
-  - sudo apt-get install jags
-  - sudo apt-get r-api-3
+  - sudo add-apt-repository ppa:marutter/rrutter
   - sudo apt-get update
+  - sudo apt-get r-api-3
+  - sudo apt-get install jags
   - sudo apt-get install r-cran-rjags
 
 # for codecov
